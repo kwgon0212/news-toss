@@ -22,24 +22,36 @@ import UpPrice from "@/components/ui/shared/UpPrice";
 import DownPrice from "@/components/ui/shared/DownPrice";
 
 const NewsDetail = ({
-  news,
+  // news,
   token,
   newsId,
   mainStockList,
   impactScore,
   summary,
 }: {
-  news: News;
+  // news: News;
   token: JwtToken | null;
   newsId: string;
   mainStockList: StockSearchResult[];
   impactScore: number;
   summary: string;
 }) => {
+  const [news, setNews] = useState<News | null>(null);
   const [isOpenNewsDetail, setIsOpenNewsDetail] = useState(false);
   const [isScrap, setIsScrap] = useState(false);
   const { scraps, setScraps } = useScrapStore();
   const newsDetailRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      const newsRes = await fetch(`/proxy/news/v2/detail?newsId=${newsId}`, {
+        credentials: "include",
+      });
+      const newsJson: { data: News } = await newsRes.json();
+      setNews(newsJson.data);
+    };
+    fetchNews();
+  }, [newsId]);
 
   useEffect(() => {
     if (scraps.find((scrap) => scrap.newsId === newsId)) {

@@ -16,13 +16,13 @@ const NewsDetailPage = async ({
   const { id: newsId } = await params;
   const token = await getJwtToken();
 
-  const newsRes = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/detail?newsId=${newsId}`,
-    {
-      credentials: "include",
-    }
-  );
-  const newsJson: { data: News } = await newsRes.json();
+  // const newsRes = await fetch(
+  //   `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/detail?newsId=${newsId}`,
+  //   {
+  //     credentials: "include",
+  //   }
+  // );
+  // const newsJson: { data: News } = await newsRes.json();
 
   const relatedNewsRes = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/related/news?newsId=${newsId}`,
@@ -85,7 +85,7 @@ const NewsDetailPage = async ({
   return (
     <div className="size-full grid grid-cols-[1fr_1px_1.5fr] gap-[20px]">
       <NewsDetail
-        news={newsJson.data}
+        // news={newsJson.data}
         token={token}
         newsId={newsId}
         mainStockList={mainStockList}
