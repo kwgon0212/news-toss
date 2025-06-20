@@ -1,33 +1,49 @@
+"use client";
+
 import { JwtToken } from "@/type/jwt";
 import clsx from "clsx";
 import { Heart } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 
 const Scrab = ({
   type,
   className,
   stockCode,
-  fill,
   token,
   onClick,
 }: {
   type: "news" | "stock";
   className?: string;
   stockCode: string;
-  fill?: boolean;
   token: JwtToken | null;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) => {
+  const [isScrab, setIsScrab] = useState(false);
+
+  if (token) return null;
+
   return (
-    <div className="opacity-0 group-hover:opacity-100 transition-all duration-400 absolute bottom-0 left-0 rounded-bl-main border-main-blue/20 border-[20px] border-t-transparent border-r-transparent z-10">
+    <div
+      className={clsx(
+        "transition-all duration-400 absolute left-1 bottom-1 z-10",
+        isScrab ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+        className
+      )}
+    >
       <button
-        className={clsx(className, "absolute -bottom-[16px] -left-[18px]")}
-        onClick={onClick}
+        // -bottom-[16px] -left-[18px]
+        className={clsx(className, "flex justify-center items-center")}
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsScrab(!isScrab);
+          console.log("stockCode관심종목!!", stockCode);
+        }}
       >
         <Heart
-          className="text-main-blue hover:scale-110 transition-all duration-300"
+          className="text-main-blue hover:scale-115 active:scale-80 transition-all duration-300"
           size={18}
-          fill={fill ? "#3485fa" : "transparent"}
+          fill={isScrab ? "#3485fa" : "transparent"}
+          strokeWidth={1}
         />
       </button>
     </div>

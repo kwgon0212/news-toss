@@ -57,7 +57,7 @@ const StockPage = async () => {
         <CategoryStock token={token} />
       </div>
 
-      <Test />
+      {/* <Test /> */}
     </div>
   );
 };

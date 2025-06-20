@@ -76,7 +76,7 @@ const PopularStock = ({
           popularStocks.map((stock, index) => (
             <div
               key={`popular-${stock.hts_kor_isnm}`}
-              className="rounded-main px-[20px] py-3 transition duration-300 hover:shadow-color hover:scale-102 cursor-pointer relative group"
+              className="rounded-main px-[20px] py-3 transition duration-300 border border-transparent hover:border-main-blue/20 hover:scale-102 cursor-pointer relative group"
               onClick={(e) => {
                 e.stopPropagation();
                 handleClickStock(stock.mksc_shrn_iscd);
@@ -86,7 +86,6 @@ const PopularStock = ({
                 type="stock"
                 stockCode={stock.mksc_shrn_iscd}
                 token={token}
-                fill
                 onClick={(e) => {
                   e.stopPropagation();
                   handleScrab(stock.mksc_shrn_iscd);

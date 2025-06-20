@@ -267,7 +267,7 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
             {categoryStocks &&
               categoryStocks.stocks.map((stock) => (
                 <div
-                  className="w-full flex flex-col justify-around hover:shadow-color hover:scale-102 rounded-main transition-all duration-200 ease-in-out px-[20px] py-main gap-[5px] relative group"
+                  className="w-full flex flex-col justify-around border border-transparent hover:border-main-blue/20 hover:scale-102 rounded-main transition-all duration-200 ease-in-out px-[20px] py-main gap-[5px] relative group"
                   key={selectedCategory + stock.stockCode}
                   onClick={() => router.push(`/stock/${stock.stockCode}`)}
                 >
@@ -275,7 +275,6 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
                     type="stock"
                     stockCode={stock.stockCode}
                     token={token}
-                    fill
                     onClick={(e) => {
                       e.stopPropagation();
                       handleScrab(stock.stockCode);
