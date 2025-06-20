@@ -5,6 +5,7 @@ import React, { useState, useRef } from "react";
 import AddressModal from "@/components/ui/shared/AddressModal";
 import { UserInfo } from "@/type/userInfo";
 import { toast } from "react-toastify";
+import Button from "@/components/ui/shared/Button";
 
 interface RegisterStep1Props {
   setStep: (step: number) => void;
@@ -68,12 +69,13 @@ const RegisterStep1 = ({
             disabled
             value={userInfo.address.zipcode}
           />
-          <button
-            className="bg-main-blue text-white px-4 py-2 rounded-main text-sm w-full"
+          <Button
+            variant="primary"
             onClick={() => setIsOpenAddressModal(true)}
+            className="w-full"
           >
             주소 찾기
-          </button>
+          </Button>
         </div>
         <Input placeholder="주소" disabled value={userInfo.address.address} />
         <Input
@@ -157,12 +159,9 @@ const RegisterStep1 = ({
           onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
         />
       </div>
-      <button
-        className="bg-main-blue text-white px-4 py-2 rounded-main text-sm justify-self-end self-end w-fit"
-        onClick={handleNext}
-      >
+      <Button onClick={handleNext} className="w-fit self-end">
         다음
-      </button>
+      </Button>
 
       <AddressModal
         isOpen={isOpenAddressModal}

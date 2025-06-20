@@ -9,6 +9,7 @@ import { JwtToken } from "@/type/jwt";
 import UpPrice from "@/components/ui/shared/UpPrice";
 import DownPrice from "@/components/ui/shared/DownPrice";
 import Image from "next/image";
+import Button from "@/components/ui/shared/Button";
 
 const CATEGORY_GROUPS = {
   제조업: [
@@ -234,18 +235,16 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
                   >
                     <div className="flex flex-wrap gap-main pb-2">
                       {cats.map((category) => (
-                        <button
+                        <Button
                           key={category}
-                          className={clsx(
-                            "text-main-blue rounded-main p-main flex items-center h-fit",
-                            selectedCategory === category
-                              ? "bg-main-blue text-white hover:bg-main-blue/90"
-                              : "bg-main-blue/20 text-main-blue hover:bg-main-blue/30"
-                          )}
+                          variant={
+                            selectedCategory === category ? "primary" : "ghost"
+                          }
                           onClick={() => handleCategoryClick(category)}
+                          className="py-2"
                         >
-                          <span className="px-main">{category}</span>
-                        </button>
+                          {category}
+                        </Button>
                       ))}
                     </div>
                   </div>

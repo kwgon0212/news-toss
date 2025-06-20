@@ -6,6 +6,7 @@ import clsx from "clsx";
 import { UserInfo } from "@/type/userInfo";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import Button from "@/components/ui/shared/Button";
 
 interface RegisterStep2Props {
   setStep: (step: number) => void;
@@ -156,12 +157,15 @@ const RegisterStep2 = ({
               value={userInfo.id}
               onChange={(e) => setUserInfo({ ...userInfo, id: e.target.value })}
             />
-            <button
+            <Button variant="primary" onClick={checkUserId} className="w-full">
+              중복 확인
+            </Button>
+            {/* <button
               className="bg-main-blue text-white rounded-main w-fit shrink-0 px-4 py-2 text-sm"
               onClick={checkUserId}
             >
               중복 확인
-            </button>
+            </button> */}
           </div>
 
           {isIdAvailable === true && (
@@ -260,18 +264,12 @@ const RegisterStep2 = ({
       </div>
 
       <div className="flex gap-main self-end">
-        <button
-          className="bg-main-blue/20 text-main-blue px-4 py-2 rounded-main text-sm w-fit"
-          onClick={() => setStep(1)}
-        >
+        <Button variant="ghost" onClick={() => setStep(1)} className="w-fit">
           이전
-        </button>
-        <button
-          className="bg-main-blue text-white px-4 py-2 rounded-main text-sm w-fit"
-          onClick={handleSignup}
-        >
+        </Button>
+        <Button variant="primary" onClick={handleSignup} className="w-fit">
           회원가입
-        </button>
+        </Button>
       </div>
     </div>
   );

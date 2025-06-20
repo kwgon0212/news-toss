@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import Input from "../Input";
 import Link from "next/link";
 import useOutsideClick from "@/hooks/useOutsideClick";
+import Button from "../Button";
 
 const LoginForm = () => {
   const [isOpenForm, setIsOpenForm] = useState(false);
@@ -51,14 +52,14 @@ const LoginForm = () => {
 
   return (
     <div className="relative size-fit">
-      <button
+      <Button
         onClick={() => {
           setIsOpenForm(!isOpenForm);
         }}
-        className="bg-main-blue text-white px-4 rounded-[10px] py-[5px]"
+        variant="primary"
       >
         로그인
-      </button>
+      </Button>
 
       <div
         ref={loginFormRef}
@@ -88,12 +89,10 @@ const LoginForm = () => {
             hasShowButton={true}
           />
 
-          <button
-            type="submit"
-            className="w-full bg-main-blue text-white px-4 rounded-[10px] py-[5px]"
-          >
+          <Button type="submit" variant="primary" className="w-full">
             로그인
-          </button>
+          </Button>
+
           <Link href="/signup" className="text-xs">
             회원가입
           </Link>

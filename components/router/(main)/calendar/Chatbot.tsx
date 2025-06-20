@@ -5,6 +5,7 @@ import { Loader2, Newspaper, Send } from "lucide-react";
 import Image from "next/image";
 import React, { useRef, useState, useEffect } from "react";
 import MarkdownRenderer from "./MarkdownRenderer";
+import Button from "@/components/ui/shared/Button";
 
 interface Message {
   role: "user" | "bot";
@@ -198,7 +199,19 @@ const Chatbot = ({
           ref={inputRef}
           className="outline-none border border-main-light-gray flex-1 px-main py-2 rounded-main"
         />
-        <button
+        <Button
+          type="submit"
+          variant="primary"
+          disabled={isLoading}
+          className={clsx(isLoading && "bg-gray-400 cursor-not-allowed")}
+        >
+          {isLoading ? (
+            <Loader2 className="text-white animate-spin" size={16} />
+          ) : (
+            <Send className="text-white" size={16} />
+          )}
+        </Button>
+        {/* <button
           type="submit"
           disabled={isLoading}
           className={clsx(
@@ -213,7 +226,7 @@ const Chatbot = ({
           ) : (
             <Send className="text-white" size={16} />
           )}
-        </button>
+        </button> */}
       </form>
     </div>
   );
