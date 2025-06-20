@@ -227,9 +227,9 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
                   </button>
                   <div
                     className={clsx(
-                      "transition-all duration-300 overflow-hidden",
+                      "transition-all duration-300",
                       openGroup === group
-                        ? "max-h-40 opacity-100"
+                        ? "max-h-100 opacity-100"
                         : "max-h-0 opacity-0"
                     )}
                   >
