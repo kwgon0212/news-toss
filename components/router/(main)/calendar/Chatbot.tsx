@@ -53,82 +53,99 @@ const Chatbot = ({
     }
   }, [isOpen]);
 
-  const handleSend = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSend = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!input.trim()) return;
 
     setIsLoading(true);
-
     sseRef.current?.close();
     manuallyClosedRef.current = false;
 
-    const sse = new EventSource(
-      `/api/sse/chatbot?message=${encodeURIComponent(input)}`
-    );
-    sseRef.current = sse;
-
     setMessages((prev) => [
       ...prev,
-      { role: "user", content: input },
-      { role: "bot", content: "" },
+      {
+        role: "user",
+        content: input,
+      },
+      {
+        role: "bot",
+        content: "",
+      },
     ]);
     setInput("");
     botMessageRef.current = "";
 
-    sse.onmessage = (event) => {
-      try {
-        const parsed = JSON.parse(event.data);
+    const chatRes = await fetch(`/proxy/sse/stream`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "text/event-stream",
+      },
+      body: JSON.stringify({ message: input }),
+      credentials: "include",
+    });
 
-        if (parsed.content) {
-          botMessageRef.current += parsed.content;
+    if (!chatRes.body) {
+      console.error("❌ Response body 없음");
+      setIsLoading(false);
+      return;
+    }
+
+    const reader = chatRes.body
+      .pipeThrough(new TextDecoderStream())
+      .getReader();
+    let buffer = "";
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      buffer += value;
+
+      // '\n\n' 단위로 이벤트 끊기
+      const events = buffer.split("\n\n");
+      buffer = events.pop() || "";
+
+      for (const raw of events) {
+        const lines = raw.split("\n");
+        const eventLine = lines.find((line) => line.startsWith("event:"));
+        const dataLines = lines.filter((line) => line.startsWith("data:"));
+
+        const eventType = eventLine?.replace("event:", "").trim();
+        const data = dataLines
+          .map((line) => line.replace(/^data:/, ""))
+          .join("");
+
+        console.log(data);
+
+        if (eventType === "chat") {
+          botMessageRef.current += data;
 
           setMessages((prev) => {
             const updated = [...prev];
-            const lastIdx = updated.length - 1;
-
-            if (updated[lastIdx].role === "bot") {
-              updated[lastIdx] = {
-                role: "bot",
+            const lastIndex = updated.length - 1;
+            if (updated[lastIndex].role === "bot") {
+              updated[lastIndex] = {
+                ...updated[lastIndex],
                 content: botMessageRef.current,
               };
             }
-
             return updated;
           });
         }
 
-        if (parsed.is_last) {
-          manuallyClosedRef.current = true;
-          sse.close();
+        if (eventType === "chat-end") {
           setIsLoading(false);
+          return;
         }
-      } catch (err) {
-        console.error("❌ JSON parse error:", err);
-        setIsLoading(false);
       }
-    };
-
-    sse.addEventListener("end", () => {
-      manuallyClosedRef.current = true;
-      sse.close();
-      setIsLoading(false);
-    });
-
-    sse.onerror = (e) => {
-      if (manuallyClosedRef.current || sse.readyState === EventSource.CLOSED) {
-        console.log("🟡 SSE 정상 종료");
-      } else {
-        console.error("❌ SSE 에러", e);
-      }
-      sse.close();
-      setIsLoading(false);
-    };
+    }
   };
 
-  // useEffect(() => {
-  //   endRef.current?.scrollIntoView({ behavior: "smooth" });
-  // }, [messages]);
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
     <div

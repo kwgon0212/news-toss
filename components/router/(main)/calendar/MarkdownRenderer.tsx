@@ -8,13 +8,38 @@ const MarkdownRenderer = ({ markdown }: { markdown: string }) => {
 
   useEffect(() => {
     const renderMarkdown = async () => {
-      const rawHtml = await marked(markdown);
-      const cleanHtml = DOMPurify.sanitize(rawHtml);
+      // const isHtml = /<\/?[a-z][\s\S]*>/i.test(markdown);
+
+      const rawHtml = await marked(markdown, {
+        breaks: true,
+      });
+
+      const cleanHtml = DOMPurify.sanitize(rawHtml, {
+        ALLOWED_TAGS: ["b", "i", "em", "strong", "a", "img", "p", "br"],
+        ALLOWED_ATTR: ["href", "src", "alt", "target"],
+      });
+
       setHtml(cleanHtml);
     };
 
     renderMarkdown();
   }, [markdown]);
+
+  // useEffect(() => {
+  //   const renderMarkdown = async () => {
+  //     const rawHtml = await marked(markdown);
+
+  //     const cleanHtml = DOMPurify.sanitize(rawHtml, {
+  //       ALLOWED_TAGS: ["b", "i", "em", "strong", "a", "img", "p", "br"],
+  //       ALLOWED_ATTR: ["href", "src", "alt", "target"],
+  //     });
+
+  //     console.log(cleanHtml);
+  //     setHtml(cleanHtml);
+  //   };
+
+  //   renderMarkdown();
+  // }, [markdown]);
 
   return (
     <div
