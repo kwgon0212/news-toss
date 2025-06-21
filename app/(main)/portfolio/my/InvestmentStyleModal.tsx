@@ -746,12 +746,17 @@ const ResultForm = ({
   const handleClose = async () => {
     if (!token) return;
     const score = selectedAnswer.reduce((acc, curr) => acc + curr, 0);
-    const res = await fetch(
-      `/proxy/auth/invest?memberId=${token.memberId}&invest_score=${score}`,
-      {
-        credentials: "include",
-      }
-    );
+    const res = await fetch(`/proxy/auth/invest`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        memberId: token.memberId,
+        investScore: score,
+      }),
+      credentials: "include",
+    });
 
     const json = await res.json();
     console.log(json);

@@ -92,18 +92,11 @@ const GaugeChart = ({ token }: { token: JwtToken | null }) => {
     if (!chart) return;
 
     let value = 0;
-
-    if (investScore <= 7) {
-      value = 5;
-    } else if (investScore <= 12) {
-      value = 28;
-    } else if (investScore <= 17) {
-      value = 50;
-    } else if (investScore <= 21) {
-      value = 72;
-    } else {
-      value = 95;
-    }
+    if (investScore <= 7) value = 5;
+    else if (investScore <= 12) value = 28;
+    else if (investScore <= 17) value = 50;
+    else if (investScore <= 21) value = 72;
+    else value = 95;
 
     const needle = {
       id: "needle",
@@ -115,21 +108,17 @@ const GaugeChart = ({ token }: { token: JwtToken | null }) => {
 
         const angle = (Math.PI * value) / 100;
         const cx = left + width / 2;
-        const cy = top + height / 1.3; // 반원 기준 중심
+        const cy = top + height / 1.3;
         const radius = height * 0.5;
 
         const dx = radius * Math.cos(angle + Math.PI);
         const dy = radius * Math.sin(angle + Math.PI);
 
-        const baseWidth = 5; // 바늘 중심쪽 두께
-        const backOffset = 3; // 뒤쪽 삼각형 길이
-
-        // 바늘 삼각형 좌표 계산
+        const baseWidth = 5;
         const baseAngle = angle + Math.PI / 2;
 
         const x1 = -baseWidth * Math.cos(baseAngle);
         const y1 = -baseWidth * Math.sin(baseAngle);
-
         const x2 = baseWidth * Math.cos(baseAngle);
         const y2 = baseWidth * Math.sin(baseAngle);
 
@@ -144,12 +133,9 @@ const GaugeChart = ({ token }: { token: JwtToken | null }) => {
         ctx.lineTo(x2, y2);
         ctx.lineTo(tipX, tipY);
         ctx.closePath();
-        ctx.lineJoin = "round";
-        ctx.lineCap = "round";
         ctx.fill();
         ctx.restore();
 
-        // 바늘 중심에 동그란 중심점 추가 (원형 마감 처리)
         ctx.save();
         ctx.beginPath();
         ctx.fillStyle = "#707070";
@@ -159,8 +145,12 @@ const GaugeChart = ({ token }: { token: JwtToken | null }) => {
       },
     };
 
-    if (!chart.config.plugins) chart.config.plugins = [];
-    chart.config.plugins.push(needle);
+    // plugins 수정
+    const plugins = chart.config.plugins as any[];
+    const index = plugins.findIndex((p) => p.id === "needle");
+    if (index !== -1) plugins.splice(index, 1);
+    plugins.push(needle);
+
     chart.update();
   }, [investScore]);
 
