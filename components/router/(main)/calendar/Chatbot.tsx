@@ -76,71 +76,106 @@ const Chatbot = ({
     setInput("");
     botMessageRef.current = "";
 
-    const chatRes = await fetch(`/proxy/sse/stream`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "text/event-stream",
-      },
-      body: JSON.stringify({ message: input }),
-      credentials: "include",
+    const sse = new EventSource(
+      `https://news-toss.click/api/sse/stream?message=${encodeURIComponent(
+        input
+      )}`
+    );
+
+    sse.addEventListener("chat", (event) => {
+      console.log("✅ 받은 데이터:", event.data);
+
+      botMessageRef.current += event.data;
+
+      setMessages((prev) => {
+        const updated = [...prev];
+        const lastIndex = updated.length - 1;
+
+        if (updated[lastIndex].role === "bot") {
+          updated[lastIndex] = {
+            ...updated[lastIndex],
+            content: botMessageRef.current,
+          };
+        }
+
+        return updated;
+      });
     });
 
-    if (!chatRes.body) {
-      console.error("❌ Response body 없음");
+    sse.addEventListener("chat-end", (event) => {
+      sse.close();
       setIsLoading(false);
-      return;
-    }
+    });
 
-    const reader = chatRes.body
-      .pipeThrough(new TextDecoderStream())
-      .getReader();
-    let buffer = "";
+    sse.onerror = (event) => {
+      console.error("❌ SSE 오류", event);
+    };
 
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
+    // const chatRes = await fetch(`/proxy/sse/stream`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Accept: "text/event-stream",
+    //   },
+    //   body: JSON.stringify({ message: input }),
+    //   credentials: "include",
+    // });
 
-      buffer += value;
+    // if (!chatRes.body) {
+    //   console.error("❌ Response body 없음");
+    //   setIsLoading(false);
+    //   return;
+    // }
 
-      // '\n\n' 단위로 이벤트 끊기
-      const events = buffer.split("\n\n");
-      buffer = events.pop() || "";
+    // const reader = chatRes.body
+    //   .pipeThrough(new TextDecoderStream())
+    //   .getReader();
+    // let buffer = "";
 
-      for (const raw of events) {
-        const lines = raw.split("\n");
-        const eventLine = lines.find((line) => line.startsWith("event:"));
-        const dataLines = lines.filter((line) => line.startsWith("data:"));
+    // while (true) {
+    //   const { value, done } = await reader.read();
+    //   if (done) break;
 
-        const eventType = eventLine?.replace("event:", "").trim();
-        const data = dataLines
-          .map((line) => line.replace(/^data:/, ""))
-          .join("");
+    //   buffer += value;
 
-        console.log(data);
+    //   // '\n\n' 단위로 이벤트 끊기
+    //   const events = buffer.split("\n\n");
+    //   buffer = events.pop() || "";
 
-        if (eventType === "chat") {
-          botMessageRef.current += data;
+    //   for (const raw of events) {
+    //     const lines = raw.split("\n");
+    //     const eventLine = lines.find((line) => line.startsWith("event:"));
+    //     const dataLines = lines.filter((line) => line.startsWith("data:"));
 
-          setMessages((prev) => {
-            const updated = [...prev];
-            const lastIndex = updated.length - 1;
-            if (updated[lastIndex].role === "bot") {
-              updated[lastIndex] = {
-                ...updated[lastIndex],
-                content: botMessageRef.current,
-              };
-            }
-            return updated;
-          });
-        }
+    //     const eventType = eventLine?.replace("event:", "").trim();
+    //     const data = dataLines
+    //       .map((line) => line.replace(/^data:/, ""))
+    //       .join("");
 
-        if (eventType === "chat-end") {
-          setIsLoading(false);
-          return;
-        }
-      }
-    }
+    //     console.log(data);
+
+    //     if (eventType === "chat") {
+    //       botMessageRef.current += data;
+
+    //       setMessages((prev) => {
+    //         const updated = [...prev];
+    //         const lastIndex = updated.length - 1;
+    //         if (updated[lastIndex].role === "bot") {
+    //           updated[lastIndex] = {
+    //             ...updated[lastIndex],
+    //             content: botMessageRef.current,
+    //           };
+    //         }
+    //         return updated;
+    //       });
+    //     }
+
+    //     if (eventType === "chat-end") {
+    //       setIsLoading(false);
+    //       return;
+    //     }
+    //   }
+    // }
   };
 
   useEffect(() => {
