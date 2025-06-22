@@ -2,6 +2,7 @@
 
 import Tooltip from "@/components/ui/Tooltip";
 import { News } from "@/type/news";
+import { formatDate } from "@/utils/formatDate";
 import { CircleHelp, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,24 +10,37 @@ import React, { useEffect, useState } from "react";
 
 const RealTime = () => {
   const [news, setNews] = useState<News[]>([]);
-  const [newNewsId, setNewNewsId] = useState<string | null>(null);
+  // const [newNewsId, setNewNewsId] = useState<string | null>(null);
+
+  // sse 데이터형식
+  // const realtime = {
+  //   wdate: string,
+  //   title: string,
+  //   article: string | null,
+  //   url: string,
+  //   press: string,
+  //   image:
+  //     "https://imgnews.pstatic.net/image/018/2024/08/13/0005810751_001_20240813185912614.jpg?type=w800",
+  //   impact_score: 0.0,
+  //   news_id: "1111-2222",
+  // };
 
   useEffect(() => {
-    // const sse = new EventSource("/sse/news");
-    const sse = new EventSource("/api/sse/news");
+    const sse = new EventSource("https://news-toss.click/api/sse/realtime");
 
     sse.onopen = () => {
-      console.log("✅ 서버 연결됨");
+      console.log("실시간 뉴스 sse 연결 완료");
     };
 
-    // ✨ 커스텀 이벤트 수신!
     sse.addEventListener("news", (event) => {
-      console.log("🔥 뉴스 이벤트 수신:", event.data);
       try {
         const data = JSON.parse(event.data);
+
         setNews((prev) => {
-          setNewNewsId(data.newsId);
-          return [...prev, data];
+          const newQueue = [...prev, data];
+          if (newQueue.length > 3) newQueue.shift();
+          // setNewNewsId(data.news_id);
+          return newQueue;
         });
       } catch (err) {
         console.error("❌ JSON 파싱 에러:", err);
@@ -44,12 +58,8 @@ const RealTime = () => {
   }, []);
 
   useEffect(() => {
-    if (news.length > 0) {
-      const interval = setInterval(() => {
-        setNews((prev) => prev.slice(1));
-      }, 5000);
-
-      return () => clearInterval(interval);
+    if (news.length > 3) {
+      setNews((prev) => prev.slice(1));
     }
   }, [news.length]);
 
@@ -77,33 +87,76 @@ const RealTime = () => {
         </span>
       </div>
 
-      <div className="col-span-2 grid grid-cols-[auto_1fr_auto_auto] gap-main">
-        <span className="text-center font-semibold">관련 종목</span>
-        <span className="text-center font-semibold">요약</span>
-        <span className="text-center font-semibold">뉴스 중요도</span>
-        <span className="text-center font-semibold">시간</span>
+      <div className="col-span-2">
+        <table className="w-full table-auto">
+          <colgroup>
+            <col className="w-auto" />
+            <col className="w-full" />
+            <col className="w-auto" />
+            <col className="w-auto" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th className="text-center font-semibold p-2 whitespace-nowrap">
+                관련 종목
+              </th>
+              <th className="text-center font-semibold p-2">요약</th>
+              <th className="text-center font-semibold p-2 whitespace-nowrap">
+                뉴스 중요도
+              </th>
+              <th className="text-center font-semibold p-2 whitespace-nowrap">
+                시간
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                colSpan={4}
+                className="border-t border-main-dark-gray/10"
+              ></td>
+            </tr>
+            {news.length === 0 && (
+              <tr>
+                <td colSpan={4} className="text-center py-main">
+                  <p className="text-sm text-main-dark-gray">
+                    실시간으로 수집된 뉴스가 없습니다.
+                  </p>
+                </td>
+              </tr>
+            )}
+            {news.map((item, idx) => (
+              <tr
+                key={`realtime-news-${item.newsId}`}
+                className={idx === news.length - 1 ? "fade-bg" : ""}
+              >
+                <td className="text-center p-2">삼성전자</td>
 
-        <div className="h-px bg-main-dark-gray/10 col-span-full" />
+                <td className="p-2">
+                  <Link
+                    href={item.url}
+                    className="underline hover:text-main-blue transition-colors"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {item.title}
+                  </Link>
+                </td>
 
-        {Array.from({ length: 3 }).map((_, idx) => {
-          return (
-            <React.Fragment
-              key={`realtime-news-${idx}`}
-              // className="col-span-full grid grid-cols-[auto_1fr_auto_auto] gap-main"
-              // style={{ animationDelay: `${idx * 0.1}s` }}
-            >
-              <p className="text-center">삼성전자</p>
-              <p className="">삼성전자 주가가 상승했습니다.</p>
-              <p className="text-center font-semibold text-main-blue">
-                {Number(0.28 * 100).toFixed(2)}%
-              </p>
-              <p className="text-center flex items-center gap-1 text-sm">
-                <Clock className="text-main-dark-gray" size={12} />
-                10분전
-              </p>
-            </React.Fragment>
-          );
-        })}
+                <td className="text-center font-semibold text-main-blue p-2">
+                  {item.impact_score && (item.impact_score * 100).toFixed(2)}%
+                </td>
+
+                <td className="text-center p-2">
+                  <div className="flex items-center justify-center gap-1 text-sm">
+                    <Clock className="text-main-dark-gray" size={12} />
+                    {item.wdate && formatDate(item.wdate)}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

@@ -64,6 +64,19 @@
     overflow: hidden;
     white-space: nowrap;
   }
+
+  @keyframes fadeHighlight {
+    0% {
+      background-color: rgba(52, 133, 250, 0.2);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+
+  .fade-bg {
+    animation: fadeHighlight 2s ease-in-out;
+  }
 }
 
 :root {

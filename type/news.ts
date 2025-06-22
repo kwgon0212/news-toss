@@ -9,6 +9,7 @@ export interface News {
   image?: string; // 이미지
   similarity?: number; // 유사도
   date?: string; // 작성일
+  impact_score?: number; // 중요도
 }
 
 export interface HighlightNews {

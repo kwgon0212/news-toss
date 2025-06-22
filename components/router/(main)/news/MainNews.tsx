@@ -21,8 +21,6 @@ const MainNews = ({
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const mainNewsCardRef = useRef<HTMLDivElement | null>(null);
 
-  console.log(news);
-
   if (error) {
     return (
       <div className="grid grid-cols-3 w-full gap-[20px]">
