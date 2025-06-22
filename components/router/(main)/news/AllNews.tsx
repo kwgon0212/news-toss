@@ -72,7 +72,7 @@ const AllNews = ({
 
   if (error) {
     return (
-      <div className="grid grid-cols-3 w-full gap-[20px]">
+      <div className="grid grid-cols-3 w-full gap-main-2">
         <div className="col-span-3 grid grid-cols-3 gap-main w-full relative">
           <div className="col-span-3 flex items-center gap-main">
             <div className="text-3xl font-bold">모든 뉴스</div>
@@ -86,8 +86,8 @@ const AllNews = ({
   }
 
   return (
-    <div className="flex flex-col gap-main">
-      <div className="flex justify-between items-center mb-main">
+    <div className="flex flex-col gap-main-2">
+      <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
           모든 뉴스
         </h2>

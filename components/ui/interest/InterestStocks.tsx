@@ -605,7 +605,7 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
 
                                     {group.main ? (
                                       <div
-                                        className="size-[20px]"
+                                        className="size-main-2"
                                         onClick={() => {
                                           handleSetMainGroup(group.groupId);
                                         }}

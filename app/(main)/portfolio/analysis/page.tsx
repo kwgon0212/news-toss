@@ -8,7 +8,7 @@ const AnalysisPortfolioPage = () => {
   return (
     <div>
       <div className="grid grid-cols-3 gap-main">
-        <div className="shadow-color rounded-main p-[20px]">
+        <div className="shadow-color rounded-main p-main-2">
           <h2 className="text-lg font-bold text-main-dark-gray flex flex-col gap-main">
             자산 배분 현황
           </h2>
@@ -16,7 +16,7 @@ const AnalysisPortfolioPage = () => {
             <PortfolioDoughnutChart />
           </div>
         </div>
-        <div className="col-span-2 shadow-color rounded-main p-[20px]">
+        <div className="col-span-2 shadow-color rounded-main p-main-2">
           <h2 className="text-lg font-bold text-main-dark-gray">
             홍길동님을 위한 종목 추천
           </h2>
@@ -25,7 +25,7 @@ const AnalysisPortfolioPage = () => {
           </div>
         </div>
 
-        <div className="col-span-3 shadow-color rounded-main p-[20px] flex flex-col gap-main">
+        <div className="col-span-3 shadow-color rounded-main p-main-2 flex flex-col gap-main">
           <h2 className="text-lg font-bold text-main-dark-gray">
             리포트 모음.zip
           </h2>

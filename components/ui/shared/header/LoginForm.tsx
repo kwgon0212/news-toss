@@ -69,7 +69,7 @@ const LoginForm = () => {
         )}
       >
         <form
-          className="w-[300px] bg-white rounded-main shadow-color p-[20px] flex flex-col gap-main items-center"
+          className="w-[300px] bg-white rounded-main shadow-color p-main-2 flex flex-col gap-main items-center"
           onSubmit={handleSubmit}
         >
           <Input

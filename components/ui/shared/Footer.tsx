@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="w-full py-[20px] bg-main-light-gray/30 mt-[100px] flex flex-col items-center justify-center text-center text-main-dark-gray rounded-t-main">
+    <footer className="w-full py-main-2 bg-main-light-gray/30 mt-[100px] flex flex-col items-center justify-center text-center text-main-dark-gray rounded-t-main">
       <div className="mb-4 flex flex-col items-center">
         <span className="font-bold text-lg text-gray-800">
           과거 뉴스 기반 주가 경향성 예측 서비스

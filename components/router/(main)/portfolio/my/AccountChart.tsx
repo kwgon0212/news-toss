@@ -110,7 +110,7 @@ const AccountChart = () => {
           <button
             key={type.state}
             className={clsx(
-              "px-[20px] py-2 rounded-main transition-colors",
+              "px-main-2 py-2 rounded-main transition-colors",
               chartType === type.state
                 ? "bg-main-light-gray text-black"
                 : "hover:bg-main-light-gray text-main-dark-gray"

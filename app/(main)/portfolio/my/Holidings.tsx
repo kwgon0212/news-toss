@@ -244,7 +244,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-x-[20px] text-sm text-gray-700">
+                  <div className="grid grid-cols-2 gap-x-main-2 text-sm text-gray-700">
                     <div className="flex justify-between gap-main">
                       <span className="text-main-dark-gray">투자금</span>
                       <span className="font-medium">
@@ -448,7 +448,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-x-[20px] text-sm text-gray-700">
+              <div className="grid grid-cols-2 gap-x-main-2 text-sm text-gray-700">
                 <div className="flex justify-between gap-main">
                   <span className="text-main-dark-gray">현재가</span>
                   <span className="font-medium">

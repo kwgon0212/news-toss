@@ -154,13 +154,13 @@ const CalendarPage = () => {
             filteredIrDataList.map((irData) => (
               <div
                 key={`IR-${irData.irId}-${irData.date}`}
-                className="w-full flex flex-col gap-main bg-white rounded-main shadow-sm p-[20px]"
+                className="w-full flex flex-col gap-main bg-white rounded-main shadow-sm p-main-2"
               >
                 <p className="text-xl font-semibold flex items-center gap-2">
                   {irData.title}
                 </p>
 
-                <div className="grid grid-cols-[auto_1fr] gap-y-[5px] gap-x-[20px] text-sm text-gray-500">
+                <div className="grid grid-cols-[auto_1fr] gap-y-[5px] gap-x-main-2 text-sm text-gray-500">
                   <p>
                     회사:{" "}
                     <span className="text-main-blue font-semibold">

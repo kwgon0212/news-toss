@@ -92,7 +92,7 @@ const Sidebar = ({ token }: { token: JwtToken | null }) => {
       <div
         className={clsx(
           "duration-200 shrink-0 transition-all overflow-hidden",
-          isOpen ? "w-[300px] pl-[20px]" : "w-0 opacity-0 px-0"
+          isOpen ? "w-[300px] pl-main-2" : "w-0 opacity-0 px-0"
         )}
       >
         {category === "내 투자" && <MyPortfolio token={token} />}
@@ -100,7 +100,7 @@ const Sidebar = ({ token }: { token: JwtToken | null }) => {
         {category === "최근 본" && <RecentView />}
       </div>
 
-      <div className="flex flex-col gap-[20px] shrink-0 items-center px-[10px]">
+      <div className="flex flex-col gap-main-2 shrink-0 items-center px-[10px]">
         <button
           className="flex flex-col items-center cursor-pointer hover:bg-sub/40 rounded-sm transition-colors duration-200"
           onClick={handleToggle}

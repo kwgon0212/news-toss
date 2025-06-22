@@ -69,14 +69,14 @@ const PopularStock = ({
   if (!popularStocks) return null;
 
   return (
-    <div className="col-span-2 p-main mb-[20px]">
+    <div className="col-span-2 p-main mb-main-2">
       <h2 className="text-xl font-bold text-gray-800 mb-4">인기 종목</h2>
       <div className="grid grid-cols-2 gap-main">
         {popularStocks &&
           popularStocks.map((stock, index) => (
             <div
               key={`popular-${stock.hts_kor_isnm}`}
-              className="rounded-main px-[20px] py-3 transition duration-300 border border-transparent hover:border-main-blue/20 hover:scale-102 cursor-pointer relative group"
+              className="rounded-main px-main-2 py-3 transition duration-300 border border-transparent hover:border-main-blue/20 hover:scale-102 cursor-pointer relative group"
               onClick={(e) => {
                 e.stopPropagation();
                 handleClickStock(stock.mksc_shrn_iscd);

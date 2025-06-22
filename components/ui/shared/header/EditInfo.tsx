@@ -103,7 +103,7 @@ const EditInfo = ({ token }: { token: JwtToken }) => {
                 }
               />
               <button
-                className="w-full bg-main-blue text-white rounded-main px-[20px] py-main"
+                className="w-full bg-main-blue text-white rounded-main px-main-2 py-main"
                 onClick={() => setIsOpenAddressModal(true)}
               >
                 주소 찾기
@@ -136,7 +136,7 @@ const EditInfo = ({ token }: { token: JwtToken }) => {
 
           <button
             type="submit"
-            className="bg-main-blue text-white rounded-main px-[20px] py-main"
+            className="bg-main-blue text-white rounded-main px-main-2 py-main"
           >
             수정하기
           </button>

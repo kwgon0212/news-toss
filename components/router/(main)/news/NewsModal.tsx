@@ -17,7 +17,7 @@ const NewsModal = ({ isOpen, onClose, children }: NewsModalProps) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="flex flex-col gap-[40px] py-[20px] px-[30px]">
+      <div className="flex flex-col gap-[40px] py-main-2 px-[30px]">
         <div className="flex flex-col gap-main">
           <h2 className="text-2xl font-bold">
             "포스트 반도체 찾는다"... '사업 디각화' 집중하는 삼성전자 "포스트
@@ -31,7 +31,7 @@ const NewsModal = ({ isOpen, onClose, children }: NewsModalProps) => {
 
         <div className="flex gap-main">
           <div className="w-[400px] h-[250px] bg-main-dark-gray rounded-main shrink-0" />
-          <div className="w-full flex flex-col gap-main p-[20px] shadow-color rounded-main">
+          <div className="w-full flex flex-col gap-main p-main-2 shadow-color rounded-main">
             <span>🤖 AI 요약</span>
             <h2 className="text-2xl font-bold">
               이 기사를 <strong className="text-main-red">호재</strong>로
@@ -144,7 +144,7 @@ KB증권 박철우 연구원은 "삼성전자가 기존 반도체·가전 중심
           </div>
         </div>
 
-        <div className="w-full shadow-color rounded-main p-[20px] h-[500px]">
+        <div className="w-full shadow-color rounded-main p-main-2 h-[500px]">
           <h2 className="text-2xl font-bold">리포트</h2>
         </div>
       </div>

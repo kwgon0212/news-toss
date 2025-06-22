@@ -67,7 +67,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
   if (!token) return null;
 
   return (
-    <div className="flex flex-col gap-main">
+    <div className="flex flex-col gap-main-2">
       <div className="flex items-center gap-main">
         <h2 className="text-3xl font-bold">
           <b className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
@@ -84,7 +84,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
         />
       </div>
 
-      <div className="grid grid-cols-4 gap-main mb-[20px]">
+      <div className="grid grid-cols-4 gap-main mb-main-2">
         {isRelatedNewsLoading && (
           <div className="col-span-4 flex justify-center items-center">
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -135,7 +135,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
 
                 <div className="w-full h-px bg-main-dark-gray/10" />
 
-                <div className="flex flex-col gap-main">
+                <div className="flex-1 flex flex-col gap-main">
                   {news.relatedNews.length > 0 ? (
                     news.relatedNews.slice(0, 2).map((relatedNews, index) => {
                       return (
@@ -180,7 +180,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                   ) : (
                     <div className="flex justify-center items-center size-full">
                       <p className="text-main-dark-gray text-sm">
-                        과거 유사뉴스 기사가 없습니다.
+                        과거 유사뉴스가 없습니다.
                       </p>
                     </div>
                   )}

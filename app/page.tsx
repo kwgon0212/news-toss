@@ -192,7 +192,7 @@ function Card({ title, desc }: { title: string; desc: string }) {
 
 const Header = () => {
   return (
-    <div className="absolute w-full py-main px-[20px] top-0 left-0 z-50 flex justify-between items-center">
+    <div className="absolute w-full py-main px-main-2 top-0 left-0 z-50 flex justify-between items-center">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}

@@ -52,7 +52,7 @@ const RelatedPastNews = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-3 w-full gap-[20px] transition-all duration-500 h-[500px]">
+      <div className="grid grid-cols-3 w-full gap-main-2 transition-all duration-500 h-[500px]">
         {selectedNewsData && (
           <div className="col-span-2 w-full h-full rounded-main flex flex-col gap-main relative shadow-color hover:scale-102 hover:bg-black/10 transition-all duration-500 group">
             <Link

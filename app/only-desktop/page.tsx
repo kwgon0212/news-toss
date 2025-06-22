@@ -4,7 +4,7 @@ import newsTossLogo from "@/public/news-toss-logo.png";
 
 const OnlyDesktopPage = () => {
   return (
-    <div className="w-full h-screen overflow-y-hidden flex flex-col items-center justify-center gap-[20px]">
+    <div className="w-full h-screen overflow-y-hidden flex flex-col items-center justify-center gap-main-2">
       <Image
         src={newsTossLogo}
         alt="news-toss-logo"

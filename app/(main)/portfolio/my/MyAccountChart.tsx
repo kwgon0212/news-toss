@@ -300,7 +300,7 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
                   <button
                     key={type.state}
                     className={clsx(
-                      "px-[20px] py-2 rounded-main transition-colors",
+                      "px-main-2 py-2 rounded-main transition-colors",
                       chartType === type.state
                         ? "bg-main-blue/20 text-main-blue"
                         : "hover:bg-main-dark-gray/20 text-main-dark-gray"
@@ -404,7 +404,7 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
               <button
                 key={type.state}
                 className={clsx(
-                  "px-[20px] py-2 rounded-main transition-colors",
+                  "px-main-2 py-2 rounded-main transition-colors",
                   chartType === type.state
                     ? "bg-main-blue/20 text-main-blue"
                     : "hover:bg-main-dark-gray/20 text-main-dark-gray"

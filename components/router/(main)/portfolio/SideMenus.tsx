@@ -31,7 +31,7 @@ const SideMenus = ({ token }: { token: JwtToken | null }) => {
           key={link.href}
           href={link.href}
           className={clsx(
-            "px-[20px] py-2 rounded-main transition-colors",
+            "px-main-2 py-2 rounded-main transition-colors",
             pathname === link.href
               ? "bg-main-light-gray text-black"
               : "hover:bg-main-light-gray text-main-dark-gray"

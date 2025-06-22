@@ -83,7 +83,7 @@ const NewsDetailPage = async ({
   }
 
   return (
-    <div className="size-full grid grid-cols-[1fr_1px_1.5fr] gap-[20px]">
+    <div className="size-full grid grid-cols-[1fr_1px_1.5fr] gap-main-2">
       <NewsDetail
         // news={newsJson.data}
         token={token}
@@ -95,7 +95,7 @@ const NewsDetailPage = async ({
 
       <div className="border-l border-main-light-gray h-full" />
 
-      <div className="flex flex-col gap-[20px]">
+      <div className="flex flex-col gap-main-2">
         {/* <MetaDataNews
           // metaData={metaDataJson.data}
           stockList={stockList}

@@ -11,7 +11,7 @@ const Related = ({
   return (
     <>
       <div className="relative">
-        <div className="sticky top-0 flex flex-col gap-[20px]">
+        <div className="sticky top-0 flex flex-col gap-main-2">
           {/* <div className="shadow-color rounded-main p-main">키워드</div> */}
 
           <RelatedStocks stockNames={relativeStocksData.data[0].stockName} />

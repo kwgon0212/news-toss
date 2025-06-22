@@ -47,7 +47,7 @@ const InvestmentStyleModal = ({
       onClose={handleClose}
       isClickOutsideClose={false}
     >
-      <div className="flex flex-col gap-[20px] px-main w-[600px]">
+      <div className="flex flex-col gap-main-2 px-main w-[600px]">
         <h2 className="text-xl font-bold text-main-dark-gray">투자성향 설정</h2>
 
         <div

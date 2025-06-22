@@ -234,7 +234,7 @@ export default function OverViewChart() {
   };
 
   return (
-    <div className="p-[20px] bg-white shadow-md rounded-main space-y-4">
+    <div className="p-main-2 bg-white shadow-md rounded-main space-y-4">
       <div className="flex gap-[5px]">
         {(Object.keys(symbolsByType) as TypeKey[]).map((t) => (
           <button
