@@ -250,7 +250,7 @@ const Navigation = () => {
         </div>
 
         {searchType === "news" && (
-          <div className="flex flex-col gap-main">
+          <div className="flex flex-col gap-main min-w-[500px] max-w-[600px]">
             <div className="relative w-full">
               <input
                 type="text"
@@ -266,13 +266,8 @@ const Navigation = () => {
               />
             </div>
 
-            {newsSearchResult && (
-              <div className="grid grid-cols-[250px_250px] gap-main">
-                {newsSearchResult.length > 0 && (
-                  <span className="col-span-2 text-sm text-main-dark-gray text-center">
-                    최대 10개의 결과만 표시됩니다.
-                  </span>
-                )}
+            {newsSearchResult.length > 0 && (
+              <div className="grid grid-cols-2 gap-main">
                 {newsSearchResult.map((news) => (
                   <Link
                     href={`/news/${news.newsId}`}
@@ -300,10 +295,22 @@ const Navigation = () => {
                     </div>
                   </Link>
                 ))}
+
+                <span className="col-span-2 text-sm text-main-dark-gray text-center">
+                  최대 10개의 결과만 표시됩니다.
+                </span>
               </div>
             )}
 
-            {newsSearchResult && newsSearchResult.length === 0 && (
+            {!newsSearch && (
+              <div className="flex flex-col gap-main">
+                <p className="text-sm text-main-dark-gray my-10 text-center">
+                  검색어를 입력해주세요.
+                </p>
+              </div>
+            )}
+
+            {newsSearch && newsSearchResult.length === 0 && (
               <div className="flex flex-col gap-main">
                 <p className="text-sm text-main-dark-gray my-10 text-center">
                   검색 결과가 없습니다.
@@ -314,7 +321,7 @@ const Navigation = () => {
         )}
 
         {searchType === "stock" && (
-          <div className="flex flex-col gap-main w-[510px]">
+          <div className="flex flex-col gap-main min-w-[500px]">
             <div className="relative w-full">
               <input
                 type="text"
@@ -395,7 +402,15 @@ const Navigation = () => {
               </div>
             ))}
 
-            {stockSearchResult && stockSearchResult.length === 0 && (
+            {!stockSearch && (
+              <div className="flex flex-col gap-main">
+                <p className="text-sm text-main-dark-gray my-10 text-center">
+                  종목명 또는 코드를 입력해주세요.
+                </p>
+              </div>
+            )}
+
+            {stockSearch && stockSearchResult.length === 0 && (
               <div className="flex flex-col gap-main">
                 <p className="text-sm text-main-dark-gray my-10 text-center">
                   검색 결과가 없습니다.
