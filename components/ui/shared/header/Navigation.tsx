@@ -107,6 +107,8 @@ const Navigation = () => {
     if (isOpenSearchModal) {
       setNewsSearch("");
       setNewsSearchResult([]);
+      setStockSearch("");
+      setStockSearchResult([]);
     }
   }, [isOpenSearchModal]);
 
@@ -141,6 +143,15 @@ const Navigation = () => {
     setStockSearchResult([]);
     setNewsSearch("");
     setNewsSearchResult([]);
+  };
+
+  const handleCloseSearchModal = () => {
+    setSearchType("news");
+    setStockSearch("");
+    setStockSearchResult([]);
+    setNewsSearch("");
+    setNewsSearchResult([]);
+    setIsOpenSearchModal(false);
   };
 
   return (
@@ -214,7 +225,7 @@ const Navigation = () => {
 
       <SearchModal
         isOpen={isOpenSearchModal}
-        onClose={() => setIsOpenSearchModal(false)}
+        onClose={handleCloseSearchModal}
         isEscapeClose
       >
         <div className="flex items-baseline gap-main mb-main">
@@ -337,70 +348,73 @@ const Navigation = () => {
               />
             </div>
 
-            {stockSearchResult.map((result, idx) => (
-              <div
-                className="w-full flex flex-col justify-around hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out p-main gap-[5px] group relative"
-                key={`search-stock-${result}-${idx}`}
-                onClick={() => handleClickSearchResult(result.stockCode)}
-              >
-                <div className="flex items-center gap-2 w-full">
-                  <div className="relative flex items-center justify-center size-[40px] shrink-0">
-                    {result.stockImage ? (
-                      <Image
-                        src={result.stockImage}
-                        alt={result.stockName}
-                        fill
-                        className="rounded-full"
-                        sizes="40px"
-                      />
-                    ) : (
-                      <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
-                        <span className="text-main-blue font-semibold">
-                          {result.stockName[0]}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex flex-col flex-1 truncate text-sm">
-                    <p className="flex items-center gap-main text-gray-800 truncate w-full">
-                      <span className="font-bold">{result.stockName}</span>
-                      <span className="text-gray-400">{result.stockCode}</span>
-                    </p>
-                    <div className="flex items-center gap-main">
-                      <span className="text-main-dark-gray">
-                        {Number(result.currentPrice).toLocaleString()}원
-                      </span>
-                      <div className="flex justify-between h-fit">
-                        {(result.sign === "1" || result.sign === "2") && (
-                          <UpPrice
-                            change={Number(result.changeAmount)}
-                            changeRate={Number(result.changeRate)}
-                          />
-                        )}
-                        {result.sign === "3" && (
-                          <span className="text-gray-400 font-medium">
-                            {Number(result.changeAmount)} (
-                            {Number(result.changeRate)}%)
+            {stockSearch &&
+              stockSearchResult.map((result, idx) => (
+                <div
+                  className="w-full flex flex-col justify-around hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out p-main gap-[5px] group relative"
+                  key={`search-stock-${result}-${idx}`}
+                  onClick={() => handleClickSearchResult(result.stockCode)}
+                >
+                  <div className="flex items-center gap-2 w-full">
+                    <div className="relative flex items-center justify-center size-[40px] shrink-0">
+                      {result.stockImage ? (
+                        <Image
+                          src={result.stockImage}
+                          alt={result.stockName}
+                          fill
+                          className="rounded-full"
+                          sizes="40px"
+                        />
+                      ) : (
+                        <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+                          <span className="text-main-blue font-semibold">
+                            {result.stockName[0]}
                           </span>
-                        )}
-                        {(result.sign === "4" || result.sign === "5") && (
-                          <DownPrice
-                            change={Number(result.changeAmount)}
-                            changeRate={Number(result.changeRate)}
-                          />
-                        )}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-col flex-1 truncate text-sm">
+                      <p className="flex items-center gap-main text-gray-800 truncate w-full">
+                        <span className="font-bold">{result.stockName}</span>
+                        <span className="text-gray-400">
+                          {result.stockCode}
+                        </span>
+                      </p>
+                      <div className="flex items-center gap-main">
+                        <span className="text-main-dark-gray">
+                          {Number(result.currentPrice).toLocaleString()}원
+                        </span>
+                        <div className="flex justify-between h-fit">
+                          {(result.sign === "1" || result.sign === "2") && (
+                            <UpPrice
+                              change={Number(result.changeAmount)}
+                              changeRate={Number(result.changeRate)}
+                            />
+                          )}
+                          {result.sign === "3" && (
+                            <span className="text-gray-400 font-medium">
+                              {Number(result.changeAmount)} (
+                              {Number(result.changeRate)}%)
+                            </span>
+                          )}
+                          {(result.sign === "4" || result.sign === "5") && (
+                            <DownPrice
+                              change={Number(result.changeAmount)}
+                              changeRate={Number(result.changeRate)}
+                            />
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <button className="absolute top-1/2 -translate-y-1/2 right-main hidden group-hover:block">
+                    <ChevronRight
+                      className="text-main-blue hover:bg-main-blue/30 rounded-full p-1 box-content transition-colors duration-200 ease-in-out"
+                      size={20}
+                    />
+                  </button>
                 </div>
-                <button className="absolute top-1/2 -translate-y-1/2 right-main hidden group-hover:block">
-                  <ChevronRight
-                    className="text-main-blue hover:bg-main-blue/30 rounded-full p-1 box-content transition-colors duration-200 ease-in-out"
-                    size={20}
-                  />
-                </button>
-              </div>
-            ))}
+              ))}
 
             {!stockSearch && (
               <div className="flex flex-col gap-main">
