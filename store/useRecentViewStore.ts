@@ -9,30 +9,20 @@ export interface RecentViewStock {
 interface RecentViewState {
   recentViewStocks: RecentViewStock[];
   setRecentViewStocks: (stocks: RecentViewStock[]) => void;
-  // syncFromLocalStorage: () => void;
 }
 
 export const useRecentViewStore = create<RecentViewState>((set) => ({
-  recentViewStocks: [],
+  recentViewStocks:
+    typeof window !== "undefined" && localStorage.getItem("latestViewStocks")
+      ? JSON.parse(localStorage.getItem("latestViewStocks") || "[]")
+      : [],
   setRecentViewStocks: (stocks) => {
     if (stocks.length > 5) {
       stocks.pop();
     }
     set({ recentViewStocks: stocks });
-    // if (typeof window !== "undefined") {
-    //   localStorage.setItem("latestViewStocks", JSON.stringify(stocks));
-    // }
+    if (typeof window !== "undefined") {
+      localStorage.setItem("latestViewStocks", JSON.stringify(stocks));
+    }
   },
-  // syncFromLocalStorage: () => {
-  //   if (typeof window !== "undefined") {
-  //     const raw = localStorage.getItem("latestViewStocks");
-  //     let parsed: RecentViewStock[] = [];
-  //     if (raw) {
-  //       parsed = JSON.parse(raw);
-  //     } else {
-  //       parsed = [];
-  //     }
-  //     set({ recentViewStocks: parsed });
-  //   }
-  // },
 }));

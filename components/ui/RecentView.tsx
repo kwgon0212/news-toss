@@ -11,10 +11,6 @@ const RecentView = () => {
 
   const router = useRouter();
 
-  // useEffect(() => {
-  //   syncFromLocalStorage();
-  // }, []);
-
   const handleRemoveStock = (
     e: React.MouseEvent<HTMLButtonElement>,
     stockCode: string
