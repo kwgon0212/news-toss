@@ -65,7 +65,6 @@ export default async function handler(
             const chunk = JSON.stringify({ content: char });
             res.write(`data: ${chunk}\n\n`);
             (res as any).flush?.();
-            await new Promise((r) => setTimeout(r, 30)); // 🕒 약간의 타이핑 딜레이
           }
         }
 

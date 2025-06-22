@@ -61,15 +61,32 @@ const Chatbot = ({
     setInput("");
     botMessageRef.current = "";
 
-    const sse = new EventSource(
-      `https://news-toss.click/api/sse/stream?message=${encodeURIComponent(
-        input
-      )}`
-    );
-    sseRef.current = sse;
+    // const sse = new EventSource(
+    //   `https://news-toss.click/api/sse/stream?message=${encodeURIComponent(
+    //     input
+    //   )}`
+    // );
+    // // sseRef.current = sse;
 
-    sse.addEventListener("chat", (event) => {
-      if (event.data === "[DONE]") {
+    // sse.addEventListener("chat", (event) => {
+    //   if (event.data === "[DONE]") {
+    //     sse.close();
+    //     setIsLoading(false);
+    //     return;
+    //   }
+
+    //   console.log("💬 새 메시지 내용:", event.data, new Date().getSeconds());
+    // });
+
+    // api router
+    const sse = new EventSource(
+      `/api/sse/chatbot?message=${encodeURIComponent(input)}`
+    );
+
+    sse.onmessage = (event) => {
+      const parsed = JSON.parse(event.data);
+
+      if (parsed.is_last) {
         sse.close();
         setIsLoading(false);
         return;
@@ -80,12 +97,15 @@ const Chatbot = ({
         const lastIdx = updated.length - 1;
         updated[lastIdx] = {
           ...updated[lastIdx],
-          content: updated[lastIdx].content + event.data,
+          content: updated[lastIdx].content + parsed.content,
         };
-
-        console.log("💬 새 메시지 내용:", updated[lastIdx].content);
         return updated;
       });
+    };
+
+    sse.addEventListener("end", () => {
+      sse.close();
+      setIsLoading(false);
     });
   };
 
@@ -136,22 +156,22 @@ const Chatbot = ({
                 key={`${msg.role}-${idx}`}
                 className="w-full flex justify-start items-start"
               >
-                {/* <MarkdownRenderer markdown={msg.content} /> */}
-                <p>{msg.content}</p>
+                <MarkdownRenderer message={msg.content} />
+                {/* <p>{msg.content}</p> */}
+              </div>
+            );
+          } else {
+            return (
+              <div
+                key={`${msg.role}-${idx}`}
+                className="w-full flex justify-end items-start"
+              >
+                <p className="w-fit max-w-[80%] px-3 py-2 rounded-main bg-main-blue/10 break-words">
+                  {msg.content}
+                </p>
               </div>
             );
           }
-
-          return (
-            <div
-              key={`${msg.role}-${idx}`}
-              className="w-full flex justify-end items-start"
-            >
-              <p className="w-fit max-w-[80%] px-3 py-2 rounded-main bg-main-blue/10 break-words">
-                {msg.content}
-              </p>
-            </div>
-          );
         })}
         <div ref={endRef} />
       </div>
