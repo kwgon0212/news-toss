@@ -24,19 +24,9 @@ const Chatbot = ({
       role: "bot",
       content: "안녕하세요! NewsToss 챗봇입니다.",
     },
+    { role: "bot", content: "무엇이든 물어보세요!" },
   ]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "bot",
-          content: "무엇이든 물어보세요!",
-        },
-      ]);
-    }, 500);
-  }, []);
   const [input, setInput] = useState("");
   const botMessageRef = useRef("");
   const sseRef = useRef<EventSource | null>(null);
@@ -62,16 +52,11 @@ const Chatbot = ({
     sseRef.current?.close();
     manuallyClosedRef.current = false;
 
+    // 유저 입력 + 봇 응답 자리 추가
     setMessages((prev) => [
       ...prev,
-      {
-        role: "user",
-        content: input,
-      },
-      {
-        role: "bot",
-        content: "",
-      },
+      { role: "user", content: input },
+      { role: "bot", content: "" },
     ]);
     setInput("");
     botMessageRef.current = "";
@@ -81,101 +66,27 @@ const Chatbot = ({
         input
       )}`
     );
+    sseRef.current = sse;
 
     sse.addEventListener("chat", (event) => {
-      console.log("✅ 받은 데이터:", event.data);
-
-      botMessageRef.current += event.data;
+      if (event.data === "[DONE]") {
+        sse.close();
+        setIsLoading(false);
+        return;
+      }
 
       setMessages((prev) => {
         const updated = [...prev];
-        const lastIndex = updated.length - 1;
+        const lastIdx = updated.length - 1;
+        updated[lastIdx] = {
+          ...updated[lastIdx],
+          content: updated[lastIdx].content + event.data,
+        };
 
-        if (updated[lastIndex].role === "bot") {
-          updated[lastIndex] = {
-            ...updated[lastIndex],
-            content: botMessageRef.current,
-          };
-        }
-
+        console.log("💬 새 메시지 내용:", updated[lastIdx].content);
         return updated;
       });
     });
-
-    sse.addEventListener("chat-end", (event) => {
-      sse.close();
-      setIsLoading(false);
-    });
-
-    sse.onerror = (event) => {
-      console.error("❌ SSE 오류", event);
-    };
-
-    // const chatRes = await fetch(`/proxy/sse/stream`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Accept: "text/event-stream",
-    //   },
-    //   body: JSON.stringify({ message: input }),
-    //   credentials: "include",
-    // });
-
-    // if (!chatRes.body) {
-    //   console.error("❌ Response body 없음");
-    //   setIsLoading(false);
-    //   return;
-    // }
-
-    // const reader = chatRes.body
-    //   .pipeThrough(new TextDecoderStream())
-    //   .getReader();
-    // let buffer = "";
-
-    // while (true) {
-    //   const { value, done } = await reader.read();
-    //   if (done) break;
-
-    //   buffer += value;
-
-    //   // '\n\n' 단위로 이벤트 끊기
-    //   const events = buffer.split("\n\n");
-    //   buffer = events.pop() || "";
-
-    //   for (const raw of events) {
-    //     const lines = raw.split("\n");
-    //     const eventLine = lines.find((line) => line.startsWith("event:"));
-    //     const dataLines = lines.filter((line) => line.startsWith("data:"));
-
-    //     const eventType = eventLine?.replace("event:", "").trim();
-    //     const data = dataLines
-    //       .map((line) => line.replace(/^data:/, ""))
-    //       .join("");
-
-    //     console.log(data);
-
-    //     if (eventType === "chat") {
-    //       botMessageRef.current += data;
-
-    //       setMessages((prev) => {
-    //         const updated = [...prev];
-    //         const lastIndex = updated.length - 1;
-    //         if (updated[lastIndex].role === "bot") {
-    //           updated[lastIndex] = {
-    //             ...updated[lastIndex],
-    //             content: botMessageRef.current,
-    //           };
-    //         }
-    //         return updated;
-    //       });
-    //     }
-
-    //     if (eventType === "chat-end") {
-    //       setIsLoading(false);
-    //       return;
-    //     }
-    //   }
-    // }
   };
 
   useEffect(() => {
@@ -217,6 +128,7 @@ const Chatbot = ({
             유사사건을 알려줘!
           </p>
         </div>
+
         {messages.map((msg, idx) => {
           if (msg.role === "bot") {
             return (
@@ -224,7 +136,8 @@ const Chatbot = ({
                 key={`${msg.role}-${idx}`}
                 className="w-full flex justify-start items-start"
               >
-                <MarkdownRenderer markdown={msg.content} />
+                {/* <MarkdownRenderer markdown={msg.content} /> */}
+                <p>{msg.content}</p>
               </div>
             );
           }
@@ -263,22 +176,6 @@ const Chatbot = ({
             <Send className="text-white" size={16} />
           )}
         </Button>
-        {/* <button
-          type="submit"
-          disabled={isLoading}
-          className={clsx(
-            "px-[20px] py-1 rounded-main text-white",
-            isLoading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600"
-          )}
-        >
-          {isLoading ? (
-            <Loader2 className="text-white animate-spin" size={16} />
-          ) : (
-            <Send className="text-white" size={16} />
-          )}
-        </button> */}
       </form>
     </div>
   );
