@@ -18,7 +18,7 @@ import { Portfolio, usePortfolioStore } from "@/store/usePortfolio";
 type Category = "내 투자" | "관심" | "최근 본" | null;
 
 const Sidebar = ({ token }: { token: JwtToken | null }) => {
-  const { isOpen, toggle, open } = useSidebarStore();
+  const { isOpen, toggle, open, close } = useSidebarStore();
   const { setScraps } = useScrapStore();
   const { setPortfolio } = usePortfolioStore();
   const [category, setCategory] = useState<Category>(null);
@@ -78,6 +78,11 @@ const Sidebar = ({ token }: { token: JwtToken | null }) => {
   };
 
   const handleCategoryChange = (newCategory: Category) => {
+    if (newCategory === category) {
+      setCategory(null);
+      close();
+      return;
+    }
     setCategory(newCategory);
     open();
   };
@@ -103,8 +108,8 @@ const Sidebar = ({ token }: { token: JwtToken | null }) => {
           <ChevronsLeft
             size={25}
             className={clsx(
-              "p-1 box-content transition-transform duration-500",
-              isOpen && "rotate-540"
+              "p-1 box-content transition-transform duration-300",
+              isOpen && "rotate-180"
             )}
           />
         </button>
