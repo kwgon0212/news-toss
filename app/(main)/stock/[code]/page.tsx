@@ -123,16 +123,21 @@ const StockDetailPage = () => {
 
   const isMyStock = portfolio.some((stock) => stock.stockCode === code);
 
-  // 종목 검색 count 증가
-  // await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/stocks/search`, {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify({
-  //     stockCode: code,
-  //   }),
-  // });
+  useEffect(() => {
+    // 종목 검색 count 증가
+    const searchCount = async () => {
+      await fetch(`/proxy/v1/stocks/search`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          stockCode: code,
+        }),
+      });
+    };
+    searchCount();
+  }, []);
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
@@ -259,7 +264,7 @@ const StockDetailPage = () => {
       tooltip.innerHTML = `
         ${
           "open" in data
-            ? `<div><strong>시가:</strong>${data} ${data.open.toLocaleString()}원</div>`
+            ? `<div><strong>시가:</strong> ${data.open.toLocaleString()}원</div>`
             : ""
         }
         ${
@@ -642,44 +647,55 @@ const StockDetailPage = () => {
           </h2>
 
           <div className="grid grid-cols-5 grid-rows-2 gap-main">
-            {relatedNews.map((news) => (
-              <Link
-                href={`/news/${news.newsId}`}
-                key={news.newsId}
-                className="flex flex-col gap-main hover:scale-102 transition-all duration-300"
-              >
-                <div className="bg-black w-full aspect-[1.8/1] rounded-main shrink-0 relative">
-                  <div className="absolute size-full bg-black/5 z-10 rounded-main inset-shadow-2xs" />
-                  <Image
-                    src={news.image || "https://placehold.co/250x150"}
-                    alt={`${news.title}-image`}
-                    fill
-                    sizes="100%"
-                    className="object-cover rounded-main"
-                  />
-                  <div className="absolute inset-0 bg-black/40 z-10 rounded-main inset-shadow-2xs" />
-                  <div className="absolute inset-0 flex items-end justify-center p-main">
-                    <p className="text-white text-sm font-semibold line-clamp-2 z-10">
-                      {news.title}
-                    </p>
-                  </div>
-                  <div className="flex items-center text-main-dark-gray text-xs">
-                    <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
-                    <span className="text-main-dark-gray">
-                      {news.wdate && new Date(news.wdate).toLocaleDateString()}{" "}
-                    </span>
-                  </div>
+            {relatedNews.length > 0 ? (
+              <>
+                {relatedNews.map((news) => (
+                  <Link
+                    href={`/news/${news.newsId}`}
+                    key={news.newsId}
+                    className="flex flex-col gap-main hover:scale-102 transition-all duration-300"
+                  >
+                    <div className="bg-black w-full aspect-[1.8/1] rounded-main shrink-0 relative">
+                      <div className="absolute size-full bg-black/5 z-10 rounded-main inset-shadow-2xs" />
+                      <Image
+                        src={news.image || "https://placehold.co/250x150"}
+                        alt={`${news.title}-image`}
+                        fill
+                        sizes="100%"
+                        className="object-cover rounded-main"
+                      />
+                      <div className="absolute inset-0 bg-black/40 z-10 rounded-main inset-shadow-2xs" />
+                      <div className="absolute inset-0 flex items-end justify-center p-main">
+                        <p className="text-white text-sm font-semibold line-clamp-2 z-10">
+                          {news.title}
+                        </p>
+                      </div>
+                      <div className="flex items-center text-main-dark-gray text-xs">
+                        <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
+                        <span className="text-main-dark-gray">
+                          {news.wdate &&
+                            new Date(news.wdate).toLocaleDateString()}{" "}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+                <div className="flex justify-center border-t border-gray-200 pt-main col-span-5">
+                  <button
+                    className="text-main-dark-gray text-sm hover:bg-main-light-gray w-full rounded-main py-main transition-all duration-300 ease-in-out"
+                    onClick={handleMoreNews}
+                  >
+                    더보기
+                  </button>
                 </div>
-              </Link>
-            ))}
-            <div className="flex justify-center border-t border-gray-200 pt-main col-span-5">
-              <button
-                className="text-main-dark-gray text-sm hover:bg-main-light-gray w-full rounded-main py-main transition-all duration-300 ease-in-out"
-                onClick={handleMoreNews}
-              >
-                더보기
-              </button>
-            </div>
+              </>
+            ) : (
+              <div className="flex justify-center items-center h-full col-span-5 row-span-2">
+                <p className="text-main-dark-gray text-sm py-[30px]">
+                  관련 뉴스가 없습니다.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
