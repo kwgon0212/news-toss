@@ -183,7 +183,6 @@ const MainNews = ({
                       invertedStyle["inverted-radius"],
                       "object-cover h-full hover:scale-103 duration-300 ease-in-out"
                     )}
-                    unoptimized
                   />
 
                   <div className="absolute w-full h-full bottom-0 left-0 bg-gradient-to-t from-black/70 to-transparent hover:to-black/70 pointer-events-none flex items-end transition-all duration-300 ease-in-out">
@@ -268,7 +267,6 @@ const MainNews = ({
                     fill
                     sizes="100%"
                     className="object-cover rounded-main group-hover:scale-102 duration-300 ease-in-out"
-                    unoptimized
                   />
                 </div>
                 <div className="w-full h-full flex flex-col justify-around">

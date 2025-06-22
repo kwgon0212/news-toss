@@ -130,7 +130,6 @@ const AllNews = ({
                   fill
                   sizes="100%"
                   className="object-cover rounded-main"
-                  unoptimized
                 />
               </div>
               <div className="w-full flex flex-col gap-main justify-around">
