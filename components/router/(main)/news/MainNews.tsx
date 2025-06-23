@@ -23,6 +23,7 @@ const MainNews = ({
   const mainNewsCardRef = useRef<HTMLDivElement | null>(null);
 
   const [selectedNews, setSelectedNews] = useState<News | null>(null);
+  const [isOpenNewsModal, setIsOpenNewsModal] = useState(false);
 
   console.log(selectedNews, "selectedNews");
 
@@ -258,7 +259,10 @@ const MainNews = ({
         >
           {gridNews.slice(0, 3).map((item, idx) => (
             <button
-              onClick={() => setSelectedNews(item as News)}
+              onClick={() => {
+                setSelectedNews(item as News);
+                setIsOpenNewsModal(true);
+              }}
               className="flex items-center gap-main hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group"
               key={`main-news-${item.newsId}`}
             >
@@ -295,8 +299,8 @@ const MainNews = ({
           <NewsModal
             newsId={selectedNews?.newsId || null}
             newsSummary={selectedNews?.image || null}
-            isOpen={!!selectedNews}
-            onClose={() => setSelectedNews(null)}
+            isOpen={isOpenNewsModal}
+            onClose={() => setIsOpenNewsModal(false)}
           />
         </div>
       </div>

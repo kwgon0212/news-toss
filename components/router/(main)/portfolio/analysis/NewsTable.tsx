@@ -113,12 +113,12 @@ const NewsTable = () => {
         </button>
       </div>
 
-      <NewsModal
+      {/* <NewsModal
         isOpen={isOpenNewsModal}
         onClose={() => setIsOpenNewsModal(false)}
       >
         test
-      </NewsModal>
+      </NewsModal> */}
     </>
   );
 };
