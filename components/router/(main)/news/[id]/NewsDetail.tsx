@@ -163,7 +163,7 @@ const NewsDetail = ({
           <div className="flex items-center gap-main flex-wrap">
             {mainStockList.map((stock) => (
               <Link
-                href={`/stocks/${stock.stockCode}`}
+                href={`/stock/${stock.stockCode}`}
                 key={`main-stock-${stock.stockCode}`}
                 className="text-main-blue px-2 py-1 text-xs font-semibold rounded-main flex items-center gap-2 hover:bg-main-blue/10 transition-all duration-200 ease-in-out"
               >

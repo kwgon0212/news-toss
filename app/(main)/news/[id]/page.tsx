@@ -1,13 +1,11 @@
 import React from "react";
 import { getJwtToken } from "@/utils/auth";
 import NewsDetail from "@/components/router/(main)/news/[id]/NewsDetail";
-import RelatedNews from "./RelatedNews";
 import * as Sentry from "@sentry/nextjs";
 import { MetaData, News } from "@/type/news";
-import MetaDataNews from "./MetaDataNews";
 import { StockSearchResult } from "@/type/stocks/StockSearchResult";
 import { StockData } from "@/type/stocks/stockData";
-import Test from "./Test";
+import MetaDataNews from "./MetaDataNews";
 
 const NewsDetailPage = async ({
   params,
@@ -119,7 +117,7 @@ const NewsDetailPage = async ({
       <div className="border-l border-main-light-gray h-full" />
 
       <div className="flex flex-col gap-main-2">
-        <Test
+        <MetaDataNews
           mainStockList={mainStockList}
           relatedStockList={relatedStockList}
           stockChartList={stockChartList}

@@ -101,8 +101,6 @@ const Chart = ({
       })
       .sort((a, b) => (a.time as number) - (b.time as number)); // 타임스탬프순 정렬
 
-    console.log("변환된 라인 차트 데이터:", formattedData);
-
     lineSeries.setData(formattedData);
 
     createSeriesMarkers(
