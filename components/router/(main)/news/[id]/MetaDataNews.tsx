@@ -10,8 +10,8 @@ import { Clock, HelpCircle, Info } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import Chart from "./Chart";
 import { formatDate } from "@/utils/formatDate";
+import Chart from "./Chart";
 
 interface TestProps {
   mainStockList: StockSearchResult[];

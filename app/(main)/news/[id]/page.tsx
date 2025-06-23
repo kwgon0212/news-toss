@@ -2,10 +2,11 @@ import React from "react";
 import { getJwtToken } from "@/utils/auth";
 import NewsDetail from "@/components/router/(main)/news/[id]/NewsDetail";
 import * as Sentry from "@sentry/nextjs";
-import { MetaData, News } from "@/type/news";
+import { MetaData, News, NewsExternal } from "@/type/news";
 import { StockSearchResult } from "@/type/stocks/StockSearchResult";
 import { StockData } from "@/type/stocks/stockData";
-import MetaDataNews from "./MetaDataNews";
+import MetaDataNews from "@/components/router/(main)/news/[id]/MetaDataNews";
+import External from "@/components/router/(main)/news/[id]/External";
 
 const NewsDetailPage = async ({
   params,
@@ -104,6 +105,11 @@ const NewsDetailPage = async ({
     });
   }
 
+  const externalRes = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/external?newsId=${newsId}`
+  );
+  const externalJson: { data: NewsExternal } = await externalRes.json();
+
   return (
     <div className="size-full grid grid-cols-[1fr_1px_1fr] gap-main-2">
       <NewsDetail
@@ -123,6 +129,7 @@ const NewsDetailPage = async ({
           stockChartList={stockChartList}
           relatedNews={relatedNewsJson.data}
         />
+        <External external={externalJson.data} />
       </div>
     </div>
   );

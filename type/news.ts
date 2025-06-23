@@ -46,3 +46,40 @@ export interface MetaData {
   }[];
   impactScore: number;
 }
+
+export interface NewsExternal {
+  news_id: string;
+  dMinus5Close: number;
+  dMinus5Volume: number;
+  dMinus5Foreign: number;
+  dMinus5Institution: number;
+  dMinus5Individual: number;
+  dMinus4Close: number;
+  dMinus4Volume: number;
+  dMinus4Foreign: number;
+  dMinus4Institution: number;
+  dMinus4Individual: number;
+  dMinus3Close: number;
+  dMinus3Volume: number;
+  dMinus3Foreign: number;
+  dMinus3Institution: number;
+  dMinus3Individual: number;
+  dMinus2Close: number;
+  dMinus2Volume: number;
+  dMinus2Foreign: number;
+  dMinus2Institution: number;
+  dMinus2Individual: number;
+  dMinus1Close: number;
+  dMinus1Volume: number;
+  dMinus1Foreign: number;
+  dMinus1Institution: number;
+  dMinus1Individual: number;
+  dPlus1Close: number;
+  dPlus2Close: number;
+  dPlus3Close: number;
+  dPlus4Close: number;
+  dPlus5Close: number;
+  fx: number;
+  bond10y: number;
+  baseRate: number;
+}
