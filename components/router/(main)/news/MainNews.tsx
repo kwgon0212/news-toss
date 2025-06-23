@@ -133,7 +133,7 @@ const MainNews = ({
 
   return (
     <div className="grid grid-cols-7 gap-main-2 w-full relative">
-      <div className="col-span-7 flex items-center gap-main">
+      {/* <div className="col-span-7 flex items-center gap-main">
         <div className="text-3xl font-bold">
           <span>오늘의 </span>
           <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
@@ -144,18 +144,17 @@ const MainNews = ({
             과거 유사뉴스
           </span>
         </div>
-
-        <Tooltip
-          position="right"
-          message="AI 모델을 통해 예측된 주요 뉴스기사와 과거 유사뉴스입니다."
-          icon={<CircleHelp size={16} />}
-        />
-      </div>
+      </div> */}
 
       <div className="col-span-4 flex flex-col gap-main">
-        {/* <h2 className="font-bold text-lg bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent px-main w-fit">
-            주요뉴스
-          </h2> */}
+        <div className="text-2xl flex items-center gap-main font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent px-main w-fit">
+          <span>주요뉴스</span>
+          <Tooltip
+            position="right"
+            message="AI 모델을 통해 예측된 주요 뉴스기사와 과거 유사뉴스입니다."
+            icon={<CircleHelp size={16} />}
+          />
+        </div>
         <div className="flex-1 relative">
           {mainNews && (
             <Link
@@ -237,7 +236,7 @@ const MainNews = ({
       </div>
 
       <div className="col-span-3 flex flex-col gap-1">
-        <h2 className="font-bold text-xl bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent px-main w-fit">
+        <h2 className="font-bold text-2xl bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent px-main w-fit">
           과거 유사뉴스
         </h2>
         {gridNews.length === 0 && (
@@ -266,6 +265,7 @@ const MainNews = ({
                   sizes="100%"
                   className="object-cover rounded-main group-hover:scale-102 duration-300 ease-in-out"
                 />
+                <div className="absolute top-0 left-0 size-full bg-black/5 rounded-main group-hover:bg-transparent group-hover:scale-102 duration-300 ease-in-out" />
               </div>
               <div className="w-full h-full flex flex-col gap-main justify-around">
                 <div className="flex flex-col gap-1">

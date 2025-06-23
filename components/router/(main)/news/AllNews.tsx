@@ -19,7 +19,7 @@ const AllNews = ({
 }) => {
   const [newsList, setNewsList] = useState<News[]>(initialNews);
   const [rows, setRows] = useState(3);
-  const [cols, setCols] = useState(4);
+  const [cols, setCols] = useState(3);
   const [skip, setSkip] = useState(0);
   const [hasMore, setHasMore] = useState(true);
 

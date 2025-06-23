@@ -31,7 +31,7 @@ const HomePage = async () => {
   return (
     <div className="grid gap-main max-w-[1000px] mx-auto">
       <div className="p-main">
-        <RealTime />
+        <RealTime initialNews={allInitialNews.slice(0, 4)} />
       </div>
 
       <div className="p-main">

@@ -3,14 +3,14 @@
 import Tooltip from "@/components/ui/Tooltip";
 import { News } from "@/type/news";
 import { formatDate } from "@/utils/formatDate";
+import clsx from "clsx";
 import { CircleHelp, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
-const RealTime = () => {
-  const [news, setNews] = useState<News[]>([]);
-  // const [newNewsId, setNewNewsId] = useState<string | null>(null);
+const RealTime = ({ initialNews }: { initialNews: News[] }) => {
+  const [news, setNews] = useState<News[]>(initialNews);
 
   // sse 데이터형식
   // const realtime = {
@@ -57,12 +57,6 @@ const RealTime = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (news.length > 3) {
-      setNews((prev) => prev.slice(1));
-    }
-  }, [news.length]);
-
   return (
     <div className="grid grid-cols-2 gap-main">
       <div className="flex items-center gap-main">
@@ -88,75 +82,50 @@ const RealTime = () => {
       </div>
 
       <div className="col-span-2">
-        <table className="w-full table-auto">
-          <colgroup>
-            <col className="w-auto" />
-            <col className="w-full" />
-            <col className="w-auto" />
-            <col className="w-auto" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th className="text-center font-semibold p-2 whitespace-nowrap">
-                관련 종목
-              </th>
-              <th className="text-center font-semibold p-2">요약</th>
-              <th className="text-center font-semibold p-2 whitespace-nowrap">
-                뉴스 중요도
-              </th>
-              <th className="text-center font-semibold p-2 whitespace-nowrap">
-                시간
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td
-                colSpan={4}
-                className="border-t border-main-dark-gray/10"
-              ></td>
-            </tr>
-            {news.length === 0 && (
-              <tr>
-                <td colSpan={4} className="text-center py-main">
-                  <p className="text-sm text-main-dark-gray">
-                    실시간으로 수집된 뉴스가 없습니다.
-                  </p>
-                </td>
-              </tr>
-            )}
-            {news.map((item, idx) => (
-              <tr
-                key={`realtime-news-${item.newsId}`}
-                className={idx === news.length - 1 ? "fade-bg" : ""}
-              >
-                <td className="text-center p-2">삼성전자</td>
+        <div className="flex flex-col overflow-y-scroll h-[160px]">
+          {news.length === 0 && (
+            <div className="text-center py-main">
+              <p className="text-sm text-main-dark-gray">
+                실시간으로 수집된 뉴스가 없습니다.
+              </p>
+            </div>
+          )}
+          {news.map((item, idx) => (
+            <div
+              key={`realtime-news-${item.newsId}`}
+              className={clsx(
+                "grid grid-cols-[100px_1fr_80px_80px] gap-main",
+                idx === 0
+                  ? "fade-bg"
+                  : idx % 2 === 1
+                  ? "bg-main-light-gray/50 rounded-sm"
+                  : ""
+              )}
+            >
+              <div className="text-center p-2 truncate">삼성전자</div>
 
-                <td className="p-2">
-                  <Link
-                    href={item.url}
-                    className="underline hover:text-main-blue transition-colors"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {item.title}
-                  </Link>
-                </td>
+              <div className="p-2">
+                <Link
+                  href={item.url}
+                  className="underline hover:text-main-blue transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {item.title}
+                </Link>
+              </div>
 
-                <td className="text-center font-semibold text-main-blue p-2">
-                  {item.impact_score && (item.impact_score * 100).toFixed(2)}%
-                </td>
+              <div className="text-center font-semibold text-main-blue p-2">
+                임시{item.impact_score && (item.impact_score * 100).toFixed(2)}%
+              </div>
 
-                <td className="text-center p-2">
-                  <div className="flex items-center justify-center gap-1 text-sm">
-                    <Clock className="text-main-dark-gray" size={12} />
-                    {item.wdate && formatDate(item.wdate)}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+              <div className="flex items-center gap-1 text-sm">
+                <Clock className="text-main-dark-gray" size={12} />
+                {item.wdate && formatDate(item.wdate)}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
