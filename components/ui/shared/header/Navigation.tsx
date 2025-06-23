@@ -31,6 +31,7 @@ const Navigation = () => {
     }[]
   >([]);
   const [isMac, setIsMac] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   const [searchType, setSearchType] = useState<"news" | "stock">("news");
 
@@ -40,12 +41,13 @@ const Navigation = () => {
   const router = useRouter();
 
   useEffect(() => {
+    setIsClient(true);
     if (typeof window !== "undefined") {
       setIsMac(/Mac/.test(navigator.platform));
     }
   }, []);
 
-  const modKey = isMac ? "⌘" : "Ctrl";
+  const modKey = isClient ? (isMac ? "⌘" : "Ctrl") : "Ctrl";
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
