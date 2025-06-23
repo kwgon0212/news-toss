@@ -8,9 +8,9 @@ const MarkdownRenderer = ({ message }: { message: string }) => {
 
   useEffect(() => {
     const renderMarkdown = async () => {
-      const rawHtml = await marked(message);
+      // const rawHtml = await marked(message);
 
-      const cleanHtml = DOMPurify.sanitize(rawHtml, {
+      const cleanHtml = DOMPurify.sanitize(message, {
         ALLOWED_TAGS: ["b", "i", "em", "strong", "a", "img", "p", "br"],
         ALLOWED_ATTR: [
           "href",
@@ -31,7 +31,7 @@ const MarkdownRenderer = ({ message }: { message: string }) => {
 
   return (
     <div
-      className="prose font-[inherit] max-w-[80%] w-fit bg-gray-100 px-3 py-2 rounded-main break-keep"
+      className="prose font-[inherit] max-w-[80%] w-fit bg-gray-100 px-3 py-2 rounded-main break-keep overflow-x-hidden"
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );

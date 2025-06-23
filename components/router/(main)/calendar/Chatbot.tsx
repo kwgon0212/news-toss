@@ -137,7 +137,16 @@ const Chatbot = ({
 
       <div className="flex-1 overflow-y-auto p-main flex flex-col gap-main w-full">
         <div className="w-full h-full py-main flex flex-col items-center justify-center gap-main mb-main">
-          <Newspaper size={30} strokeWidth={1.5} />
+          <div className="relative size-[80px]">
+            <Image
+              src={`/news.png`}
+              alt="news-icon"
+              fill
+              sizes="100px"
+              className="object-cover "
+            />
+          </div>
+
           <p className="text-main-dark-gray text-lg text-center mb-main">
             미래 공시 일정을 확인하고
             <br />
