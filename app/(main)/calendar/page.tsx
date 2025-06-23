@@ -60,10 +60,6 @@ const CalendarPage = () => {
     fetchIRData();
   }, [month, year]);
 
-  useEffect(() => {
-    setSelectedMarket("전체");
-  }, [day]);
-
   return (
     <div className="grid grid-cols-2 gap-[40px]">
       <div className="w-full flex flex-col gap-main h-[calc(100vh-140px)]">

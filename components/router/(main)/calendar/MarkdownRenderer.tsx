@@ -28,6 +28,8 @@ const MarkdownRenderer = ({ message }: { message: string }) => {
 
     renderMarkdown();
   }, [message]);
+  console.log(html, "html");
+  console.log(message, "message");
 
   return (
     <div
