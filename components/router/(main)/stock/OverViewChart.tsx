@@ -240,7 +240,7 @@ export default function OverViewChart() {
           <button
             key={t}
             onClick={() => setType(t)}
-            className={`px-2 py-1 rounded-full text-sm hover:bg-main-blue/10 transition-colors duration-300 ${
+            className={`px-2 py-1 rounded-full text-sm-custom hover:bg-main-blue/10 transition-colors duration-300 ${
               type === t ? "text-main-blue font-semibold" : "text-main-blue/50"
             }`}
           >
@@ -258,7 +258,7 @@ export default function OverViewChart() {
           <button
             key={s.symbol}
             onClick={() => setSymbol(s.symbol)}
-            className={`w-fit px-main py-1 rounded-main text-sm transition-colors duration-300 ${
+            className={`w-fit px-main py-1 rounded-main text-sm-custom transition-colors duration-300 ${
               symbol === s.symbol
                 ? "bg-main-blue text-white"
                 : "bg-main-blue/10 text-main-blue hover:bg-main-blue/20"
@@ -271,7 +271,7 @@ export default function OverViewChart() {
 
       {forexData ? (
         <div>
-          <div className="grid grid-cols-[auto_auto_auto_auto] gap-x-main gap-y-2 text-sm">
+          <div className="grid grid-cols-[auto_auto_auto_auto] gap-x-main gap-y-2 text-sm-custom">
             <div className="text-gray-500">현재가</div>
             <span>{Number(forexData.currentPrice).toLocaleString()}</span>
 

@@ -162,6 +162,7 @@ const Navigation = () => {
         <Link
           href="/news"
           className={clsx(
+            "text-base-custom",
             pathname.startsWith("/news")
               ? "text-black font-semibold"
               : "text-sub"
@@ -172,6 +173,7 @@ const Navigation = () => {
         <Link
           href="/stock"
           className={clsx(
+            "text-base-custom",
             pathname.startsWith("/stock")
               ? "text-black font-semibold"
               : "text-sub"
@@ -182,18 +184,19 @@ const Navigation = () => {
         <Link
           href="/calendar"
           className={clsx(
-            "cursor-pointer",
+            "cursor-pointer text-base-custom",
             pathname.startsWith("/calendar")
               ? "text-black font-semibold"
               : "text-sub"
           )}
         >
           <span>캘린더 </span>
-          <span className="text-xs">with 챗봇</span>
+          <span className="text-xs-custom">with 챗봇</span>
         </Link>
         <Link
           href="/portfolio/my"
           className={clsx(
+            "text-base-custom",
             pathname.startsWith("/portfolio")
               ? "text-black font-semibold"
               : "text-sub"
@@ -209,15 +212,15 @@ const Navigation = () => {
           <input
             placeholder="뉴스 및 종목 검색"
             type="text"
-            className="text-sm pointer-events-none w-[140px]"
+            className="text-sm-custom pointer-events-none w-[140px]"
           />
 
           <div className="flex items-center gap-1 pointer-events-none">
-            <kbd className="px-1.5 py-0.5 rounded border-[0.5px] border-main-dark-gray/70 text-xs font-mono flex items-center justify-center">
+            <kbd className="px-1.5 py-0.5 rounded border-[0.5px] border-main-dark-gray/70 text-xs-custom font-mono flex items-center justify-center">
               <span className="text-main-dark-gray/70">{modKey}</span>
             </kbd>
             <span className="text-main-dark-gray/70">+</span>
-            <kbd className="px-1.5 py-0.5 rounded border-[0.5px] border-main-dark-gray/70 text-xs font-mono flex items-center justify-center">
+            <kbd className="px-1.5 py-0.5 rounded border-[0.5px] border-main-dark-gray/70 text-xs-custom font-mono flex items-center justify-center">
               <span className="text-main-dark-gray/70">K</span>
             </kbd>
           </div>
@@ -233,7 +236,7 @@ const Navigation = () => {
         <div className="flex items-baseline gap-main mb-main">
           <button
             className={clsx(
-              "text-lg",
+              "text-lg-custom",
               searchType === "news"
                 ? "text-main-blue font-semibold"
                 : "text-main-blue/50"
@@ -245,7 +248,7 @@ const Navigation = () => {
 
           <button
             className={clsx(
-              "text-lg",
+              "text-lg-custom",
               searchType === "stock"
                 ? "text-main-blue font-semibold"
                 : "text-main-blue/50"
@@ -254,8 +257,8 @@ const Navigation = () => {
           >
             종목 검색
           </button>
-          <span className="text-main-dark-gray/60 text-xs ml-main flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 rounded border-[0.5px] border-main-dark-gray/70 text-xs font-mono flex items-center justify-center">
+          <span className="text-main-dark-gray/60 text-xs-custom ml-main flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 rounded border-[0.5px] border-main-dark-gray/70 text-xs-custom font-mono flex items-center justify-center">
               <span className="text-main-dark-gray/70">Tab</span>
             </kbd>
             으로 검색 타입 변경이 가능합니다.
@@ -297,7 +300,7 @@ const Navigation = () => {
                     </div>
                     <div className="w-full flex flex-col justify-around">
                       <p className="line-clamp-2 font-semibold">{news.title}</p>
-                      <div className="flex items-center text-main-dark-gray text-xs">
+                      <div className="flex items-center text-main-dark-gray text-xs-custom">
                         <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
                         <span className="text-main-dark-gray">
                           {news.wdate &&
@@ -309,7 +312,7 @@ const Navigation = () => {
                   </Link>
                 ))}
 
-                <span className="col-span-2 text-sm text-main-dark-gray text-center">
+                <span className="col-span-2 text-sm-custom text-main-dark-gray text-center">
                   최대 10개의 결과만 표시됩니다.
                 </span>
               </div>
@@ -317,7 +320,7 @@ const Navigation = () => {
 
             {!newsSearch && (
               <div className="flex flex-col gap-main">
-                <p className="text-sm text-main-dark-gray my-10 text-center">
+                <p className="text-sm-custom text-main-dark-gray my-10 text-center">
                   검색어를 입력해주세요.
                 </p>
               </div>
@@ -325,7 +328,7 @@ const Navigation = () => {
 
             {newsSearch && newsSearchResult.length === 0 && (
               <div className="flex flex-col gap-main">
-                <p className="text-sm text-main-dark-gray my-10 text-center">
+                <p className="text-sm-custom text-main-dark-gray my-10 text-center">
                   검색 결과가 없습니다.
                 </p>
               </div>
@@ -375,7 +378,7 @@ const Navigation = () => {
                         </div>
                       )}
                     </div>
-                    <div className="flex flex-col flex-1 truncate text-sm">
+                    <div className="flex flex-col flex-1 truncate text-sm-custom">
                       <p className="flex items-center gap-main text-gray-800 truncate w-full">
                         <span className="font-bold">{result.stockName}</span>
                         <span className="text-gray-400">
@@ -420,7 +423,7 @@ const Navigation = () => {
 
             {!stockSearch && (
               <div className="flex flex-col gap-main">
-                <p className="text-sm text-main-dark-gray my-10 text-center">
+                <p className="text-sm-custom text-main-dark-gray my-10 text-center">
                   종목명 또는 코드를 입력해주세요.
                 </p>
               </div>
@@ -428,7 +431,7 @@ const Navigation = () => {
 
             {stockSearch && stockSearchResult.length === 0 && (
               <div className="flex flex-col gap-main">
-                <p className="text-sm text-main-dark-gray my-10 text-center">
+                <p className="text-sm-custom text-main-dark-gray my-10 text-center">
                   검색 결과가 없습니다.
                 </p>
               </div>

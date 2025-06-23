@@ -78,7 +78,7 @@ const ProfitLossCalendar = ({ token }: { token: JwtToken | null }) => {
               ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 
               return (
-                <span className="w-full flex justify-center text-xs">
+                <span className="w-full flex justify-center text-xs-custom">
                   {Number(100000000).toLocaleString()}
                 </span>
               );
@@ -125,7 +125,7 @@ const ProfitLossCalendar = ({ token }: { token: JwtToken | null }) => {
 
         if (!pnlData)
           return (
-            <span className="w-full flex justify-center text-xs text-main-dark-gray">
+            <span className="w-full flex justify-center text-xs-custom text-main-dark-gray">
               -
             </span>
           );
@@ -133,7 +133,7 @@ const ProfitLossCalendar = ({ token }: { token: JwtToken | null }) => {
         return (
           <span
             className={clsx(
-              "w-full flex justify-center text-xs font-semibold",
+              "w-full flex justify-center text-xs-custom font-semibold",
               pnlData.pnl > 0 && "text-main-red",
               pnlData.pnl < 0 && "text-main-blue",
               pnlData.pnl === 0 && "text-main-dark-gray"

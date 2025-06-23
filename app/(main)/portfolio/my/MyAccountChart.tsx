@@ -290,7 +290,7 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
           <div className="grid grid-cols-[auto_1px_1fr] gap-main">
             <div className="flex flex-col gap-main">
               <div className="flex gap-2 items-baseline">
-                <span className="text-lg font-semibold">
+                <span className="text-lg-custom font-semibold">
                   {Number(12801235).toLocaleString()}원
                 </span>
               </div>
@@ -381,12 +381,12 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
       <div className="grid grid-cols-[auto_1px_auto] gap-main">
         <div className="flex flex-col gap-main items-start">
           <div className="flex gap-2 items-baseline">
-            <span className="text-lg font-semibold">
+            <span className="text-lg-custom font-semibold">
               {asset.todayAsset.toLocaleString()}원
             </span>
             <span
               className={clsx(
-                "text-xs font-semibold",
+                "text-xs-custom font-semibold",
                 asset.pnlPercent > 0 ? "text-main-red" : "text-main-blue"
               )}
             >

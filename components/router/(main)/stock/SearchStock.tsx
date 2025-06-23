@@ -132,7 +132,7 @@ const SearchStock = () => {
                         </div>
                       )}
                     </div>
-                    <div className="flex flex-col flex-1 truncate text-sm">
+                    <div className="flex flex-col flex-1 truncate text-sm-custom">
                       <p className="flex items-center gap-main text-gray-800 truncate w-full">
                         <span className="font-bold">{result.stockName}</span>
                         <span className="text-gray-400">

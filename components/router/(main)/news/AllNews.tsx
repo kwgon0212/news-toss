@@ -75,7 +75,7 @@ const AllNews = ({
       <div className="grid grid-cols-3 w-full gap-main-2">
         <div className="col-span-3 grid grid-cols-3 gap-main w-full relative">
           <div className="col-span-3 flex items-center gap-main">
-            <div className="text-3xl font-bold">모든 뉴스</div>
+            <div className="text-3xl-custom font-bold">모든 뉴스</div>
           </div>
           <p className="text-red-500">
             모든 뉴스 데이터를 불러오는데 실패했습니다.
@@ -88,7 +88,7 @@ const AllNews = ({
   return (
     <div className="flex flex-col gap-main-2">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+        <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
           모든 뉴스
         </h2>
 
@@ -137,7 +137,7 @@ const AllNews = ({
                   className={clsx(
                     "text-start font-semibold",
                     cols < 5 ? "line-clamp-2" : "line-clamp-1",
-                    cols > 3 ? "text-sm" : "text-base"
+                    cols > 3 ? "text-sm-custom" : "text-base-custom"
                   )}
                 >
                   {news.title}
@@ -145,14 +145,13 @@ const AllNews = ({
 
                 <p
                   className={clsx(
-                    "line-clamp-2 text-start text-main-dark-gray text-xs",
-                    cols > 3 ? "text-xs" : "text-sm"
+                    "line-clamp-2 text-start text-main-dark-gray text-xs-custom"
                   )}
                 >
                   {news.article}
                 </p>
 
-                <div className="flex items-center text-main-dark-gray text-xs">
+                <div className="flex items-center text-main-dark-gray text-xs-custom">
                   <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
                   <span className="text-main-dark-gray">
                     {news.wdate && formatDate(news.wdate)} · {news.press}
@@ -166,7 +165,7 @@ const AllNews = ({
 
       <div className="flex justify-center border-t border-gray-200 pt-main">
         <button
-          className="text-main-dark-gray text-sm hover:bg-main-light-gray w-full rounded-main py-main transition-all duration-300 ease-in-out"
+          className="text-main-dark-gray text-sm-custom hover:bg-main-light-gray w-full rounded-main py-main transition-all duration-300 ease-in-out"
           onClick={handleMoreNews}
         >
           더보기

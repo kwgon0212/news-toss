@@ -233,7 +233,7 @@ const StockDetailPage = () => {
       const tooltipHeight = tooltip.offsetHeight;
       const containerWidth = container.clientWidth;
 
-      // 툴팁 X 위치 (중앙 정렬 + 화면 밖 방지)
+      // 툴크 X 위치 (중앙 정렬 + 화면 밖 방지)
       const x = param.point.x - tooltipWidth / 2;
       const safeX = Math.max(0, Math.min(x, containerWidth - tooltipWidth));
 
@@ -552,13 +552,13 @@ const StockDetailPage = () => {
                 </div>
               )}
             </div>
-            <div className="flex flex-col flex-1 truncate text-sm">
+            <div className="flex flex-col flex-1 truncate text-sm-custom">
               <p className="flex items-center gap-main text-gray-800 truncate w-full">
                 <span className="font-bold">{stock.stockName}</span>
                 <span className="text-gray-400">{stock.stockCode}</span>
                 <span
                   className={clsx(
-                    "px-2 py-1 rounded-main font-bold text-sm",
+                    "px-2 py-1 rounded-main font-bold text-sm-custom",
                     marketOpen
                       ? "text-main-blue bg-main-blue/10"
                       : "text-main-red bg-main-red/10"
@@ -568,7 +568,7 @@ const StockDetailPage = () => {
                 </span>
               </p>
               <div className="flex items-center gap-main">
-                <span className="text-main-dark-gray text-xl font-bold">
+                <span className="text-main-dark-gray text-xl-custom font-bold">
                   {Number(stock.currentPrice).toLocaleString()}원
                 </span>
                 <div className="flex justify-between h-fit">
@@ -616,7 +616,7 @@ const StockDetailPage = () => {
       </div>
 
       {priceDiff && (
-        <p className="text-sm mt-2">
+        <p className="text-sm-custom mt-2">
           전일 대비:{" "}
           <span
             className={clsx(
@@ -642,7 +642,7 @@ const StockDetailPage = () => {
           />
         </div>
         <div className="col-span-1 flex flex-col gap-main pb-[100px]">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+          <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
             {stock?.stockName} 관련 뉴스
           </h2>
 
@@ -666,11 +666,11 @@ const StockDetailPage = () => {
                       />
                       <div className="absolute inset-0 bg-black/40 z-10 rounded-main inset-shadow-2xs" />
                       <div className="absolute inset-0 flex items-end justify-center p-main">
-                        <p className="text-white text-sm font-semibold line-clamp-2 z-10">
+                        <p className="text-white text-sm-custom font-semibold line-clamp-2 z-10">
                           {news.title}
                         </p>
                       </div>
-                      <div className="flex items-center text-main-dark-gray text-xs">
+                      <div className="flex items-center text-main-dark-gray text-xs-custom">
                         <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
                         <span className="text-main-dark-gray">
                           {news.wdate &&
@@ -682,7 +682,7 @@ const StockDetailPage = () => {
                 ))}
                 <div className="flex justify-center border-t border-gray-200 pt-main col-span-5">
                   <button
-                    className="text-main-dark-gray text-sm hover:bg-main-light-gray w-full rounded-main py-main transition-all duration-300 ease-in-out"
+                    className="text-main-dark-gray text-sm-custom hover:bg-main-light-gray w-full rounded-main py-main transition-all duration-300 ease-in-out"
                     onClick={handleMoreNews}
                   >
                     더보기
@@ -691,7 +691,7 @@ const StockDetailPage = () => {
               </>
             ) : (
               <div className="flex justify-center items-center h-full col-span-5 row-span-2">
-                <p className="text-main-dark-gray text-sm py-[30px]">
+                <p className="text-main-dark-gray text-sm-custom py-[30px]">
                   관련 뉴스가 없습니다.
                 </p>
               </div>

@@ -127,7 +127,7 @@ const NewsDetail = ({
     <div className="w-full flex flex-col gap-main overflow-x-hidden overflow-y-scroll">
       <div className="flex flex-col gap-[5px]">
         <div className="flex items-center gap-2">
-          <h2 className="text-2xl font-bold">{news.title}</h2>
+          <h2 className="text-2xl-custom font-bold">{news.title}</h2>
           <button
             className="p-1 active:scale-80 transition-all duration-200 ease-in-out"
             onClick={handleScrap}

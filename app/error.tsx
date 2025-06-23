@@ -11,7 +11,7 @@ const Error = () => {
       <h1 className="text-[8rem] font-extrabold text-main-red leading-none animate-pulse drop-shadow-lg">
         500
       </h1>
-      <h2 className="text-2xl md:text-3xl font-semibold text-gray-700 mt-4">
+      <h2 className="text-2xl-custom md:text-3xl-custom font-semibold text-gray-700 mt-4">
         알 수 없는 오류가 발생했어요
       </h2>
       <p className="text-gray-500 mt-2 mb-6">

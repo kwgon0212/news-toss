@@ -19,7 +19,7 @@ const NotFound = () => {
           </span>
         ))}
       </h1>
-      <h2 className="text-2xl md:text-3xl font-semibold text-gray-700 mt-4">
+      <h2 className="text-2xl-custom md:text-3xl-custom font-semibold text-gray-700 mt-4">
         페이지를 찾을 수 없어요!
       </h2>
       <p className="text-gray-500 mt-2 mb-6">

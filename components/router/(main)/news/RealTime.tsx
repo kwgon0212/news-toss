@@ -51,7 +51,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
   return (
     <div className="grid grid-cols-2 gap-main">
       <div className="flex items-center gap-main">
-        <span className="text-3xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+        <span className="text-3xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
           실시간 수집 뉴스
         </span>
         <Tooltip
@@ -61,7 +61,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
         />
       </div>
 
-      <div className="grid grid-cols-[1fr_auto] h-fit gap-x-main justify-end text-end font-semibold text-sm">
+      <div className="grid grid-cols-[1fr_auto] h-fit gap-x-main justify-end text-end font-semibold text-sm-custom">
         <p>오늘 수집된 뉴스:</p>{" "}
         <span>
           <b className="text-main-blue">{3}</b>개
@@ -76,7 +76,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
         <div className="flex flex-col overflow-y-scroll h-[160px]">
           {news.length === 0 && (
             <div className="text-center py-main">
-              <p className="text-sm text-main-dark-gray">
+              <p className="text-sm-custom text-main-dark-gray">
                 실시간으로 수집된 뉴스가 없습니다.
               </p>
             </div>
@@ -93,12 +93,14 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
                   : ""
               )}
             >
-              <div className="text-center p-2 truncate">삼성전자</div>
+              <div className="text-center p-2 truncate text-sm-custom">
+                삼성전자
+              </div>
 
               <div className="p-2">
                 <Link
                   href={item.url}
-                  className="hover:text-main-blue transition-colors duration-300"
+                  className="hover:text-main-blue transition-colors duration-300 text-sm-custom"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -106,14 +108,14 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
                 </Link>
               </div>
 
-              <div className="text-center text-main-blue p-2">
+              <div className="text-center text-main-blue p-2 text-sm-custom font-semibold">
                 {item.impact_score
                   ? Number(item.impact_score * 100).toFixed(2)
                   : "--.--"}{" "}
                 %
               </div>
 
-              <div className="flex items-center gap-1 text-sm">
+              <div className="flex items-center gap-1 text-xs-custom">
                 <Clock className="text-main-dark-gray" size={12} />
                 {item.wdate && formatDate(item.wdate)}
               </div>

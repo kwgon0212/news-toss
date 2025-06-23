@@ -13,7 +13,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   icon,
 }) => {
   const basePosition =
-    "absolute opacity-0 peer-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap text-white text-sm bg-black/80 rounded-main px-main py-1 z-50";
+    "absolute opacity-0 peer-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap text-white text-sm-custom bg-black/80 rounded-main px-main py-1 z-50";
 
   const positionClasses = {
     top: "bottom-full left-1/2 -translate-x-1/2 mb-2",

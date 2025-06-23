@@ -24,7 +24,7 @@ const Header = async () => {
   return (
     <header className="absolute w-full py-main px-main-2 z-50 backdrop-blur-sm min-w-[1200px]">
       <div className="w-full flex relative gap-5 justify-between items-center">
-        <div className="font-bold text-lg flex items-center gap-2">
+        <div className="font-bold text-lg-custom flex items-center gap-2">
           <Link href="/news" className="size-[40px] relative">
             <Image
               src={newsTossLogo}
@@ -34,8 +34,8 @@ const Header = async () => {
             />
           </Link>
           <div className="flex flex-col">
-            <span className="font-bold text-lg">NewsToss</span>
-            <span className="text-sm text-main-dark-gray">
+            <span className="font-bold text-lg-custom">NewsToss</span>
+            <span className="text-sm-custom text-main-dark-gray">
               실시간 주식 투자 AI 애널리스트
             </span>
           </div>

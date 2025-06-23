@@ -193,12 +193,12 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
       <>
         <div className="size-full flex flex-col gap-main">
           <div className="w-full flex justify-between items-center">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+            <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
               보유 종목
             </h2>
             <button
               id="add-holding"
-              className="bg-main-blue text-white px-4 py-2 rounded-main text-sm flex items-center gap-[5px]"
+              className="bg-main-blue text-white px-4 py-2 rounded-main text-sm-custom flex items-center gap-[5px]"
               onClick={() => {
                 setIsOpenAddHoldingModal(true);
                 console.log("add holding modal open");
@@ -222,21 +222,21 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
                 >
                   <div className="flex justify-between items-center">
                     <div className="flex gap-[5px] items-baseline">
-                      <p className="text-lg font-bold text-gray-800">
+                      <p className="text-lg-custom font-bold text-gray-800">
                         {h.name}
                       </p>
-                      <p className="text-sm text-gray-500">{h.code}</p>
+                      <p className="text-sm-custom text-gray-500">{h.code}</p>
                     </div>
 
                     <div className="flex gap-main">
                       <button
-                        className="px-3 py-1 text-sm rounded-full bg-main-blue/20 text-main-blue hover:bg-main-blue/30 font-semibold"
+                        className="px-3 py-1 text-sm-custom rounded-full bg-main-blue/20 text-main-blue hover:bg-main-blue/30 font-semibold"
                         // onClick={() => openSettlementModal(h)}
                       >
                         매수
                       </button>
                       <button
-                        className="px-3 py-1 text-sm rounded-full bg-main-red/20 text-main-red hover:bg-main-red/30 font-semibold"
+                        className="px-3 py-1 text-sm-custom rounded-full bg-main-red/20 text-main-red hover:bg-main-red/30 font-semibold"
                         // onClick={() => openSettlementModal(h)}
                       >
                         청산
@@ -244,7 +244,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-x-main-2 text-sm text-gray-700">
+                  <div className="grid grid-cols-2 gap-x-main-2 text-sm-custom text-gray-700">
                     <div className="flex justify-between gap-main">
                       <span className="text-main-dark-gray">투자금</span>
                       <span className="font-medium">
@@ -280,7 +280,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
           onClose={() => setIsOpenAddHoldingModal(false)}
         >
           <div className="flex flex-col gap-main px-main">
-            <h2 className="text-lg font-bold text-main-dark-gray">
+            <h2 className="text-lg-custom font-bold text-main-dark-gray">
               보유 종목 추가
             </h2>
 
@@ -337,7 +337,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
                     </div>
                     <div className="flex gap-1 items-center">
                       <span>{searchStockResult.stockName}</span>
-                      <span className="text-gray-500 text-xs">
+                      <span className="text-gray-500 text-xs-custom">
                         {searchStockResult.stockCode}
                       </span>
                     </div>
@@ -407,12 +407,12 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
     <>
       <div className="size-full flex flex-col gap-main">
         <div className="w-full flex justify-between items-center">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+          <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
             보유 종목
           </h2>
           <button
             id="add-holding"
-            className="bg-main-blue/20 text-main-blue px-4 py-2 rounded-main text-sm flex items-center gap-[5px] hover:bg-main-blue/30 transition-colors duration-300 ease-in-out"
+            className="bg-main-blue/20 text-main-blue px-4 py-2 rounded-main text-sm-custom flex items-center gap-[5px] hover:bg-main-blue/30 transition-colors duration-300 ease-in-out"
             onClick={() => setIsOpenAddHoldingModal(true)}
           >
             <Plus size={16} /> <span>보유 종목 추가</span>
@@ -426,21 +426,23 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
             >
               <div className="flex justify-between items-center">
                 <div className="flex gap-[5px] items-baseline">
-                  <p className="text-lg font-bold text-gray-800">
+                  <p className="text-lg-custom font-bold text-gray-800">
                     {stock.stockName}
                   </p>
-                  <p className="text-sm text-gray-500">{stock.stockCode}</p>
+                  <p className="text-sm-custom text-gray-500">
+                    {stock.stockCode}
+                  </p>
                 </div>
 
                 <div className="flex gap-main">
                   <button
-                    className="px-3 py-1 text-sm rounded-full bg-main-blue/20 text-main-blue hover:bg-main-blue/30 font-semibold transition-colors duration-300 ease-in-out"
+                    className="px-3 py-1 text-sm-custom rounded-full bg-main-blue/20 text-main-blue hover:bg-main-blue/30 font-semibold transition-colors duration-300 ease-in-out"
                     onClick={() => openSettlementModal(stock, "buy")}
                   >
                     매수
                   </button>
                   <button
-                    className="px-3 py-1 text-sm rounded-full bg-main-red/20 text-main-red hover:bg-main-red/30 font-semibold transition-colors duration-300 ease-in-out"
+                    className="px-3 py-1 text-sm-custom rounded-full bg-main-red/20 text-main-red hover:bg-main-red/30 font-semibold transition-colors duration-300 ease-in-out"
                     onClick={() => openSettlementModal(stock, "sell")}
                   >
                     청산
@@ -448,7 +450,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-x-main-2 text-sm text-gray-700">
+              <div className="grid grid-cols-2 gap-x-main-2 text-sm-custom text-gray-700">
                 <div className="flex justify-between gap-main">
                   <span className="text-main-dark-gray">현재가</span>
                   <span className="font-medium">
@@ -516,7 +518,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
       >
         {selectedHoldings && (
           <div className="flex flex-col gap-main">
-            <h2 className="text-xl font-bold text-main-dark-gray mb-main">
+            <h2 className="text-xl-custom font-bold text-main-dark-gray mb-main">
               {selectedHoldings.changeType === "buy"
                 ? `${selectedHoldings.stockName} 추가 매수`
                 : `${selectedHoldings.stockName} 청산`}
@@ -524,7 +526,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
             <div className="grid grid-cols-2 gap-main">
               <div className="flex flex-col gap-main">
                 <div className="flex flex-col gap-2">
-                  <label className="text-sm font-semibold text-main-dark-gray">
+                  <label className="text-sm-custom font-semibold text-main-dark-gray">
                     {selectedHoldings.changeType === "buy" && "구매가"}
                     {selectedHoldings.changeType === "sell" && "판매가"}
                   </label>
@@ -551,7 +553,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-main-dark-gray">
+                <label className="text-sm-custom font-semibold text-main-dark-gray">
                   추가 수량 입력 (현재{" "}
                   {
                     portfolio.find(
@@ -607,7 +609,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
                   <button
                     key={n}
                     className={clsx(
-                      "py-2 rounded-full font-semibold text-sm transition-colors",
+                      "py-2 rounded-full font-semibold text-sm-custom transition-colors",
                       selectedHoldings.changeType === "buy"
                         ? "bg-main-blue/10 text-main-blue hover:bg-main-blue/20"
                         : "bg-main-red/10 text-main-red hover:bg-main-red/20"
@@ -645,7 +647,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
                 ))}
                 {selectedHoldings.changeType === "sell" && (
                   <button
-                    className="py-2 rounded-full font-semibold text-sm transition-colors bg-main-red/10 text-main-red hover:bg-main-red/20"
+                    className="py-2 rounded-full font-semibold text-sm-custom transition-colors bg-main-red/10 text-main-red hover:bg-main-red/20"
                     onClick={() => {
                       setSelectedHoldings((prev) => {
                         if (!prev) return null;
@@ -664,7 +666,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
 
             <div className="flex justify-end gap-3 pt-4">
               <button
-                className="px-4 py-2 rounded-main text-sm font-medium text-main-dark-gray hover:bg-main-dark-gray/10 transition-colors"
+                className="px-4 py-2 rounded-main text-sm-custom font-medium text-main-dark-gray hover:bg-main-dark-gray/10 transition-colors"
                 onClick={() => {
                   setIsOpenSettlementModal(false);
                   setSelectedHoldings(null);
@@ -674,7 +676,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
               </button>
               <button
                 className={clsx(
-                  "px-4 py-2 rounded-main text-sm font-medium text-white transition-colors",
+                  "px-4 py-2 rounded-main text-sm-custom font-medium text-white transition-colors",
                   selectedHoldings.changeType === "buy"
                     ? "bg-main-blue hover:bg-main-blue/80"
                     : "bg-main-red hover:bg-main-red/80"
@@ -693,7 +695,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
         onClose={() => setIsOpenAddHoldingModal(false)}
       >
         <div className="flex flex-col gap-main px-main">
-          <h2 className="text-lg font-bold text-main-dark-gray">
+          <h2 className="text-lg-custom font-bold text-main-dark-gray">
             보유 종목 추가
           </h2>
 
@@ -746,7 +748,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
                   </div>
                   <div className="flex gap-1 items-center">
                     <span>{searchStockResult.stockName}</span>
-                    <span className="text-gray-500 text-xs">
+                    <span className="text-gray-500 text-xs-custom">
                       {searchStockResult.stockCode}
                     </span>
                   </div>

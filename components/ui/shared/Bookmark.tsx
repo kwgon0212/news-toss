@@ -37,7 +37,7 @@ const Bookmark = ({ rank = 1, color = "red", className }: BookmarkProps) => {
           <span
             className={clsx(
               styles.rank,
-              "absolute top-0 left-1/2 -translate-x-1/2 text-sm text-white font-semibold"
+              "absolute top-0 left-1/2 -translate-x-1/2 text-sm-custom text-white font-semibold"
             )}
           >
             {rank}

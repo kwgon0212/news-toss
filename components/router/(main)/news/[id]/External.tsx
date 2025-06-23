@@ -155,7 +155,7 @@ const External = ({ external }: { external: NewsExternal }) => {
 
   return (
     <div className="size-full flex flex-col gap-main-2">
-      <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+      <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
         뉴스 전후 주가 변동 추이
       </h2>
       <div className="flex justify-center gap-2 mb-4 flex-wrap">
@@ -163,7 +163,7 @@ const External = ({ external }: { external: NewsExternal }) => {
           <button
             key={key}
             onClick={() => setSelected(key)}
-            className={`px-4 py-2 rounded-full text-sm transition-all duration-200 ${
+            className={`px-4 py-2 rounded-full text-sm-custom transition-all duration-200 ${
               selected === key
                 ? "bg-main-blue text-white"
                 : "bg-main-light-gray text-gray-700 hover:bg-gray-200"

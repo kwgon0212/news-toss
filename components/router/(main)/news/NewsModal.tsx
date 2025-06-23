@@ -43,9 +43,9 @@ const NewsModal = ({
         <div className="w-[800px] flex flex-col gap-main overflow-x-hidden overflow-y-scroll">
           <div className="flex flex-col gap-[5px]">
             <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold">{news.title}</h2>
+              <h2 className="text-2xl-custom font-bold">{news.title}</h2>
             </div>
-            <div className="text-sm text-main-dark-gray flex items-center gap-main">
+            <div className="text-sm-custom text-main-dark-gray flex items-center gap-main">
               <span>
                 {news.wdate && formatDate(news.wdate)} · {news.press}
               </span>
@@ -74,7 +74,7 @@ const NewsModal = ({
                 <Link
                   href={`/stocks/${stock.stockCode}`}
                   key={`main-stock-${stock.stockCode}`}
-                  className="text-main-blue px-2 py-1 text-xs font-semibold rounded-main flex items-center gap-2 hover:bg-main-blue/10 transition-all duration-200 ease-in-out"
+                  className="text-main-blue px-2 py-1 text-xs-custom font-semibold rounded-main flex items-center gap-2 hover:bg-main-blue/10 transition-all duration-200 ease-in-out"
                 >
                   <div className="relative flex items-center justify-center size-[30px] shrink-0">
                     {stock.stockImage ? (
@@ -94,9 +94,9 @@ const NewsModal = ({
                     )}
                   </div>
   
-                  <p className="text-sm text-main-dark-gray flex items-baseline gap-1">
+                  <p className="text-sm-custom text-main-dark-gray flex items-baseline gap-1">
                     <span className="font-semibold">{stock.stockName}</span>
-                    <span className="text-xs">{stock.stockCode}</span>
+                    <span className="text-xs-custom">{stock.stockCode}</span>
                   </p>
                 </Link>
               ))}
@@ -106,11 +106,11 @@ const NewsModal = ({
           <div>
             {impactScore && (
               <div className="flex items-baseline gap-main">
-                <span className="text-sm font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+                <span className="text-sm-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
                   뉴스 중요도
                 </span>
   
-                <p className="flex-1 flex text-2xl font-bold items-center justify-center">
+                <p className="flex-1 flex text-2xl-custom font-bold items-center justify-center">
                   <span className="bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent">
                     {(impactScore * 100).toFixed(1)}%
                   </span>
@@ -122,7 +122,7 @@ const NewsModal = ({
 
           <div className="p-main">
             <div className="flex flex-col gap-main shadow-color p-main rounded-main">
-              <span className="text-lg font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+              <span className="text-lg-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
                 뉴스 요약
               </span>
               <p className="whitespace-pre-wrap leading-7">{newsSummary}</p>

@@ -47,7 +47,7 @@ const EditInfo = ({ token }: { token: JwtToken }) => {
         isClickOutsideClose={false}
       >
         <form className="flex flex-col gap-main" onSubmit={handleSubmit}>
-          <h2 className="text-xl font-bold">내 정보 수정</h2>
+          <h2 className="text-xl-custom font-bold">내 정보 수정</h2>
 
           <div className="flex flex-col gap-[5px]">
             <label htmlFor="name">이름</label>

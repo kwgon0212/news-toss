@@ -378,7 +378,9 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
   return (
     <>
       <div className="flex flex-col gap-main">
-        <h2 className="text-xl font-bold text-main-dark-gray">관심 종목</h2>
+        <h2 className="text-xl-custom font-bold text-main-dark-gray">
+          관심 종목
+        </h2>
 
         {!token ? (
           <div className="w-full h-[120px] flex items-center justify-center text-main-dark-gray">
@@ -463,14 +465,14 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
                                     <span className="font-bold">
                                       {stock.stockInfo.stockName}
                                     </span>
-                                    <span className="text-gray-500 text-xs">
+                                    <span className="text-gray-500 text-xs-custom">
                                       {stock.stockInfo.stockCode}
                                     </span>
                                   </div>
-                                  <div className="text-sm flex gap-main items-center">
+                                  <div className="text-sm-custom flex gap-main items-center">
                                     <span
                                       className={clsx(
-                                        "text-gray-500 text-sm font-semibold",
+                                        "text-gray-500 text-sm-custom font-semibold",
                                         (stock.stockInfo.sign === "1" ||
                                           stock.stockInfo.sign === "2") &&
                                           "text-main-red",
@@ -544,11 +546,11 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
           onClose={() => setIsOpenSettingModal(false)}
         >
           <div className="flex flex-col gap-main">
-            <h2 className="text-xl font-bold text-main-dark-gray">
+            <h2 className="text-xl-custom font-bold text-main-dark-gray">
               관심 종목 설정
             </h2>
 
-            <h4 className="text-sm text-main-dark-gray flex items-center justify-between">
+            <h4 className="text-sm-custom text-main-dark-gray flex items-center justify-between">
               <span>드래그를 통해 그룹 및 종목 순서를 변경할 수 있습니다.</span>
 
               <SearchStock
@@ -761,14 +763,14 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
                                           <span className="font-bold">
                                             {stock.stockInfo.stockName}
                                           </span>
-                                          <span className="text-gray-500 text-xs">
+                                          <span className="text-gray-500 text-xs-custom">
                                             {stock.stockInfo.stockCode}
                                           </span>
                                         </div>
-                                        <div className="text-sm flex gap-main items-center">
+                                        <div className="text-sm-custom flex gap-main items-center">
                                           <span
                                             className={clsx(
-                                              "text-gray-500 text-sm font-semibold",
+                                              "text-gray-500 text-sm-custom font-semibold",
                                               (stock.stockInfo.sign === "1" ||
                                                 stock.stockInfo.sign === "2") &&
                                                 "text-main-red",

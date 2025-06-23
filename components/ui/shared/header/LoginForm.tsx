@@ -93,7 +93,7 @@ const LoginForm = () => {
             로그인
           </Button>
 
-          <Link href="/signup" className="text-xs">
+          <Link href="/signup" className="text-xs-custom">
             회원가입
           </Link>
         </form>

@@ -15,10 +15,13 @@ const MyProfit = ({
           {title}
         </h2>
         <div>
-          <span className={clsx("text-xl font-bold text-main-red")}>
+          <span className={clsx("text-xl-custom font-bold text-main-red")}>
             {Number(135980).toLocaleString()}
           </span>
-          <span className="text-sm text-gray-500 font-semibold"> 원</span>
+          <span className="text-sm-custom text-gray-500 font-semibold">
+            {" "}
+            원
+          </span>
         </div>
       </div>
     );
@@ -31,14 +34,14 @@ const MyProfit = ({
       <div>
         <span
           className={clsx(
-            "text-xl font-bold",
+            "text-xl-custom font-bold",
             profit > 0 ? "text-main-red" : "text-main-blue"
           )}
         >
           {profit > 0 ? "+" : ""}
           {profit.toLocaleString()}
         </span>
-        <span className="text-sm text-gray-500 font-semibold"> 원</span>
+        <span className="text-sm-custom text-gray-500 font-semibold"> 원</span>
       </div>
     </div>
   );

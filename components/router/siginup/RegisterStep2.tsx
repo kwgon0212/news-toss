@@ -161,7 +161,7 @@ const RegisterStep2 = ({
               중복 확인
             </Button>
             {/* <button
-              className="bg-main-blue text-white rounded-main w-fit shrink-0 px-4 py-2 text-sm"
+              className="bg-main-blue text-white rounded-main w-fit shrink-0 px-4 py-2 text-sm-custom"
               onClick={checkUserId}
             >
               중복 확인
@@ -169,12 +169,12 @@ const RegisterStep2 = ({
           </div>
 
           {isIdAvailable === true && (
-            <span className="text-sm text-main-blue ml-main">
+            <span className="text-sm-custom text-main-blue ml-main">
               사용가능한 아이디입니다
             </span>
           )}
           {isIdAvailable === false && (
-            <span className="text-sm text-main-red ml-main">
+            <span className="text-sm-custom text-main-red ml-main">
               사용할 수 없는 아이디입니다
             </span>
           )}
@@ -190,7 +190,7 @@ const RegisterStep2 = ({
               setUserInfo({ ...userInfo, password: e.target.value })
             }
           />
-          <span className="text-sm text-main-dark-gray">
+          <span className="text-sm-custom text-main-dark-gray">
             비밀번호 강도: {passwordStrengthText} (영문, 숫자, 특수문자 조합
             8~20자)
           </span>
@@ -236,13 +236,13 @@ const RegisterStep2 = ({
           />
           {userInfo.passwordConfirm &&
             userInfo.password !== userInfo.passwordConfirm && (
-              <span className="text-sm text-main-red ml-main">
+              <span className="text-sm-custom text-main-red ml-main">
                 비밀번호가 일치하지 않습니다
               </span>
             )}
 
           {userInfo.password === userInfo.passwordConfirm && (
-            <span className="text-sm text-main-blue ml-main">
+            <span className="text-sm-custom text-main-blue ml-main">
               비밀번호가 일치합니다
             </span>
           )}

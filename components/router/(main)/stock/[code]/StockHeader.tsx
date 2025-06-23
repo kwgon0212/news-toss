@@ -74,13 +74,13 @@ const StockHeader = ({ code }: { code: string }) => {
           </div>
         )}
       </div>
-      <div className="flex flex-col flex-1 truncate text-sm">
+      <div className="flex flex-col flex-1 truncate text-sm-custom">
         <p className="flex items-center gap-main text-gray-800 truncate w-full">
           <span className="font-bold">{stock.stockName}</span>
           <span className="text-gray-400">{stock.stockCode}</span>
         </p>
         <div className="flex items-center gap-main">
-          <span className="text-main-dark-gray text-xl font-bold">
+          <span className="text-main-dark-gray text-xl-custom font-bold">
             {Number(stock.currentPrice).toLocaleString()}원
           </span>
           <div className="flex justify-between h-fit">

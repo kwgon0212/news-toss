@@ -11,7 +11,9 @@ const MyPortfolio = ({ token }: { token: JwtToken | null }) => {
   if (!token) {
     return (
       <div className="flex flex-col gap-main">
-        <h2 className="text-xl font-bold text-main-dark-gray">내 투자</h2>
+        <h2 className="text-xl-custom font-bold text-main-dark-gray">
+          내 투자
+        </h2>
         <div className="flex flex-col gap-main">
           <div className="w-full h-[200px] flex items-center justify-center">
             <p className="text-main-dark-gray">로그인 후 이용해주세요.</p>
@@ -22,7 +24,7 @@ const MyPortfolio = ({ token }: { token: JwtToken | null }) => {
   }
   return (
     <div className="flex flex-col gap-main">
-      <h2 className="text-xl font-bold text-main-dark-gray">내 투자</h2>
+      <h2 className="text-xl-custom font-bold text-main-dark-gray">내 투자</h2>
       <div className="flex flex-col gap-main">
         {!token && (
           <div className="w-full h-[200px] flex items-center justify-center">
@@ -59,15 +61,17 @@ const MyPortfolio = ({ token }: { token: JwtToken | null }) => {
             <div className="flex flex-col gap-1">
               <div className="flex gap-1 items-center">
                 <span className="font-semibold">{stock.stockName}</span>
-                <span className="text-gray-500 text-xs">{stock.stockCode}</span>
+                <span className="text-gray-500 text-xs-custom">
+                  {stock.stockCode}
+                </span>
               </div>
 
               <div className="grid grid-cols-2 gap-1">
                 <div className="grid grid-cols-[auto_1fr] gap-1">
-                  <span className="text-gray-500 text-xs">수익</span>
+                  <span className="text-gray-500 text-xs-custom">수익</span>
                   <span
                     className={clsx(
-                      "text-xs font-semibold",
+                      "text-xs-custom font-semibold",
                       stock.profitLoss > 0 ? "text-main-red" : "text-main-blue"
                     )}
                   >
@@ -77,10 +81,10 @@ const MyPortfolio = ({ token }: { token: JwtToken | null }) => {
                 </div>
 
                 <div className="grid grid-cols-[auto_1fr] gap-1">
-                  <span className="text-gray-500 text-xs">수익률</span>
+                  <span className="text-gray-500 text-xs-custom">수익률</span>
                   <span
                     className={clsx(
-                      "text-xs font-semibold",
+                      "text-xs-custom font-semibold",
                       stock.profitLossRate > 0
                         ? "text-main-red"
                         : "text-main-blue"

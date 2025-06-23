@@ -121,14 +121,14 @@ const SearchStock = ({ onSelect }: SearchStockProps) => {
                     <div className="flex flex-col flex-1 truncate">
                       <div className="text-gray-800 truncate w-full flex items-baseline gap-1">
                         <span className="font-bold">{result.stockName}</span>
-                        <span className="text-gray-500 text-xs">
+                        <span className="text-gray-500 text-xs-custom">
                           {result.stockCode}
                         </span>
                       </div>
-                      <div className="text-sm flex gap-main items-center">
+                      <div className="text-sm-custom flex gap-main items-center">
                         <span
                           className={clsx(
-                            "text-gray-500 text-sm font-semibold",
+                            "text-gray-500 text-sm-custom font-semibold",
                             (result.sign === "1" || result.sign === "2") &&
                               "text-main-red",
                             (result.sign === "4" || result.sign === "5") &&

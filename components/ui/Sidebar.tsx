@@ -165,7 +165,7 @@ const SidebarButton = ({
       </div>
       <span
         className={clsx(
-          "text-xs transition-colors",
+          "text-xs-custom transition-colors",
           active ? "text-black" : "text-sub"
         )}
       >

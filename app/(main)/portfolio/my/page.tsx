@@ -11,7 +11,7 @@ const MyPortfolioPage = async () => {
   return (
     <div className="grid grid-cols-10 gap-main-2 max-w-[1200px] mx-auto min-w-[800px] pb-[100px]">
       <div className="col-span-7 flex flex-col gap-main box-content p-main-2 bg-white rounded-main shadow-sm">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+        <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
           내 계좌
         </h2>
         <MyAccountChart token={token} />
@@ -28,7 +28,7 @@ const MyPortfolioPage = async () => {
 
         <div className="col-span-3 relative w-full">
           <div className="sticky top-0 bg-white rounded-main p-main-2 shadow-sm">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+            <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
               날짜별 손익
             </h2>
             <ProfitLossCalendar token={token} />

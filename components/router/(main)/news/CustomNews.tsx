@@ -69,7 +69,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
   return (
     <div className="flex flex-col gap-main-2">
       <div className="flex items-center gap-main">
-        <h2 className="text-3xl font-bold">
+        <h2 className="text-3xl-custom font-bold">
           <b className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
             {token && token.memberName ? token.memberName : "홍길동"}
           </b>
@@ -118,13 +118,13 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
 
                   <p
                     className={clsx(
-                      "line-clamp-2 text-start text-main-dark-gray text-xs"
+                      "line-clamp-2 text-start text-main-dark-gray text-xs-custom"
                     )}
                   >
                     {news.mainNews.article}
                   </p>
 
-                  <div className="flex items-center text-main-dark-gray text-xs">
+                  <div className="flex items-center text-main-dark-gray text-xs-custom">
                     <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
                     <span className="text-main-dark-gray">
                       {news.mainNews.wdate && formatDate(news.mainNews.wdate)} ·{" "}
@@ -156,15 +156,15 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                             />
                           </div>
                           <div className="w-full flex flex-col justify-around">
-                            <span className="text-xs text-main-blue bg-main-blue/20 rounded-full px-2 w-fit">
+                            <span className="text-xs-custom text-main-blue bg-main-blue/20 rounded-full px-2 w-fit">
                               유사도:{" "}
                               {Number(relatedNews.similarity! * 100).toFixed(2)}
                               %
                             </span>
-                            <p className="line-clamp-2 font-semibold text-sm">
+                            <p className="line-clamp-2 font-semibold text-sm-custom">
                               {relatedNews.title}
                             </p>
-                            <div className="flex items-center text-main-dark-gray text-xs">
+                            <div className="flex items-center text-main-dark-gray text-xs-custom">
                               <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
                               <span className="text-main-dark-gray">
                                 {relatedNews.wdate &&
@@ -179,14 +179,14 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                     })
                   ) : (
                     <div className="flex justify-center items-center size-full">
-                      <p className="text-main-dark-gray text-sm">
+                      <p className="text-main-dark-gray text-sm-custom">
                         과거 유사뉴스가 없습니다.
                       </p>
                     </div>
                   )}
                 </div>
                 {news.relatedNews.length > 2 && (
-                  <p className="text-main-dark-gray text-xs text-center">
+                  <p className="text-main-dark-gray text-xs-custom text-center">
                     {news.relatedNews.length - 2} more...
                   </p>
                 )}

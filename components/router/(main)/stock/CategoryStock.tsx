@@ -301,11 +301,11 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
                     <div className="flex flex-col flex-1 truncate">
                       <div className="text-gray-800 truncate w-full flex items-baseline gap-1">
                         <span className="font-bold">{stock.stockName}</span>
-                        <span className="text-gray-500 text-xs">
+                        <span className="text-gray-500 text-xs-custom">
                           {stock.stockCode}
                         </span>
                       </div>
-                      <div className="text-sm flex gap-main items-center">
+                      <div className="text-sm-custom flex gap-main items-center">
                         <span
                           className={clsx(
                             "text-gray-500 text-sm font-semibold",

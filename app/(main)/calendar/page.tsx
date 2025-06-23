@@ -65,7 +65,7 @@ const CalendarPage = () => {
       <div className="w-full flex flex-col gap-main h-[calc(100vh-140px)]">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-[5px]">
-            <h2 className="font-semibold text-2xl bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">{`${year}년 ${month}월 ${day}일 IR 일정`}</h2>
+            <h2 className="font-semibold text-2xl-custom bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">{`${year}년 ${month}월 ${day}일 IR 일정`}</h2>
             <p className="text-main-dark-gray/70">
               총 {filteredIrDataList.length}건의 일정
             </p>
@@ -135,11 +135,11 @@ const CalendarPage = () => {
                 key={`IR-${irData.irId}-${irData.date}`}
                 className="w-full flex flex-col gap-main bg-white rounded-main shadow-sm p-main-2"
               >
-                <p className="text-xl font-semibold flex items-center gap-2">
+                <p className="text-xl-custom font-semibold flex items-center gap-2">
                   {irData.title}
                 </p>
 
-                <div className="grid grid-cols-[auto_1fr] gap-y-[5px] gap-x-main-2 text-sm text-gray-500">
+                <div className="grid grid-cols-[auto_1fr] gap-y-[5px] gap-x-main-2 text-sm-custom text-gray-500">
                   <p>
                     회사:{" "}
                     <span className="text-main-blue font-semibold">
@@ -151,7 +151,7 @@ const CalendarPage = () => {
                     시장:{" "}
                     <span
                       className={clsx(
-                        "text-xs text-main-blue bg-main-blue/10 px-2 py-1 rounded-full w-fit",
+                        "text-xs-custom text-main-blue bg-main-blue/10 px-2 py-1 rounded-full w-fit",
                         irData.market === "코스피"
                           ? "bg-main-blue/10 text-main-blue"
                           : "bg-main-red/10 text-main-red"

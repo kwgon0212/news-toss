@@ -5,15 +5,15 @@ const Footer = () => {
   return (
     <footer className="w-full py-main-2 bg-main-light-gray/30 mt-[100px] flex flex-col items-center justify-center text-center text-main-dark-gray rounded-t-main">
       <div className="mb-4 flex flex-col items-center">
-        <span className="font-bold text-lg text-gray-800">
+        <span className="font-bold text-lg-custom text-gray-800">
           과거 뉴스 기반 주가 경향성 예측 서비스
         </span>
-        <span className="text-sm text-gray-400 mt-1">
+        <span className="text-sm-custom text-gray-400 mt-1">
           주식 투자에 설명력을 더해주는 AI 애널리스트
         </span>
       </div>
 
-      <nav className="mb-3 flex gap-6 text-base font-medium">
+      <nav className="mb-3 flex gap-6 text-base-custom font-medium">
         <Link href="/news" className="hover:text-main-blue transition-colors">
           뉴스
         </Link>
@@ -51,7 +51,7 @@ const Footer = () => {
           Github
         </Link>
       </div>
-      <div className="text-xs text-gray-400">
+      <div className="text-xs-custom text-gray-400">
         © 2025 NewsToss | Made by 우리팀
       </div>
     </footer>

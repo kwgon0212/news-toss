@@ -9,7 +9,7 @@ const DownPrice = ({
   changeRate?: number;
 }) => {
   return (
-    <span className="text-main-blue font-medium flex items-center gap-1">
+    <span className="text-main-blue font-medium flex items-center gap-1 text-sm-custom">
       <Triangle
         fill="#3485fa"
         className="text-main-blue rotate-180"

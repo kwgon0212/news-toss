@@ -24,7 +24,7 @@ const LogoutForm = ({ action }: { action: (formData: FormData) => void }) => {
     <form action={handleLogout}>
       <button
         type="submit"
-        className="w-full bg-main-blue text-white px-4 rounded-[10px] py-[5px]"
+        className="w-full bg-main-red text-white py-2 px-4 rounded-main font-medium text-sm-custom"
         disabled={pending}
       >
         로그아웃

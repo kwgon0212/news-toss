@@ -37,20 +37,20 @@ const MetaDataNews = ({
 
   return (
     <div className="size-full flex flex-col gap-main-2">
-      <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+      <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
         주가 경향성 및 과거 유사뉴스
       </h2>
 
-      <div className="flex items-center gap-main text-xl">
+      <div className="flex items-center gap-main text-xl-custom">
         <Dropdown
           groups={mainStockList.map((stock) => stock.stockName)}
           selected={selectedStockName}
           onSelect={(stock) => {
             setSelectedStockName(stock);
           }}
-          className="border border-main-light-gray py-0.5 text-base"
+          className="border border-main-light-gray py-0.5 text-base-custom"
         />
-        <span className="text-xl font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+        <span className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
           의 주가 경향성
         </span>
         <Tooltip
@@ -72,8 +72,8 @@ const MetaDataNews = ({
       </div>
 
       <div className="flex flex-col gap-main">
-        <div className="flex items-center gap-main text-xl">
-          <h2 className="text-xl font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+        <div className="flex items-center gap-main text-xl-custom">
+          <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
             과거 유사 사건 뉴스
           </h2>
           <Tooltip
@@ -100,7 +100,7 @@ const MetaDataNews = ({
               </button>
             ))}
           </div>
-          <p className="text-main-dark-gray text-xs flex items-center gap-1">
+          <p className="text-main-dark-gray text-xs-custom flex items-center gap-1">
             <Info size={14} />
             뉴스는 유사도 순으로 정렬되어 있어요.
           </p>
@@ -122,18 +122,18 @@ const MetaDataNews = ({
           </div>
           <div className="col-span-4 w-full h-full flex flex-col gap-main justify-around">
             <div className="flex flex-col gap-1">
-              <span className="font-semibold text-sm text-main-blue bg-main-blue/10 rounded-main px-main py-0.5 w-fit">
+              <span className="font-semibold text-sm-custom text-main-blue bg-main-blue/10 rounded-main px-main py-0.5 w-fit">
                 유사도: {Number(selectedNews.similarity! * 100).toFixed(2)}%
               </span>
-              <p className="line-clamp-1 font-semibold text-lg">
+              <p className="line-clamp-1 font-semibold text-lg-custom">
                 {selectedNews.title}
               </p>
-              <p className="text-main-dark-gray text-xs line-clamp-3">
+              <p className="text-main-dark-gray text-xs-custom line-clamp-3">
                 {selectedNews.image}
               </p>
             </div>
 
-            <div className="flex items-center text-main-dark-gray text-xs">
+            <div className="flex items-center text-main-dark-gray text-xs-custom">
               <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
               <span className="text-main-dark-gray">
                 {selectedNews.wdate &&
@@ -147,7 +147,7 @@ const MetaDataNews = ({
 
       {/* <div className="flex-1 size-full">
         <div className="flex items-center gap-main text-xl">
-          <h2 className="text-xl font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+          <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
             관련 종목
           </h2>
           <Tooltip
@@ -159,7 +159,7 @@ const MetaDataNews = ({
 
         <div className="grid grid-cols-5 gap-main-2 h-full">
           {relatedStockList.length === 0 && (
-            <div className="col-span-5 flex items-center justify-center text-center text-main-dark-gray text-sm py-main-2">
+            <div className="col-span-5 flex items-center justify-center text-center text-main-dark-gray text-sm-custom py-main-2">
               관련 종목이 없어요.
             </div>
           )}

@@ -200,13 +200,13 @@ const GaugeChart = ({ token }: { token: JwtToken | null }) => {
       <>
         <div className="size-full flex flex-col gap-main">
           <div className="flex justify-between items-end">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+            <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
               내 투자성향
             </h2>
 
             <button
               id="investment-style"
-              className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
+              className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
               onClick={() => setIsOpenInvestmentStyleModal(true)}
             >
               <span>투자성향 변경</span>
@@ -246,13 +246,13 @@ const GaugeChart = ({ token }: { token: JwtToken | null }) => {
     <>
       <div className="size-full flex flex-col gap-main">
         <div className="flex justify-between items-end">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+          <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
             내 투자성향
           </h2>
 
           <button
             id="investment-style"
-            className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
+            className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
             onClick={() => setIsOpenInvestmentStyleModal(true)}
           >
             <span>투자성향 변경</span>

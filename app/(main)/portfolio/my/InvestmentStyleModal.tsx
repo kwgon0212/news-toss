@@ -48,7 +48,9 @@ const InvestmentStyleModal = ({
       isClickOutsideClose={false}
     >
       <div className="flex flex-col gap-main-2 px-main w-[600px]">
-        <h2 className="text-xl font-bold text-main-dark-gray">투자성향 설정</h2>
+        <h2 className="text-xl-custom font-bold text-main-dark-gray">
+          투자성향 설정
+        </h2>
 
         <div
           className={clsx(
@@ -159,11 +161,11 @@ const AcceptForm = ({
 }) => {
   return (
     <div className="flex flex-col gap-main">
-      <h2 className="text-lg font-semibold">
+      <h2 className="text-lg-custom font-semibold">
         투자자 성향을 알기 위해 동의가 필요해요
       </h2>
 
-      <p className="text-sm text-main-gray leading-8 my-main">
+      <p className="text-sm-custom text-main-gray leading-8 my-main">
         금융투자상품의 적합성 판단을 위해 투자자 성향에 대한 진단이 필요합니다.
         <br />
         해당 설문은 고객님의 투자 목적, 경험, 위험 선호도를 기반으로
@@ -174,13 +176,13 @@ const AcceptForm = ({
         성향 분석을 위해 입력하신 정보는 관련 법령에 따라 안전하게 처리됩니다.
       </p>
 
-      <label className="flex items-center gap-2 text-sm text-main-gray">
+      <label className="flex items-center gap-2 text-sm-custom text-main-gray">
         <input
           type="checkbox"
           checked={isAccept}
           onChange={() => setIsAccept(!isAccept)}
         />
-        <span className="text-sm text-main-gray leading-relaxed">
+        <span className="text-sm-custom text-main-gray leading-relaxed">
           본인은 투자자 성향 진단을 위한 정보 수집 및 활용에 동의합니다.
         </span>
       </label>
@@ -188,7 +190,7 @@ const AcceptForm = ({
       <div className="flex justify-end">
         <button
           className={clsx(
-            "text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-2 py-1 flex items-center gap-1",
+            "text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-2 py-1 flex items-center gap-1",
             !isAccept && "text-main-gray bg-main-gray/10"
           )}
           onClick={next}
@@ -208,7 +210,7 @@ const Question1 = ({
 }: QuestionProps) => {
   return (
     <div className="flex flex-col gap-main">
-      <h2 className="text-lg font-semibold">
+      <h2 className="text-lg-custom font-semibold">
         Q1. 귀하의 주된 투자 목적은 무엇입니까?
       </h2>
 
@@ -272,7 +274,7 @@ const Question1 = ({
 
       <div className="flex justify-end">
         <button
-          className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
+          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
           onClick={next}
           disabled={selectedAnswer[0] === 0}
         >
@@ -292,7 +294,7 @@ const Question2 = ({
 }: QuestionProps) => {
   return (
     <div className="flex flex-col gap-main">
-      <h2 className="text-lg font-semibold">
+      <h2 className="text-lg-custom font-semibold">
         Q2. 금융상품(주식/채권 등) 투자 경험이 있으신가요?
       </h2>
 
@@ -356,14 +358,14 @@ const Question2 = ({
 
       <div className="flex justify-end">
         <button
-          className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pr-2 pl-1 py-1 flex items-center gap-1"
+          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pr-2 pl-1 py-1 flex items-center gap-1"
           onClick={prev}
         >
           <ChevronLeft size={16} />
           <span>이전</span>
         </button>
         <button
-          className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
+          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
           onClick={next}
           disabled={selectedAnswer[1] === 0}
         >
@@ -383,7 +385,7 @@ const Question3 = ({
 }: QuestionProps) => {
   return (
     <div className="flex flex-col gap-main">
-      <h2 className="text-lg font-semibold">
+      <h2 className="text-lg-custom font-semibold">
         Q3. 1년 내 원금의 20% 손실 가능성이 있는 투자상품을 추천받는다면?
       </h2>
 
@@ -447,14 +449,14 @@ const Question3 = ({
 
       <div className="flex justify-end">
         <button
-          className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pr-2 pl-1 py-1 flex items-center gap-1"
+          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pr-2 pl-1 py-1 flex items-center gap-1"
           onClick={prev}
         >
           <ChevronLeft size={16} />
           <span>이전</span>
         </button>
         <button
-          className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
+          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
           onClick={next}
           disabled={selectedAnswer[2] === 0}
         >
@@ -474,7 +476,7 @@ const Question4 = ({
 }: QuestionProps) => {
   return (
     <div className="flex flex-col gap-main">
-      <h2 className="text-lg font-semibold">
+      <h2 className="text-lg-custom font-semibold">
         Q4. 투자 가능한 기간은 어느 정도인가요?
       </h2>
 
@@ -538,14 +540,14 @@ const Question4 = ({
 
       <div className="flex justify-end">
         <button
-          className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pr-2 pl-1 py-1 flex items-center gap-1"
+          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pr-2 pl-1 py-1 flex items-center gap-1"
           onClick={prev}
         >
           <ChevronLeft size={16} />
           <span>이전</span>
         </button>
         <button
-          className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
+          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
           onClick={next}
           disabled={selectedAnswer[3] === 0}
         >
@@ -565,7 +567,7 @@ const Question5 = ({
 }: QuestionProps) => {
   return (
     <div className="flex flex-col gap-main">
-      <h2 className="text-lg font-semibold">
+      <h2 className="text-lg-custom font-semibold">
         Q5. 투자 원금 대비 손실 가능성이 있을 때 본인의 반응은?
       </h2>
 
@@ -629,14 +631,14 @@ const Question5 = ({
 
       <div className="flex justify-end">
         <button
-          className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pr-2 pl-1 py-1 flex items-center gap-1"
+          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pr-2 pl-1 py-1 flex items-center gap-1"
           onClick={prev}
         >
           <ChevronLeft size={16} />
           <span>이전</span>
         </button>
         <button
-          className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
+          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
           onClick={next}
           disabled={selectedAnswer[4] === 0}
         >
@@ -773,17 +775,17 @@ const ResultForm = ({
 
   return (
     <div className="flex flex-col gap-main">
-      <h2 className="text-lg font-semibold">투자자 성향 분석 결과</h2>
+      <h2 className="text-lg-custom font-semibold">투자자 성향 분석 결과</h2>
 
-      <span className="text-lg font-semibold">{type}</span>
+      <span className="text-lg-custom font-semibold">{type}</span>
       <p
-        className="text-sm text-main-dark-gray leading-relaxed"
+        className="text-sm-custom text-main-dark-gray leading-relaxed"
         dangerouslySetInnerHTML={{ __html: description }}
       />
 
       <div className="flex justify-end">
         <button
-          className="text-sm text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pr-2 pl-1 py-1 flex items-center gap-1"
+          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pr-2 pl-1 py-1 flex items-center gap-1"
           onClick={handleClose}
         >
           <span>확인</span>

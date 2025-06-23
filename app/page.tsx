@@ -60,7 +60,7 @@ export default function LandingPage() {
         className="h-screen flex flex-col justify-center items-center bg-black/20 text-white px-4 relative"
       >
         <motion.h1
-          className="text-5xl font-bold text-center mb-4 flex items-center gap-2"
+          className="text-2xl-custom font-bold text-center mb-4 flex items-center gap-2"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -76,10 +76,11 @@ export default function LandingPage() {
           NewsToss
         </motion.h1>
         <motion.p
-          className="text-lg text-white/80 text-center"
+          className="text-lg-custom text-white/80 text-center"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
+          style={{ lineHeight: "1.8" }}
         >
           종합 주식 투자 플랫폼
         </motion.p>
@@ -102,7 +103,7 @@ export default function LandingPage() {
       >
         <Header />
         <motion.h2
-          className="text-3xl font-bold text-center mb-4"
+          className="text-3xl-custom font-bold text-center mb-4"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -137,7 +138,7 @@ export default function LandingPage() {
       >
         <Header />
         <motion.h2
-          className="text-3xl font-bold text-center mb-4"
+          className="text-3xl-custom font-bold text-center mb-4"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -162,14 +163,14 @@ export default function LandingPage() {
       >
         <Header />
         <motion.h2
-          className="text-3xl font-bold text-center mb-4"
+          className="text-3xl-custom font-bold text-center mb-4"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
           ⚙️ 기술 스택
         </motion.h2>
-        <ul className="grid grid-cols-2 md:grid-cols-3 gap-6 text-center text-sm mt-8">
+        <ul className="grid grid-cols-2 md:grid-cols-3 gap-6 text-center text-sm-custom mt-8">
           <li className="bg-main-blue/10 py-4 px-2 rounded">Next.js 15</li>
           <li className="bg-main-blue/10 py-4 px-2 rounded">실시간 스트리밍</li>
           <li className="bg-main-blue/10 py-4 px-2 rounded">반응형 디자인</li>
@@ -184,8 +185,10 @@ export default function LandingPage() {
 function Card({ title, desc }: { title: string; desc: string }) {
   return (
     <div className="p-6 bg-white rounded-xl shadow hover:shadow-md transition-all">
-      <h3 className="text-lg font-bold mb-2">{title}</h3>
-      <p className="text-sm text-main-dark-gray leading-relaxed">{desc}</p>
+      <h3 className="text-lg-custom font-bold mb-2">{title}</h3>
+      <p className="text-sm-custom text-main-dark-gray leading-relaxed">
+        {desc}
+      </p>
     </div>
   );
 }
@@ -197,7 +200,7 @@ const Header = () => {
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="font-bold text-lg flex items-center gap-2"
+        className="font-bold text-lg-custom flex items-center gap-2"
       >
         <Link href="/news" className="size-[40px] relative">
           <Image
@@ -208,8 +211,8 @@ const Header = () => {
           />
         </Link>
         <div className="flex flex-col">
-          <span className="font-bold text-lg">NewsToss</span>
-          <span className="text-sm text-main-dark-gray">
+          <span className="font-bold text-lg-custom">NewsToss</span>
+          <span className="text-sm-custom text-main-dark-gray">
             실시간 주식 투자 AI 애널리스트
           </span>
         </div>

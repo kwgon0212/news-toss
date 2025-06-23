@@ -30,7 +30,7 @@ const MainNews = ({
       <div className="grid grid-cols-3 w-full gap-main-2">
         <div className="col-span-3 grid grid-cols-3 gap-main w-full relative">
           <div className="col-span-3 flex items-center gap-main">
-            <div className="text-3xl font-bold">
+            <div className="text-3xl-custom font-bold">
               <span>오늘의 </span>
               <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
                 주요뉴스
@@ -55,7 +55,7 @@ const MainNews = ({
       <div className="grid grid-cols-3 w-full gap-main-2">
         <div className="col-span-3 grid grid-cols-7 gap-main w-full relative">
           <div className="col-span-4 flex items-center gap-main">
-            <div className="text-3xl font-bold">
+            <div className="text-3xl-custom font-bold">
               <span>오늘의 </span>
               <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
                 주요뉴스
@@ -138,7 +138,7 @@ const MainNews = ({
   return (
     <div className="grid grid-cols-7 gap-main-2 w-full relative">
       <div className="col-span-4 flex flex-col gap-main">
-        <div className="text-3xl flex items-center gap-main bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+        <div className="text-3xl-custom flex items-center gap-main bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
           <span className="font-bold">주요뉴스</span>
           <Tooltip
             position="right"
@@ -178,15 +178,15 @@ const MainNews = ({
                       invertedStyle["inverted-radius"]
                     )}
                   >
-                    <p className="text-2xl font-bold line-clamp-1 text-white drop-shadow w-full">
+                    <p className="text-2xl-custom font-bold line-clamp-1 text-white drop-shadow w-full">
                       {mainNews.title}
                     </p>
 
-                    <p className="bg-main-blue/90 w-fit rounded-full text-white text-sm font-semibold px-main py-0.5">
+                    <p className="bg-main-blue/90 w-fit rounded-full text-white text-sm-custom font-semibold px-main py-0.5">
                       🚀 뉴스 중요도:{" "}
                       {Number(mainNews.impact_score * 100).toFixed(2)}%
                     </p>
-                    <div className="flex items-center gap-1 text-white text-xs">
+                    <div className="flex items-center gap-1 text-white text-xs-custom">
                       <Clock className="h-3 w-3 mr-1" />
                       <span>
                         {mainNews.wdate && formatDate(mainNews.wdate)} ·{" "}
@@ -215,7 +215,7 @@ const MainNews = ({
       </div>
 
       <div className="col-span-3 flex flex-col gap-1">
-        <h2 className="font-bold text-3xl bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+        <h2 className="font-bold text-3xl-custom bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
           과거 유사뉴스
         </h2>
         {gridNews.length === 0 && (
@@ -251,15 +251,15 @@ const MainNews = ({
               </div>
               <div className="w-full h-full flex flex-col gap-main justify-around">
                 <div className="flex flex-col gap-1">
-                  <span className="font-semibold text-sm text-main-blue bg-main-blue/10 rounded-main px-main py-0.5 w-fit">
+                  <span className="font-semibold text-sm-custom text-main-blue bg-main-blue/10 rounded-main px-main py-0.5 w-fit">
                     유사도: {Number(item.similarity * 100).toFixed(2)}%
                   </span>
-                  <p className="line-clamp-2 font-semibold text-lg text-left">
+                  <p className="line-clamp-2 font-semibold text-lg-custom text-left">
                     {item.title}
                   </p>
                 </div>
 
-                <div className="flex items-center text-main-dark-gray text-xs">
+                <div className="flex items-center text-main-dark-gray text-xs-custom">
                   <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
                   <span className="text-main-dark-gray">
                     {item.wdate && new Date(item.wdate).toLocaleDateString()} ·{" "}

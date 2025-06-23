@@ -37,7 +37,7 @@ const UserInfo = ({
         >
           <b className="underline">{token.memberName}</b> 님
         </button>
-        <span className="flex items-center gap-1 text-main-dark-gray text-sm">
+        <span className="flex items-center gap-1 text-main-dark-gray text-sm-custom">
           <Clock size={14} /> {useTokenExpire(token.exp)}
         </span>
       </div>
@@ -51,7 +51,9 @@ const UserInfo = ({
       >
         <div className="bg-white w-[350px] rounded-main shadow-color p-main-2 flex flex-col gap-main">
           <div className="flex items-center gap-main">
-            <h2 className="text-main-dark-gray font-bold text-xl">내 정보</h2>
+            <h2 className="text-main-dark-gray font-bold text-xl-custom">
+              내 정보
+            </h2>
             <EditInfo token={token} />
           </div>
           <div className="grid grid-cols-[auto_1fr] gap-y-main gap-x-main-2">

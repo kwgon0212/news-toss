@@ -139,7 +139,7 @@ const Chatbot = ({
             className="object-cover rounded-main"
           />
         </div>
-        <h2 className="font-semibold text-lg bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+        <h2 className="font-semibold text-lg-custom bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
           NewsToss 챗봇
         </h2>
       </div>
@@ -158,12 +158,12 @@ const Chatbot = ({
             />
           </div>
 
-          <p className="text-main-dark-gray text-lg text-center mb-main">
+          <p className="text-main-dark-gray text-lg-custom text-center mb-main">
             미래 공시 일정을 확인하고
             <br />
             과거 유사사건 뉴스를 검색해보세요!
           </p>
-          <p className="text-main-dark-gray/80 text-sm text-center break-keep">
+          <p className="text-main-dark-gray/80 text-sm-custom text-center break-keep">
             ex) 25년 8월에 SK플라즈마가 IPO주관사 선정 작업을 한다는데 과거
             유사사건을 알려줘!
           </p>

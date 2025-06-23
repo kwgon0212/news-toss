@@ -8,7 +8,7 @@ const ProfitLossCalendar = () => {
 
   return (
     <div className="size-full flex flex-col gap-main">
-      <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+      <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
         날짜별 손익
       </h2>
       <Calendar

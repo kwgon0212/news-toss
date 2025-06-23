@@ -14,9 +14,11 @@ const ScrapNews = ({ token }: { token: JwtToken | null }) => {
   return (
     <div className="flex flex-col gap-main">
       <div>
-        <h2 className="text-xl font-bold text-main-dark-gray">스크랩한 뉴스</h2>
+        <h2 className="text-xl-custom font-bold text-main-dark-gray">
+          스크랩한 뉴스
+        </h2>
         {token && scraps.length > 0 && (
-          <span className="text-sm text-main-blue">
+          <span className="text-sm-custom text-main-blue">
             총 {scraps.length}개의 뉴스
           </span>
         )}
@@ -49,10 +51,10 @@ const ScrapNews = ({ token }: { token: JwtToken | null }) => {
                   className="object-cover rounded-main group-hover:scale-102 transition-all duration-200 ease-in-out"
                 />
                 <div className="group-hover:scale-102 transition-all duration-200 ease-in-out absolute bottom-0 left-0 size-full p-main bg-gradient-to-t group-hover:from-black/72 from-black/70 to-transparent rounded-main flex flex-col justify-end items-start gap-1">
-                  <h2 className="text-sm text-start font-bold text-white line-clamp-2">
+                  <h2 className="text-sm-custom text-start font-bold text-white line-clamp-2">
                     {scrap.title}
                   </h2>
-                  <p className="text-sm text-main-light-gray flex items-center gap-1">
+                  <p className="text-sm-custom text-main-light-gray flex items-center gap-1">
                     <Clock size={12} />
 
                     <span>
