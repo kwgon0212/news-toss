@@ -273,7 +273,10 @@ const MainNews = ({
             newsId={selectedNews?.newsId || null}
             newsSummary={selectedNews?.image || null}
             isOpen={isOpenNewsModal}
-            onClose={() => setIsOpenNewsModal(false)}
+            onClose={() => {
+              setIsOpenNewsModal(false);
+              setSelectedNews(null);
+            }}
           />
         </div>
       </div>
