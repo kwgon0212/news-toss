@@ -9,20 +9,14 @@ const HomePage = async () => {
   const token = await getJwtToken();
 
   const highlightRes = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/highlight/redis`,
-    {
-      next: { revalidate: 60 }, // ISR 적용
-    }
+    `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/highlight/redis`
   );
   const highlightJson = await highlightRes.json();
   const highlightNews: HighlightNews[] = highlightJson.data;
   const highlightNewsError = highlightRes.ok ? false : true;
 
   const allNewsRes = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/all?skip=0&limit=30`,
-    {
-      next: { revalidate: 60 }, // ISR 적용
-    }
+    `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/all?skip=0&limit=30`
   );
   const allInitialNewsJson = await allNewsRes.json();
   const allInitialNews: News[] = allInitialNewsJson.data;

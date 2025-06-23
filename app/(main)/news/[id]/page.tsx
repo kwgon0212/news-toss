@@ -125,14 +125,6 @@ const NewsDetailPage = async ({
           stockChartList={stockChartList}
           relatedNews={relatedNewsJson.data}
         />
-        {/* <MetaDataNews
-          // metaData={metaDataJson.data}
-          stockList={stockList}
-          mainStockList={mainStockList}
-          mainStockChartList={stockChartList}
-          relatedNews={relatedNewsJson.data}
-        /> */}
-        {/* <RelatedNews relatedNews={relatedNewsJson.data} /> */}
       </div>
     </div>
   );
