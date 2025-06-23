@@ -139,19 +139,6 @@ const MainNews = ({
 
   return (
     <div className="grid grid-cols-7 gap-main-2 w-full relative">
-      {/* <div className="col-span-7 flex items-center gap-main">
-        <div className="text-3xl font-bold">
-          <span>오늘의 </span>
-          <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
-            주요뉴스
-          </span>
-          <span> 및 </span>
-          <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
-            과거 유사뉴스
-          </span>
-        </div>
-      </div> */}
-
       <div className="col-span-4 flex flex-col gap-main">
         <div className="text-2xl flex items-center gap-main font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent px-main w-fit">
           <span>주요뉴스</span>
@@ -189,36 +176,24 @@ const MainNews = ({
                 <div className="absolute w-full h-full bottom-0 left-0 bg-gradient-to-t from-black/70 to-transparent hover:to-black/70 pointer-events-none flex items-end transition-all duration-300 ease-in-out">
                   <div
                     className={clsx(
-                      "relative flex flex-col justify-around gap-main-2 px-main-2 py-main-2 z-10",
+                      "relative flex flex-col justify-around gap-1 px-main-2 py-main-2 z-10",
                       invertedStyle["inverted-radius"]
                     )}
                   >
-                    <div className="group relative transition-all duration-300 max-h-main-2 group-hover:max-h-[400px]">
-                      <div className="flex flex-col gap-1 transition-transform duration-300 group-hover:-translate-y-2">
-                        {/* <p className="bg-main-blue/50 w-fit rounded-full text-white text-sm font-semibold px-main py-0.5">
-                            🚀 뉴스 중요도:{" "}
-                            {Number(mainNews.impact_score * 100).toFixed(2)}%
-                          </p> */}
-                        <p className="text-2xl font-bold line-clamp-1 text-white drop-shadow w-full group-hover:w-full transition-all duration-300">
-                          {mainNews.title}
-                        </p>
-                        <p className="text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          {mainNews.summary}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-1 text-xs text-gray-200">
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3 w-3 mr-1" />
-                        <span>
-                          {mainNews.wdate && formatDate(mainNews.wdate)} ·{" "}
-                          {mainNews.press}
-                        </span>
-                      </div>
-                      <p className="bg-main-blue/90 w-fit rounded-full text-white text-sm font-semibold px-main py-0.5">
-                        🚀 뉴스 중요도:{" "}
-                        {Number(mainNews.impact_score * 100).toFixed(2)}%
-                      </p>
+                    <p className="text-2xl font-bold line-clamp-1 text-white drop-shadow w-full">
+                      {mainNews.title}
+                    </p>
+
+                    <p className="bg-main-blue/90 w-fit rounded-full text-white text-sm font-semibold px-main py-0.5">
+                      🚀 뉴스 중요도:{" "}
+                      {Number(mainNews.impact_score * 100).toFixed(2)}%
+                    </p>
+                    <div className="flex items-center gap-1 text-white text-xs">
+                      <Clock className="h-3 w-3 mr-1" />
+                      <span>
+                        {mainNews.wdate && formatDate(mainNews.wdate)} ·{" "}
+                        {mainNews.press}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -281,7 +256,7 @@ const MainNews = ({
                   <span className="font-semibold text-sm text-main-blue bg-main-blue/10 rounded-main px-main py-0.5 w-fit">
                     유사도: {Number(item.similarity * 100).toFixed(2)}%
                   </span>
-                  <p className="line-clamp-2 font-semibold text-lg">
+                  <p className="line-clamp-2 font-semibold text-lg text-left">
                     {item.title}
                   </p>
                 </div>
