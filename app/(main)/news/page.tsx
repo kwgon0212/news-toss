@@ -23,7 +23,7 @@ const HomePage = async () => {
   const allInitialNewsError = allNewsRes.ok ? false : true;
 
   return (
-    <div className="grid gap-main max-w-[1000px] mx-auto">
+    <div className="grid gap-main-4 max-w-[1000px] mx-auto">
       <div className="p-main">
         <RealTime initialNews={allInitialNews.slice(0, 4)} />
       </div>
@@ -32,9 +32,11 @@ const HomePage = async () => {
         <MainNews news={highlightNews} error={highlightNewsError} />
       </div>
 
-      <div className="p-main">
-        <CustomNews token={token} />
-      </div>
+      {token && (
+        <div className="p-main">
+          <CustomNews token={token} />
+        </div>
+      )}
 
       <div className="p-main">
         <AllNews initialNews={allInitialNews} error={allInitialNewsError} />

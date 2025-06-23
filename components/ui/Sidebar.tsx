@@ -39,6 +39,7 @@ const Sidebar = ({ token }: { token: JwtToken | null }) => {
             title: item.title,
             newsId: item.newsId,
             wdate: item.wdate || new Date().toISOString(),
+            image: item.image,
           }))
         );
       };

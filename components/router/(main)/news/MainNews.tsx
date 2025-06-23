@@ -138,7 +138,7 @@ const MainNews = ({
   return (
     <div className="grid grid-cols-7 gap-main-2 w-full relative">
       <div className="col-span-4 flex flex-col gap-main">
-        <div className="text-2xl flex items-center gap-main font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent px-main w-fit">
+        <div className="text-3xl flex items-center gap-main font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent px-main w-fit">
           <span>주요뉴스</span>
           <Tooltip
             position="right"
@@ -215,7 +215,7 @@ const MainNews = ({
       </div>
 
       <div className="col-span-3 flex flex-col gap-1">
-        <h2 className="font-bold text-2xl bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent px-main w-fit">
+        <h2 className="font-bold text-3xl bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent px-main w-fit">
           과거 유사뉴스
         </h2>
         {gridNews.length === 0 && (
@@ -227,7 +227,7 @@ const MainNews = ({
         )}
         <div
           className={clsx(
-            "grid grid-rows-3 transition-opacity duration-200 ease-in-out flex-1"
+            "grid grid-rows-3 transition-opacity duration-200 ease-in-out flex-1 bg-main-light-gray/30 rounded-main"
           )}
         >
           {gridNews.slice(0, 3).map((item, idx) => (

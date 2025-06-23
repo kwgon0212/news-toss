@@ -42,6 +42,8 @@ const NewsDetail = ({
   const { scraps, setScraps } = useScrapStore();
   const newsDetailRef = useRef<HTMLDivElement>(null);
 
+  console.log(token?.memberId, "token memberId");
+
   useEffect(() => {
     const fetchNews = async () => {
       const newsRes = await fetch(`/proxy/news/v2/detail?newsId=${newsId}`, {
@@ -105,7 +107,12 @@ const NewsDetail = ({
     if (createScrapRes.ok) {
       setScraps([
         ...scraps,
-        { title: news.title, newsId: newsId, wdate: news.wdate },
+        {
+          title: news.title,
+          newsId: newsId,
+          wdate: news.wdate,
+          image: news.image,
+        },
       ]);
       toast.success("스크랩 되었습니다");
       setIsScrap(true);

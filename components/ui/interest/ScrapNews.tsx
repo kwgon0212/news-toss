@@ -2,6 +2,8 @@
 
 import { useScrapStore } from "@/store/useScrapStore";
 import { JwtToken } from "@/type/jwt";
+import { Clock } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -11,8 +13,14 @@ const ScrapNews = ({ token }: { token: JwtToken | null }) => {
 
   return (
     <div className="flex flex-col gap-main">
-      <h2 className="text-xl font-bold text-main-dark-gray">스크랩한 뉴스</h2>
-
+      <div>
+        <h2 className="text-xl font-bold text-main-dark-gray">스크랩한 뉴스</h2>
+        {token && scraps.length > 0 && (
+          <span className="text-sm text-main-blue">
+            총 {scraps.length}개의 뉴스
+          </span>
+        )}
+      </div>
       {!token && (
         <div className="w-full h-[120px] flex items-center justify-center text-main-dark-gray">
           로그인 후 이용해주세요
@@ -26,23 +34,37 @@ const ScrapNews = ({ token }: { token: JwtToken | null }) => {
       )}
 
       {token && scraps.length > 0 && (
-        <div className="grid">
+        <div className="grid px-main gap-main overflow-y-scroll">
           {scraps.map((scrap) => (
             <button
               key={`scrap-${scrap.newsId}`}
-              className="flex flex-col items-start gap-[5px] hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out p-main"
+              className="flex flex-col items-start gap-[5px] group"
               onClick={() => router.push(`/news/${scrap.newsId}`)}
             >
-              <h2 className="text-sm text-start font-bold text-main-dark-gray line-clamp-2">
-                {scrap.title}
-              </h2>
-              <p className="text-sm text-main-dark-gray">
-                {new Date(scrap.wdate || "").toLocaleDateString("ko-KR", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </p>
+              <div className="w-full aspect-video relative">
+                <Image
+                  src={scrap.image || ""}
+                  alt={scrap.title}
+                  fill
+                  className="object-cover rounded-main group-hover:scale-102 transition-all duration-200 ease-in-out"
+                />
+                <div className="group-hover:scale-102 transition-all duration-200 ease-in-out absolute bottom-0 left-0 size-full p-main bg-gradient-to-t group-hover:from-black/72 from-black/70 to-transparent rounded-main flex flex-col justify-end items-start gap-1">
+                  <h2 className="text-sm text-start font-bold text-white line-clamp-2">
+                    {scrap.title}
+                  </h2>
+                  <p className="text-sm text-main-light-gray flex items-center gap-1">
+                    <Clock size={12} />
+
+                    <span>
+                      {new Date(scrap.wdate || "").toLocaleDateString("ko-KR", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </span>
+                  </p>
+                </div>
+              </div>
             </button>
           ))}
         </div>

@@ -5,6 +5,7 @@ interface Scrap {
   title: News["title"];
   newsId: News["newsId"];
   wdate: News["wdate"];
+  image: News["image"];
 }
 
 interface ScrapStore {
