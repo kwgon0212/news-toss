@@ -21,38 +21,27 @@ interface IRData {
 const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [irDataList, setIrDataList] = useState<IRData[]>([]);
-  const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
-  const [showAllCompanies, setShowAllCompanies] = useState(false);
+  const [selectedMarket, setSelectedMarket] = useState<string>("전체");
 
   const year = selectedDate.getFullYear();
   const month = selectedDate.getMonth() + 1;
   const day = selectedDate.getDate();
 
-  const companyNames = Array.from(
-    new Set(
-      irDataList
-        .filter((data) => {
-          const dataDate = new Date(data.date);
-          return (
-            dataDate.getFullYear() === selectedDate.getFullYear() &&
-            dataDate.getMonth() === selectedDate.getMonth() &&
-            dataDate.getDate() === selectedDate.getDate()
-          );
-        })
-        .map((data) => data.companyName)
-    )
-  );
-
-  const companyNamesWithAll = ["전체", ...companyNames];
+  const marketOptions = ["전체", "KOSPI", "KOSDAQ"];
 
   const filteredIrDataList = irDataList.filter((data) => {
     const dataDate = new Date(data.date);
-    return (
-      (!selectedCompany || data.companyName === selectedCompany) &&
+    const matchesDate =
       dataDate.getFullYear() === selectedDate.getFullYear() &&
       dataDate.getMonth() === selectedDate.getMonth() &&
-      dataDate.getDate() === selectedDate.getDate()
-    );
+      dataDate.getDate() === selectedDate.getDate();
+
+    const matchesMarket =
+      selectedMarket === "전체" ||
+      (selectedMarket === "KOSPI" && data.market === "코스피") ||
+      (selectedMarket === "KOSDAQ" && data.market === "코스닥");
+
+    return matchesDate && matchesMarket;
   });
 
   const datesWithIrData = new Set(irDataList.map((data) => data.date));
@@ -72,7 +61,7 @@ const CalendarPage = () => {
   }, [month, year]);
 
   useEffect(() => {
-    setSelectedCompany(null);
+    setSelectedMarket("전체");
   }, [day]);
 
   return (
@@ -85,22 +74,16 @@ const CalendarPage = () => {
               총 {filteredIrDataList.length}건의 일정
             </p>
           </div>
-          {companyNames.length > 0 && (
-            <Dropdown
-              groups={companyNamesWithAll}
-              selected={selectedCompany || "전체"}
-              onSelect={(company) => {
-                if (company === "전체") {
-                  setSelectedCompany(null);
-                } else {
-                  setSelectedCompany(company);
-                }
-              }}
-              className="shadow-color py-1"
-              textColor="text-main-blue font-semibold"
-              maxHeight={300}
-            />
-          )}
+          <Dropdown
+            groups={marketOptions}
+            selected={selectedMarket}
+            onSelect={(market) => {
+              setSelectedMarket(market);
+            }}
+            className="shadow-color py-1"
+            textColor="text-main-blue font-semibold"
+            maxHeight={300}
+          />
         </div>
 
         <div className="flex justify-center px-main">
