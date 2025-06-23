@@ -42,7 +42,7 @@ const MainNews = ({
               icon={<CircleHelp size={16} />}
             />
           </div>
-          <p className="text-red-500">
+          <p className="text-main-red">
             주요뉴스 데이터를 불러오는데 실패했습니다.
           </p>
         </div>
@@ -67,7 +67,7 @@ const MainNews = ({
               icon={<CircleHelp size={16} />}
             />
           </div>
-          <p className="col-span-3 text-red-500 flex items-center justify-center">
+          <p className="col-span-3 text-main-red flex items-center justify-center">
             주요뉴스가 없습니다.
           </p>
         </div>
@@ -138,8 +138,8 @@ const MainNews = ({
   return (
     <div className="grid grid-cols-7 gap-main-2 w-full relative">
       <div className="col-span-4 flex flex-col gap-main">
-        <div className="text-3xl flex items-center gap-main font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent px-main w-fit">
-          <span>주요뉴스</span>
+        <div className="text-3xl flex items-center gap-main bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+          <span className="font-bold">주요뉴스</span>
           <Tooltip
             position="right"
             message="AI 모델을 통해 예측된 주요 뉴스기사와 과거 유사뉴스입니다."
@@ -215,7 +215,7 @@ const MainNews = ({
       </div>
 
       <div className="col-span-3 flex flex-col gap-1">
-        <h2 className="font-bold text-3xl bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent px-main w-fit">
+        <h2 className="font-bold text-3xl bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
           과거 유사뉴스
         </h2>
         {gridNews.length === 0 && (
