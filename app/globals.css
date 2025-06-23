@@ -150,6 +150,7 @@
   --container-main-min: 940px;
   --spacing-main: 10px;
   --radius-main: 10px;
+  --font-pretendard: "Pretendard Variable", sans-serif;
 }
 
 /* @theme inline {
@@ -178,7 +179,8 @@ body {
 
   overscroll-behavior: none;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* font-family: Arial, Helvetica, sans-serif; */
+  font-family: var(--font-pretendard);
   font-size: var(--font-size-base-custom);
 }
 
