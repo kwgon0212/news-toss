@@ -9,6 +9,7 @@ import { HighlightNews, News } from "@/type/news";
 import Link from "next/link";
 import { formatDate } from "@/utils/formatDate";
 import Tooltip from "@/components/ui/Tooltip";
+import NewsModal from "./NewsModal";
 
 const MainNews = ({
   news,
@@ -20,6 +21,10 @@ const MainNews = ({
   const [currentPage, setCurrentPage] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const mainNewsCardRef = useRef<HTMLDivElement | null>(null);
+
+  const [selectedNews, setSelectedNews] = useState<News | null>(null);
+
+  console.log(selectedNews, "selectedNews");
 
   if (error) {
     return (
@@ -252,8 +257,8 @@ const MainNews = ({
           )}
         >
           {gridNews.slice(0, 3).map((item, idx) => (
-            <Link
-              href={`/news/${item.newsId}`}
+            <button
+              onClick={() => setSelectedNews(item as News)}
               className="flex items-center gap-main hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group"
               key={`main-news-${item.newsId}`}
             >
@@ -285,8 +290,14 @@ const MainNews = ({
                   </span>
                 </div>
               </div>
-            </Link>
+            </button>
           ))}
+          <NewsModal
+            newsId={selectedNews?.newsId || null}
+            newsSummary={selectedNews?.image || null}
+            isOpen={!!selectedNews}
+            onClose={() => setSelectedNews(null)}
+          />
         </div>
       </div>
     </div>
