@@ -98,7 +98,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
               <div className="p-2">
                 <Link
                   href={item.url}
-                  className="underline hover:text-main-blue transition-colors"
+                  className="hover:text-main-blue transition-colors duration-300"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
