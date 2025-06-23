@@ -13,19 +13,6 @@ import { toast } from "react-toastify";
 const RealTime = ({ initialNews }: { initialNews: News[] }) => {
   const [news, setNews] = useState<News[]>(initialNews);
 
-  // sse 데이터형식
-  // const realtime = {
-  //   wdate: string,
-  //   title: string,
-  //   article: string | null,
-  //   url: string,
-  //   press: string,
-  //   image:
-  //     "https://imgnews.pstatic.net/image/018/2024/08/13/0005810751_001_20240813185912614.jpg?type=w800",
-  //   impact_score: 0.0,
-  //   news_id: "1111-2222",
-  // };
-
   useEffect(() => {
     const sse = new EventSource("https://news-toss.click/api/sse/realtime");
 
@@ -38,7 +25,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
         const data = JSON.parse(event.data);
         setNews((prev) => [data, ...prev]);
         toast.success("실시간 뉴스가 추가되었어요!", {
-          position: "top-right",
+          position: "top-left",
           autoClose: 500,
           hideProgressBar: false,
           closeOnClick: true,
@@ -119,8 +106,11 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
                 </Link>
               </div>
 
-              <div className="text-center font-semibold text-main-blue p-2">
-                임시{item.impact_score && (item.impact_score * 100).toFixed(2)}%
+              <div className="text-center text-main-blue p-2">
+                {item.impact_score
+                  ? Number(item.impact_score * 100).toFixed(2)
+                  : "--.--"}{" "}
+                %
               </div>
 
               <div className="flex items-center gap-1 text-sm">

@@ -25,8 +25,6 @@ const MainNews = ({
   const [selectedNews, setSelectedNews] = useState<News | null>(null);
   const [isOpenNewsModal, setIsOpenNewsModal] = useState(false);
 
-  console.log(selectedNews, "selectedNews");
-
   if (error) {
     return (
       <div className="grid grid-cols-3 w-full gap-main-2">
