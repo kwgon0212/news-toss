@@ -77,18 +77,32 @@ const NewsDetailPage = async ({
     stockCode: string;
     data: StockData[];
   }[] = [];
+
+  const cutoffDate = new Date("2024-01-01");
+
   for (const stock of mainStockList) {
     const stockListRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/${stock.stockCode}?period=Y`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/${stock.stockCode}?period=M`,
       {
         next: { revalidate: 60 * 60 * 24 * 2 },
       }
     );
     const stockListJson: { data: StockData[] } = await stockListRes.json();
+
+    const filteredData = stockListJson.data.filter((item) => {
+      const dateStr = item.stck_bsop_date; // ex) '20230428'
+      const year = parseInt(dateStr.slice(0, 4));
+      const month = parseInt(dateStr.slice(4, 6)) - 1;
+      const day = parseInt(dateStr.slice(6, 8));
+      const itemDate = new Date(year, month, day);
+
+      return itemDate >= cutoffDate;
+    });
+
     stockChartList.push({
       stockName: stock.stockName,
       stockCode: stock.stockCode,
-      data: stockListJson.data,
+      data: filteredData,
     });
   }
 

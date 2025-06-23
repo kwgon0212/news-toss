@@ -5,24 +5,43 @@ import React, { useRef, useEffect } from "react";
 import {
   createChart,
   ColorType,
-  CandlestickData,
+  LineData,
   Time,
-  CandlestickSeries,
+  LineSeries,
+  createSeriesMarkers,
 } from "lightweight-charts";
+import { News } from "@/type/news";
 
-const Chart = ({ chartData }: { chartData: StockData[] }) => {
+const Chart = ({
+  chartData,
+  relatedNews,
+}: {
+  chartData: StockData[];
+  relatedNews: News[];
+}) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
+
+  const convertToTime = (isoDate: string): Time => {
+    const date = new Date(isoDate);
+    return Math.floor(date.getTime() / 1000) as Time;
+  };
 
   useEffect(() => {
     if (!chartContainerRef.current || !chartData?.length) return;
-
-    console.log("차트 데이터:", chartData);
 
     // 차트 생성
     const chart = createChart(chartContainerRef.current, {
       layout: {
         background: { type: ColorType.Solid, color: "white" },
         textColor: "#333",
+      },
+      crosshair: {
+        vertLine: {
+          visible: false, // 세로선 숨기기
+        },
+        horzLine: {
+          visible: false, // 가로선 숨기기
+        },
       },
       width: 600,
       height: 320,
@@ -53,17 +72,17 @@ const Chart = ({ chartData }: { chartData: StockData[] }) => {
       handleScale: false,
     });
 
-    // 캔들스틱 시리즈 추가 (타입 어서션 사용)
-    const candlestickSeries = chart.addSeries(CandlestickSeries, {
-      upColor: "rgb(240, 66, 81)",
-      downColor: "rgb(52, 133, 250)",
-      borderDownColor: "rgb(52, 133, 250)",
-      borderUpColor: "rgb(240, 66, 81)",
-      wickDownColor: "rgb(52, 133, 250)",
-      wickUpColor: "rgb(240, 66, 81)",
+    // 라인 시리즈 추가
+    const lineSeries = chart.addSeries(LineSeries, {
+      color: "rgb(240, 66, 81)",
+      lineWidth: 2,
+      crosshairMarkerVisible: false,
+      crosshairMarkerRadius: 4,
+      crosshairMarkerBorderColor: "rgb(240, 66, 81)",
+      crosshairMarkerBackgroundColor: "white",
     });
 
-    // 데이터 변환 및 설정
+    // 데이터 변환 및 설정 (종가만 사용)
     const formattedData = chartData
       .map((item) => {
         // 날짜 변환 (YYYYMMDD -> timestamp)
@@ -77,17 +96,32 @@ const Chart = ({ chartData }: { chartData: StockData[] }) => {
 
         return {
           time: timestamp,
-          open: parseFloat(item.stck_oprc),
-          high: parseFloat(item.stck_hgpr),
-          low: parseFloat(item.stck_lwpr),
-          close: parseFloat(item.stck_clpr),
+          value: parseFloat(item.stck_clpr), // 종가만 사용
         };
       })
       .sort((a, b) => (a.time as number) - (b.time as number)); // 타임스탬프순 정렬
 
-    console.log("변환된 차트 데이터:", formattedData);
+    console.log("변환된 라인 차트 데이터:", formattedData);
 
-    candlestickSeries.setData(formattedData);
+    lineSeries.setData(formattedData);
+
+    createSeriesMarkers(
+      lineSeries,
+      relatedNews
+        .map((news) => news.wdate)
+        .sort()
+        .map((date, index) => ({
+          time: convertToTime(date!),
+          position: index % 2 === 0 ? "aboveBar" : "belowBar",
+          color: "rgb(240, 66, 81)",
+          shape: index % 2 === 0 ? "arrowDown" : "arrowUp",
+          text:
+            // relatedNews
+            //   .find((news) => news.wdate === date)!
+            //   .title.slice(0, 10) + "...",
+            new Date(date!).toLocaleDateString(),
+        }))
+    );
 
     // 차트를 데이터에 맞게 자동 조정
     chart.timeScale().fitContent();
@@ -108,7 +142,7 @@ const Chart = ({ chartData }: { chartData: StockData[] }) => {
       window.removeEventListener("resize", handleResize);
       chart.remove();
     };
-  }, [chartData]);
+  }, [chartData, relatedNews]);
 
   return (
     <div

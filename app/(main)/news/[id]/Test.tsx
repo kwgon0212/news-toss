@@ -6,7 +6,7 @@ import { News } from "@/type/news";
 import { StockData } from "@/type/stocks/stockData";
 import { StockSearchResult } from "@/type/stocks/StockSearchResult";
 import clsx from "clsx";
-import { Clock, InfoIcon } from "lucide-react";
+import { Clock, HelpCircle, Info } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -35,6 +35,8 @@ const Test = ({
     setSelectedNews(news);
   };
 
+  console.log(relatedNews, "relatedNews");
+
   return (
     <div className="size-full flex flex-col gap-main-2">
       <h2 className="text-2xl font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
@@ -55,7 +57,7 @@ const Test = ({
         </span>
         <Tooltip
           message="과거 유사 사건 뉴스 시점의 주가 경향성을 제공해드렸어요."
-          icon={<InfoIcon size={16} />}
+          icon={<HelpCircle size={16} />}
           position="top"
         />
       </div>
@@ -67,6 +69,7 @@ const Test = ({
               (stock) => stock.stockName === selectedStockName
             )!.data
           }
+          relatedNews={relatedNews}
         />
       </div>
 
@@ -77,26 +80,32 @@ const Test = ({
           </h2>
           <Tooltip
             message="시장 상황을 반영하여 가장 유사한 과거 뉴스를 예측했어요."
-            icon={<InfoIcon size={16} />}
+            icon={<HelpCircle size={16} />}
             position="right"
           />
         </div>
 
-        <div className="flex flex-wrap gap-main">
-          {relatedNews.map((news) => (
-            <button
-              key={`related-news-${news.newsId}`}
-              onClick={() => handleNewsChange(news)}
-              className={clsx(
-                "w-fit rounded-main py-main pl-5 pr-4 flex items-center justify-center gap-2",
-                selectedNews.newsId === news.newsId
-                  ? "bg-main-blue/20 text-main-blue"
-                  : "bg-main-gray/20 text-main-gray"
-              )}
-            >
-              {news.wdate && formatDate(news.wdate)}
-            </button>
-          ))}
+        <div className="flex flex-col gap-main">
+          <div className="flex flex-wrap gap-main">
+            {relatedNews.map((news) => (
+              <button
+                key={`related-news-${news.newsId}`}
+                onClick={() => handleNewsChange(news)}
+                className={clsx(
+                  "w-fit rounded-main py-main pl-5 pr-4 flex items-center justify-center gap-2",
+                  selectedNews.newsId === news.newsId
+                    ? "bg-main-blue/20 text-main-blue"
+                    : "bg-main-gray/20 text-main-gray"
+                )}
+              >
+                {news.wdate && formatDate(news.wdate)}
+              </button>
+            ))}
+          </div>
+          <p className="text-main-dark-gray text-xs flex items-center gap-1">
+            <Info size={14} />
+            뉴스는 유사도 순으로 정렬되어 있어요.
+          </p>
         </div>
 
         <Link
@@ -145,7 +154,7 @@ const Test = ({
           </h2>
           <Tooltip
             message="현재 뉴스와 관련된 종목 리스트에요."
-            icon={<InfoIcon size={16} />}
+            icon={<HelpCircle size={16} />}
             position="right"
           />
         </div>
