@@ -12,6 +12,8 @@ interface DropdownProps {
   className?: string;
   textColor?: string;
   maxHeight?: number;
+  outerTextSize?: number;
+  innerTextSize?: number;
 }
 
 const Dropdown = ({
@@ -19,6 +21,8 @@ const Dropdown = ({
   selected,
   onSelect,
   className,
+  outerTextSize = 16,
+  innerTextSize = 16,
   textColor = "text-main-dark-gray",
   maxHeight = 200,
 }: DropdownProps) => {
@@ -44,7 +48,9 @@ const Dropdown = ({
         onClick={() => setIsOpen((prev) => !prev)}
         type="button"
       >
-        <span className={textColor}>{selected}</span>
+        <span className={textColor} style={{ fontSize: `${outerTextSize}px` }}>
+          {selected}
+        </span>
         <ChevronDown
           size={20}
           className={clsx(
@@ -83,6 +89,7 @@ const Dropdown = ({
                 "w-full hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out px-main py-1 text-start whitespace-nowrap",
                 selected === group ? "font-bold text-main-blue" : ""
               )}
+              style={{ fontSize: `${innerTextSize}px` }}
             >
               {group}
             </button>

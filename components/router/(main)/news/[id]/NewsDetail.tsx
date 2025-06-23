@@ -136,9 +136,26 @@ const NewsDetail = ({
             )}
           </button>
         </div>
-        <p className="text-sm text-main-dark-gray">
-          {news.wdate && formatDate(news.wdate)} · {news.press}
-        </p>
+        <div className="text-sm text-main-dark-gray flex items-center gap-main">
+          <span>
+            {news.wdate && formatDate(news.wdate)} · {news.press}
+          </span>
+          <Link
+            href={news.url}
+            target="_blank"
+            className="flex items-center gap-main hover:bg-main-blue/10 rounded-main px-2 py-1 transition-all duration-200 ease-in-out"
+          >
+            {/* <LinkIcon size={16} /> */}
+            <Image
+              src="/link.png"
+              alt="link"
+              width={16}
+              height={16}
+              className="size-[16px]"
+            />
+            <span className="text-main-dark-gray">뉴스링크</span>
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-[1fr_auto] gap-main">
@@ -147,7 +164,7 @@ const NewsDetail = ({
             {mainStockList.map((stock) => (
               <Link
                 href={`/stocks/${stock.stockCode}`}
-                key={stock.stockCode}
+                key={`main-stock-${stock.stockCode}`}
                 className="text-main-blue px-2 py-1 text-xs font-semibold rounded-main flex items-center gap-2 hover:bg-main-blue/10 transition-all duration-200 ease-in-out"
               >
                 <div className="relative flex items-center justify-center size-[30px] shrink-0">
@@ -194,15 +211,6 @@ const NewsDetail = ({
         </div>
       </div>
 
-      <div className="w-full h-[300px] relative">
-        <Image
-          src={news.image || "https://placehold.co/600x400"}
-          alt={`${news.title}-image`}
-          className="object-contain"
-          fill
-        />
-      </div>
-
       <div className="p-main">
         <div className="flex flex-col gap-main shadow-color p-main rounded-main">
           <span className="text-lg font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
@@ -212,14 +220,14 @@ const NewsDetail = ({
         </div>
       </div>
 
-      <Link
-        href={news.url}
-        target="_blank"
-        className="flex items-center gap-main"
-      >
-        <LinkIcon size={16} />
-        <span className="text-main-dark-gray underline">{news.url}</span>
-      </Link>
+      <div className="w-full h-[300px] relative">
+        <Image
+          src={news.image || "https://placehold.co/600x400"}
+          alt={`${news.title}-image`}
+          className="object-contain"
+          fill
+        />
+      </div>
 
       <div
         className={clsx(
@@ -234,19 +242,19 @@ const NewsDetail = ({
 
         <div
           className={clsx(
-            "absolute -bottom-[10px] left-0 w-full flex justify-center z-10 py-main",
-            isOpenNewsDetail ? "" : "backdrop-blur-sm"
+            "absolute -bottom-[10px] left-0 w-full flex justify-center z-10 py-main-2",
+            isOpenNewsDetail ? "" : "bg-gradient-to-t from-white to-transparent"
           )}
         >
           <button
             className="w-fit bg-main-blue text-white rounded-main py-main pl-5 pr-4 flex items-center justify-center gap-2"
             onClick={() => {
               setIsOpenNewsDetail(!isOpenNewsDetail);
-              // !isOpenNewsDetail &&
-              //   newsDetailRef.current?.scrollIntoView({
-              //     behavior: "smooth",
-              //     block: "start",
-              //   });
+              !isOpenNewsDetail &&
+                newsDetailRef.current?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
             }}
           >
             <span className="font-semibold">

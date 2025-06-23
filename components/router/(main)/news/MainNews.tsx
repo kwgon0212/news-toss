@@ -49,8 +49,8 @@ const MainNews = ({
   if (news.length === 0) {
     return (
       <div className="grid grid-cols-3 w-full gap-main-2">
-        <div className="col-span-3 grid grid-cols-3 gap-main w-full relative">
-          <div className="col-span-3 flex items-center gap-main">
+        <div className="col-span-3 grid grid-cols-7 gap-main w-full relative">
+          <div className="col-span-4 flex items-center gap-main">
             <div className="text-3xl font-bold">
               <span>오늘의 </span>
               <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
@@ -63,7 +63,9 @@ const MainNews = ({
               icon={<CircleHelp size={16} />}
             />
           </div>
-          <p className="text-red-500">주요뉴스가 없습니다.</p>
+          <p className="col-span-3 text-red-500 flex items-center justify-center">
+            주요뉴스가 없습니다.
+          </p>
         </div>
       </div>
     );
@@ -239,8 +241,10 @@ const MainNews = ({
           과거 유사뉴스
         </h2>
         {gridNews.length === 0 && (
-          <div className="w-full h-full flex items-center justify-center">
-            <p className="text-main-dark-gray">과거 유사뉴스가 없습니다.</p>
+          <div className="grid grid-rows-3 w-full h-[390px] items-center justify-center">
+            <p className="text-main-dark-gray row-span-3">
+              과거 유사뉴스가 없습니다.
+            </p>
           </div>
         )}
         <div
@@ -254,7 +258,7 @@ const MainNews = ({
               className="flex items-center gap-main hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group"
               key={`main-news-${item.newsId}`}
             >
-              <div className="size-full max-w-[180px] rounded-main shrink-0 relative">
+              <div className="h-full w-full max-w-[180px] rounded-main shrink-0 relative">
                 <Image
                   src={item.press || "https://placehold.co/200x150"}
                   alt={`${item.title}-image`}

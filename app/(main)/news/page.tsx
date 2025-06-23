@@ -16,7 +16,6 @@ const HomePage = async () => {
   );
   const highlightJson = await highlightRes.json();
   const highlightNews: HighlightNews[] = highlightJson.data;
-  console.log("highlightNews", highlightNews);
   const highlightNewsError = highlightRes.ok ? false : true;
 
   const allNewsRes = await fetch(
