@@ -35,13 +35,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
     sse.addEventListener("news", (event) => {
       try {
         const data = JSON.parse(event.data);
-
-        setNews((prev) => {
-          const newQueue = [...prev, data];
-          if (newQueue.length > 3) newQueue.shift();
-          // setNewNewsId(data.news_id);
-          return newQueue;
-        });
+        setNews((prev) => [data, ...prev]);
       } catch (err) {
         console.error("❌ JSON 파싱 에러:", err);
       }
