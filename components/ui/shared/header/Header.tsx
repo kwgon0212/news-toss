@@ -22,7 +22,7 @@ const Header = async () => {
   };
 
   return (
-    <header className="absolute w-full py-main px-main-2 z-50 backdrop-blur-sm min-w-[800px]">
+    <header className="absolute w-full py-main px-main-2 z-50 backdrop-blur-sm min-w-[1200px]">
       <div className="w-full flex relative gap-5 justify-between items-center">
         <div className="font-bold text-lg flex items-center gap-2">
           <Link href="/news" className="size-[40px] relative">

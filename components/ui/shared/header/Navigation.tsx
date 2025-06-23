@@ -156,7 +156,7 @@ const Navigation = () => {
 
   return (
     <>
-      <nav className="flex items-center gap-5 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
+      <nav className="flex items-center gap-5 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 min-w-[550px]">
         <Link
           href="/news"
           className={clsx(
