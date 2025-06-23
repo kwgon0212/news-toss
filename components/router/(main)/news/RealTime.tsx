@@ -8,6 +8,7 @@ import { CircleHelp, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const RealTime = ({ initialNews }: { initialNews: News[] }) => {
   const [news, setNews] = useState<News[]>(initialNews);
@@ -36,6 +37,15 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
       try {
         const data = JSON.parse(event.data);
         setNews((prev) => [data, ...prev]);
+        toast.success("실시간 뉴스가 추가되었어요!", {
+          position: "top-right",
+          autoClose: 500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+        });
       } catch (err) {
         console.error("❌ JSON 파싱 에러:", err);
       }
