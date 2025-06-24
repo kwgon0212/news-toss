@@ -15,9 +15,11 @@ import { News } from "@/type/news";
 const Chart = ({
   chartData,
   relatedNews,
+  selectedNews,
 }: {
   chartData: StockData[];
   relatedNews: News[];
+  selectedNews: News;
 }) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
 
@@ -108,17 +110,18 @@ const Chart = ({
       relatedNews
         .map((news) => news.wdate)
         .sort()
-        .map((date, index) => ({
-          time: convertToTime(date!),
-          position: index % 2 === 0 ? "aboveBar" : "belowBar",
-          color: "rgb(240, 66, 81)",
-          shape: index % 2 === 0 ? "arrowDown" : "arrowUp",
-          text:
-            // relatedNews
-            //   .find((news) => news.wdate === date)!
-            //   .title.slice(0, 10) + "...",
-            new Date(date!).toLocaleDateString(),
-        }))
+        .map((date, index) => {
+          // selectedNews와 같은 날짜인지 확인
+          const isSelectedNews = selectedNews.wdate === date;
+
+          return {
+            time: convertToTime(date!),
+            position: index % 2 === 0 ? "aboveBar" : "belowBar",
+            color: isSelectedNews ? "#f04251" : "#e9e9e9",
+            shape: index % 2 === 0 ? "arrowDown" : "arrowUp",
+            text: new Date(date!).toLocaleDateString(),
+          };
+        })
     );
 
     // 차트를 데이터에 맞게 자동 조정
@@ -140,7 +143,7 @@ const Chart = ({
       window.removeEventListener("resize", handleResize);
       chart.remove();
     };
-  }, [chartData, relatedNews]);
+  }, [chartData, relatedNews, selectedNews]);
 
   return (
     <div

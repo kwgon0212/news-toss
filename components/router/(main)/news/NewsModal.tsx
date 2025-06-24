@@ -120,14 +120,16 @@ const NewsModal = ({
           </div>
         </div> */}
 
-          <div className="p-main">
-            <div className="flex flex-col gap-main shadow-color p-main rounded-main">
-              <span className="text-lg-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
-                뉴스 요약
-              </span>
-              <p className="whitespace-pre-wrap leading-7">{newsSummary}</p>
+          {newsSummary && (
+            <div className="p-main">
+              <div className="flex flex-col gap-main shadow-color p-main rounded-main">
+                <span className="text-lg-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+                  뉴스 요약
+                </span>
+                <p className="whitespace-pre-wrap leading-7">{newsSummary}</p>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="w-full h-[300px] relative">
             <Image
@@ -148,7 +150,7 @@ const NewsModal = ({
             ref={newsDetailRef}
           >
             <p className="whitespace-pre-wrap leading-7 px-main">
-              {news.article}
+              {news.article ? news.article : news.content}
             </p>
 
             <div

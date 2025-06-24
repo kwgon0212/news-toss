@@ -12,6 +12,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { formatDate } from "@/utils/formatDate";
 import Chart from "./Chart";
+import NewsModal from "../NewsModal";
 
 interface TestProps {
   mainStockList: StockSearchResult[];
@@ -30,7 +31,7 @@ const MetaDataNews = ({
   const [selectedStockName, setSelectedStockName] = useState<string>(
     mainStockList[0].stockName
   );
-
+  const [isOpenPastNewsDetail, setIsOpenPastNewsDetail] = useState(false);
   const handleNewsChange = (news: News) => {
     setSelectedNews(news);
   };
@@ -68,6 +69,7 @@ const MetaDataNews = ({
             )!.data
           }
           relatedNews={relatedNews}
+          selectedNews={selectedNews}
         />
       </div>
 
@@ -106,8 +108,11 @@ const MetaDataNews = ({
           </p>
         </div>
 
-        <Link
-          href={`/news/${selectedNews.newsId}`}
+        <button
+          // href={`/news/${selectedNews.newsId}`}
+          onClick={() => {
+            setIsOpenPastNewsDetail(true);
+          }}
           className="grid grid-cols-6 gap-main-2 hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group"
         >
           <div className="col-span-2 size-full rounded-main shrink-0 relative">
@@ -125,10 +130,10 @@ const MetaDataNews = ({
               <span className="font-semibold text-sm-custom text-main-blue bg-main-blue/10 rounded-main px-main py-0.5 w-fit">
                 유사도: {Number(selectedNews.similarity! * 100).toFixed(2)}%
               </span>
-              <p className="line-clamp-1 font-semibold text-lg-custom">
+              <p className="line-clamp-1 font-semibold text-lg-custom text-start">
                 {selectedNews.title}
               </p>
-              <p className="text-main-dark-gray text-xs-custom line-clamp-3">
+              <p className="text-main-dark-gray text-xs-custom line-clamp-3 text-start">
                 {selectedNews.image}
               </p>
             </div>
@@ -142,8 +147,15 @@ const MetaDataNews = ({
               </span>
             </div>
           </div>
-        </Link>
+        </button>
       </div>
+
+      <NewsModal
+        isOpen={isOpenPastNewsDetail}
+        onClose={() => setIsOpenPastNewsDetail(false)}
+        newsId={selectedNews.newsId}
+        newsSummary={selectedNews.summary || null}
+      />
 
       {/* <div className="flex-1 size-full">
         <div className="flex items-center gap-main text-xl">

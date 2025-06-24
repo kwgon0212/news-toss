@@ -238,16 +238,16 @@ const NewsDetail = ({
 
       <div
         className={clsx(
-          "transition-all duration-300 ease-in-out overflow-hidden relative pb-20",
-          isOpenNewsDetail
-            ? "max-h-[2000px] opacity-100"
-            : "max-h-[70px] opacity-100"
+          "transition-all duration-300 ease-in-out overflow-hidden relative pb-20"
+          // isOpenNewsDetail
+          //   ? "max-h-[2000px] opacity-100"
+          //   : "max-h-[70px] opacity-100"
         )}
         ref={newsDetailRef}
       >
         <p className="whitespace-pre-wrap leading-7 px-main">{news.article}</p>
 
-        <div
+        {/* <div
           className={clsx(
             "absolute -bottom-[10px] left-0 w-full flex justify-center z-10 py-main-2",
             isOpenNewsDetail ? "" : "bg-gradient-to-t from-white to-transparent"
@@ -272,7 +272,7 @@ const NewsDetail = ({
               className={isOpenNewsDetail ? "rotate-180" : ""}
             />
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
