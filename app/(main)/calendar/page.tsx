@@ -61,11 +61,14 @@ const CalendarPage = () => {
   }, [month, year]);
 
   return (
-    <div className="grid grid-cols-2 gap-[40px]">
+    <div className="grid grid-cols-2 gap-main-4">
       <div className="w-full flex flex-col gap-main h-[calc(100vh-140px)]">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-[5px]">
-            <h2 className="font-semibold text-2xl-custom bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">{`${year}년 ${month}월 ${day}일 IR 일정`}</h2>
+            {/* <h2 className="font-semibold text-2xl-custom bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">{`${year}년 ${month}월 ${day}일 IR 일정`}</h2> */}
+            <h2 className="font-semibold text-2xl-custom bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+              오늘의 일정
+            </h2>
             <p className="text-main-dark-gray/70">
               총 {filteredIrDataList.length}건의 일정
             </p>

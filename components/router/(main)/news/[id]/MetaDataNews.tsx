@@ -41,8 +41,8 @@ const MetaDataNews = ({
 
   return (
     <div className="size-full flex flex-col gap-main-2">
-      <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
-        주가 경향성 및 과거 유사뉴스
+      <h2 className="text-3xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+        과거 뉴스
       </h2>
 
       <div className="flex items-center gap-main text-xl-custom">
@@ -78,8 +78,8 @@ const MetaDataNews = ({
 
       <div className="flex flex-col gap-main">
         <div className="flex items-center gap-main text-xl-custom">
-          <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
-            과거 유사 사건 뉴스
+          <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+            과거 유사 뉴스
           </h2>
           <Tooltip
             message="시장 상황을 반영하여 가장 유사한 과거 뉴스를 예측했어요."

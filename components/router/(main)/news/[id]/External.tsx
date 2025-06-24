@@ -7,19 +7,21 @@ import {
   LinearScale,
   BarElement,
   Title,
-  Tooltip,
+  Tooltip as ChartTooltip,
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { News, NewsExternal } from "@/type/news";
 import Button from "@/components/ui/shared/Button";
+import Tooltip from "@/components/ui/Tooltip";
+import { HelpCircle } from "lucide-react";
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
   Title,
-  Tooltip,
+  ChartTooltip,
   Legend
 );
 
@@ -292,9 +294,16 @@ const External = ({
 
   return (
     <div className="size-full flex flex-col gap-main-2">
-      <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
-        뉴스 전후 주가 변동 추이
-      </h2>
+      <div className="flex items-center gap-main">
+        <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+          현재 vs 과거 변동률
+        </h2>
+        <Tooltip
+          message="각 일자의 지표는 이전 거래일(D-1) 대비 변동률입니다."
+          icon={<HelpCircle size={16} />}
+          position="right"
+        />
+      </div>
       <div className="flex flex-col gap-main">
         <div className="flex justify-center gap-2 flex-wrap">
           {buttons.map((key) => (

@@ -125,6 +125,10 @@ const NewsDetail = ({
 
   return (
     <div className="w-full flex flex-col gap-main overflow-x-hidden overflow-y-scroll">
+      <h2 className="text-3xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+        현재 뉴스
+      </h2>
+
       <div className="flex flex-col gap-[5px]">
         <div className="flex items-center gap-2">
           <h2 className="text-2xl-custom font-bold">{news.title}</h2>
@@ -160,7 +164,7 @@ const NewsDetail = ({
               height={16}
               className="size-[16px]"
             />
-            <span className="text-main-dark-gray">뉴스링크</span>
+            <span className="text-main-dark-gray">뉴스 링크</span>
           </Link>
         </div>
       </div>
@@ -204,11 +208,11 @@ const NewsDetail = ({
         <div>
           {impactScore && (
             <div className="flex items-baseline gap-main">
-              <span className="text-sm font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
-                뉴스 중요도
+              <span className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+                예측 변동률
               </span>
 
-              <p className="flex-1 flex text-2xl font-bold items-center justify-center">
+              <p className="flex-1 flex text-2xl-custom font-bold items-center justify-center">
                 <span className="bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent">
                   {(impactScore * 100).toFixed(1)}%
                 </span>
@@ -218,7 +222,7 @@ const NewsDetail = ({
         </div>
       </div>
 
-      <div className="p-main">
+      <div className="p-main mb-main">
         <div className="flex flex-col gap-main shadow-color p-main rounded-main">
           <span className="text-lg font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
             뉴스 요약

@@ -36,7 +36,7 @@ const Header = async () => {
           <div className="flex flex-col">
             <span className="font-bold text-lg-custom">NewsToss</span>
             <span className="text-sm-custom text-main-dark-gray">
-              실시간 주식 투자 AI 애널리스트
+              뉴스 너머의 인사이트를 건네다
             </span>
           </div>
         </div>

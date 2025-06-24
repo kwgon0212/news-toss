@@ -68,6 +68,18 @@ const Chart = ({
           top: 0.1,
           bottom: 0.1,
         },
+        // 가격 포맷을 천원 단위로 설정
+        mode: 0, // Normal mode
+        entireTextOnly: false,
+        ticksVisible: true,
+        // 가격 라벨 포맷터
+        visible: true,
+      },
+      // 가격 포맷 설정
+      localization: {
+        priceFormatter: (price: number) => {
+          return `${Number(price.toFixed(0)).toLocaleString()}원`;
+        },
       },
       // 마우스/터치 상호작용 비활성화
       handleScroll: false,

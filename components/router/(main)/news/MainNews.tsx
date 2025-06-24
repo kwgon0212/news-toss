@@ -31,9 +31,8 @@ const MainNews = ({
         <div className="col-span-3 grid grid-cols-3 gap-main w-full relative">
           <div className="col-span-3 flex items-center gap-main">
             <div className="text-3xl-custom font-bold">
-              <span>오늘의 </span>
               <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
-                주요뉴스
+                주요 뉴스
               </span>
             </div>
             <Tooltip
@@ -56,9 +55,8 @@ const MainNews = ({
         <div className="col-span-3 grid grid-cols-7 gap-main w-full relative">
           <div className="col-span-4 flex items-center gap-main">
             <div className="text-3xl-custom font-bold">
-              <span>오늘의 </span>
               <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
-                주요뉴스
+                주요 뉴스
               </span>
             </div>
             <Tooltip
@@ -139,7 +137,7 @@ const MainNews = ({
     <div className="grid grid-cols-7 gap-main-2 w-full relative">
       <div className="col-span-4 flex flex-col gap-main">
         <div className="text-3xl-custom flex items-center gap-main bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
-          <span className="font-bold">주요뉴스</span>
+          <span className="font-bold">주요 뉴스</span>
           <Tooltip
             position="right"
             message="AI 모델을 통해 예측된 주요 뉴스기사와 과거 유사뉴스입니다."
@@ -216,7 +214,7 @@ const MainNews = ({
 
       <div className="col-span-3 flex flex-col gap-1">
         <h2 className="font-bold text-3xl-custom bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
-          과거 유사뉴스
+          과거 유사 뉴스
         </h2>
         {gridNews.length === 0 && (
           <div className="grid grid-rows-3 w-full h-[390px] items-center justify-center">

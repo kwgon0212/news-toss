@@ -157,9 +157,9 @@ const Chatbot = ({
           </div>
 
           <p className="text-main-dark-gray text-lg-custom text-center mb-main">
-            미래 공시 일정을 확인하고
+            캘린더로 일정을 확인하고,
             <br />
-            과거 유사사건 뉴스를 검색해보세요!
+            과거 유사 뉴스를 검색해보세요!
           </p>
           <p className="text-main-dark-gray/80 text-sm-custom text-center break-keep">
             ex) 25년 8월에 SK플라즈마가 IPO주관사 선정 작업을 한다는데 과거
