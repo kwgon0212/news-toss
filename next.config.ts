@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
         source: "/proxy/:path*",
         destination: "https://news-toss.click/api/:path*",
       },
+      {
+        source: "/test/:path*",
+        destination: "http://3.37.207.16:8000/:path*",
+      },
     ];
   },
   images: {

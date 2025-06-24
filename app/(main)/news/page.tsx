@@ -4,6 +4,7 @@ import AllNews from "@/components/router/(main)/news/AllNews";
 import { getJwtToken } from "@/utils/auth";
 import { HighlightNews, News } from "@/type/news";
 import RealTime from "@/components/router/(main)/news/RealTime";
+import CustomNewsTest from "@/components/router/(main)/news/CustomNewsTest";
 
 const HomePage = async () => {
   const token = await getJwtToken();
@@ -34,7 +35,8 @@ const HomePage = async () => {
 
       {token && (
         <div className="p-main">
-          <CustomNews token={token} />
+          {/* <CustomNews token={token} /> */}
+          <CustomNewsTest token={token} />
         </div>
       )}
 
