@@ -61,43 +61,14 @@ const Chatbot = ({
     setInput("");
     botMessageRef.current = "";
 
-    // const sse = new EventSource(
-    //   `https://news-toss.click/api/sse/stream/v2?message=${encodeURIComponent(
-    //     input
-    //   )}`
-    // );
-    // // sseRef.current = sse;
-
-    // sse.addEventListener("chat", (event) => {
-    //   if (event.data === "[DONE]") {
-    //     sse.close();
-    //     setIsLoading(false);
-    //     return;
-    //   }
-
-    //   setMessages((prev) => {
-    //     const updated = [...prev];
-    //     const lastIdx = updated.length - 1;
-    //     updated[lastIdx] = {
-    //       ...updated[lastIdx],
-    //       content: updated[lastIdx].content + event.data,
-    //     };
-    //     return updated;
-    //   });
-
-    //   console.log(event);
-    //   console.log("💬 새 메시지 내용:", event.data, new Date().getSeconds());
-    // });
-
-    // api router
     const sse = new EventSource(
-      `/api/sse/chatbot?message=${encodeURIComponent(input)}`
+      `https://news-toss.click/api/sse/stream/v2?message=${encodeURIComponent(
+        input
+      )}`
     );
 
-    sse.onmessage = (event) => {
-      const parsed = JSON.parse(event.data);
-
-      if (parsed.is_last) {
+    sse.addEventListener("chat", (event) => {
+      if (event.data === "[DONE]") {
         sse.close();
         setIsLoading(false);
         return;
@@ -108,16 +79,41 @@ const Chatbot = ({
         const lastIdx = updated.length - 1;
         updated[lastIdx] = {
           ...updated[lastIdx],
-          content: updated[lastIdx].content + parsed.content,
+          content: updated[lastIdx].content + event.data,
         };
         return updated;
       });
-    };
-
-    sse.addEventListener("end", () => {
-      sse.close();
-      setIsLoading(false);
     });
+
+    // api router
+    // const sse = new EventSource(
+    //   `/api/sse/chatbot?message=${encodeURIComponent(input)}`
+    // );
+
+    // sse.onmessage = (event) => {
+    //   const parsed = JSON.parse(event.data);
+
+    //   if (parsed.is_last) {
+    //     sse.close();
+    //     setIsLoading(false);
+    //     return;
+    //   }
+
+    //   setMessages((prev) => {
+    //     const updated = [...prev];
+    //     const lastIdx = updated.length - 1;
+    //     updated[lastIdx] = {
+    //       ...updated[lastIdx],
+    //       content: updated[lastIdx].content + parsed.content,
+    //     };
+    //     return updated;
+    //   });
+    // };
+
+    // sse.addEventListener("end", () => {
+    //   sse.close();
+    //   setIsLoading(false);
+    // });
   };
 
   useEffect(() => {
