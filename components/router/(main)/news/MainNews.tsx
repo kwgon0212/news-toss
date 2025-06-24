@@ -131,6 +131,8 @@ const MainNews = ({
   };
 
   const mainNews = news[currentPage].news;
+
+  console.log(mainNews, "mainNews");
   const gridNews = news[currentPage].related;
 
   return (
@@ -169,10 +171,18 @@ const MainNews = ({
                   )}
                 />
 
+                <p className="absolute top-main right-main bg-white w-fit rounded-main text-main-dark-gray/80 text-base-custom font-semibold px-main py-2 shadow-md">
+                  <span>현재</span> <span className="text-main-blue">± </span>
+                  <b className="text-main-blue">
+                    {Number(mainNews.impact_score * 100).toFixed(2)}%
+                  </b>{" "}
+                  <span>변동 예측</span>
+                </p>
+
                 <div className="absolute w-full h-full bottom-0 left-0 bg-gradient-to-t from-black/70 to-transparent hover:to-black/70 pointer-events-none flex items-end transition-all duration-300 ease-in-out">
                   <div
                     className={clsx(
-                      "relative flex flex-col justify-around gap-1 px-main-2 py-main-2 z-10",
+                      "relative flex flex-col justify-around gap-main px-main-2 py-main-2 z-10",
                       invertedStyle["inverted-radius"]
                     )}
                   >
@@ -180,11 +190,7 @@ const MainNews = ({
                       {mainNews.title}
                     </p>
 
-                    <p className="bg-main-blue/90 w-fit rounded-full text-white text-sm-custom font-semibold px-main py-0.5">
-                      🚀 뉴스 중요도:{" "}
-                      {Number(mainNews.impact_score * 100).toFixed(2)}%
-                    </p>
-                    <div className="flex items-center gap-1 text-white text-xs-custom">
+                    <div className="flex items-center gap-1 text-white text-sm-custom mb-main">
                       <Clock className="h-3 w-3 mr-1" />
                       <span>
                         {mainNews.wdate && formatDate(mainNews.wdate)} ·{" "}
@@ -196,7 +202,7 @@ const MainNews = ({
               </div>
             </Link>
           )}
-          <div className="w-[190px] h-[50px] absolute bottom-0 right-0 flex items-center justify-between p-main">
+          <div className="w-[160px] h-[50px] absolute bottom-0 right-0 flex items-center justify-between p-main">
             <ChevronLeft
               className="bg-main-light-gray/50 rounded-full p-1 box-content hover:bg-main-light-gray"
               onClick={handlePrevPage}

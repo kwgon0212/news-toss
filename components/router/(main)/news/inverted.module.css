@@ -1,7 +1,7 @@
 .inverted-radius {
   --r: 10px; /* the radius */
   --s: 20px; /* size of inner curve */
-  --x: 160px; /* horizontal offset (no percentane) */
+  --x: 130px; /* horizontal offset (no percentane) */
   --y: 20px; /* vertical offset (no percentage) */
 
   width: 100%;
