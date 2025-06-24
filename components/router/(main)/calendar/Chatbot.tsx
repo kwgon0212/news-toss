@@ -68,7 +68,9 @@ const Chatbot = ({
     );
 
     sse.addEventListener("chat", (event) => {
-      if (event.data === "[DONE]") {
+      const parsed = JSON.parse(event.data);
+
+      if (parsed === "[DONE]") {
         sse.close();
         setIsLoading(false);
         return;
@@ -79,7 +81,7 @@ const Chatbot = ({
         const lastIdx = updated.length - 1;
         updated[lastIdx] = {
           ...updated[lastIdx],
-          content: updated[lastIdx].content + event.data,
+          content: updated[lastIdx].content + parsed,
         };
         return updated;
       });

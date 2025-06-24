@@ -8,8 +8,6 @@ const MarkdownRenderer = ({ message }: { message: string }) => {
 
   useEffect(() => {
     const renderMarkdown = async () => {
-      // const rawHtml = await marked(message);
-
       const cleanHtml = DOMPurify.sanitize(message, {
         ALLOWED_TAGS: [
           "b",
@@ -40,8 +38,6 @@ const MarkdownRenderer = ({ message }: { message: string }) => {
 
     renderMarkdown();
   }, [message]);
-  console.log(html, "html");
-  console.log(message, "message");
 
   return (
     <div
