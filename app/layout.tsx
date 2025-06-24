@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import SentryProvider from "./SentryProvider";
 import "./globals.css";
 import "driver.js/dist/driver.css";
+import QueryClientProvider from "./QueryClientProvider";
 
 const pretendard = localFont({
   src: "../public/fonts/PretendardVariable.woff2",
@@ -39,14 +40,16 @@ export default function RootLayout({
   return (
     <html lang="kr">
       <body className={`${pretendard.variable} antialiased`}>
-        <ToastContainer
-          position="top-center"
-          autoClose={1000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-        />
-        <SentryProvider>{children}</SentryProvider>
+        <QueryClientProvider>
+          <ToastContainer
+            position="top-center"
+            autoClose={1000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+          />
+          <SentryProvider>{children}</SentryProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );
