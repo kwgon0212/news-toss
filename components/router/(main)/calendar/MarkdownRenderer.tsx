@@ -11,7 +11,19 @@ const MarkdownRenderer = ({ message }: { message: string }) => {
       // const rawHtml = await marked(message);
 
       const cleanHtml = DOMPurify.sanitize(message, {
-        ALLOWED_TAGS: ["b", "i", "em", "strong", "a", "img", "p", "br"],
+        ALLOWED_TAGS: [
+          "b",
+          "i",
+          "em",
+          "strong",
+          "a",
+          "img",
+          "p",
+          "br",
+          "ul",
+          "li",
+          "ol",
+        ],
         ALLOWED_ATTR: [
           "href",
           "src",
