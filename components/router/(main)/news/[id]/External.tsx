@@ -295,17 +295,22 @@ const External = ({
       <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
         뉴스 전후 주가 변동 추이
       </h2>
-      <div className="flex justify-center gap-2 mb-4 flex-wrap">
-        {buttons.map((key) => (
-          <Button
-            variant={selectedType === key ? "primary" : "ghost"}
-            key={key}
-            onClick={() => setSelectedType(key)}
-          >
-            {dataMap[key].label}
-          </Button>
-        ))}
-        <Bar data={chartData} options={chartOptions} />
+      <div className="flex flex-col gap-main">
+        <div className="flex justify-center gap-2 flex-wrap">
+          {buttons.map((key) => (
+            <Button
+              variant={selectedType === key ? "primary" : "ghost"}
+              key={key}
+              onClick={() => setSelectedType(key)}
+            >
+              {dataMap[key].label}
+            </Button>
+          ))}
+        </div>
+
+        <div className="w-full min-h-[300px]">
+          <Bar data={chartData} options={chartOptions} />
+        </div>
       </div>
     </div>
   );

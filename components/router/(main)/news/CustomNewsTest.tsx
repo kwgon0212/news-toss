@@ -67,6 +67,7 @@ const CustomNewsTest = ({ token }: { token: JwtToken | null }) => {
   // }, [customNews.length]);
 
   if (!token) return null;
+
   return (
     <div className="flex flex-col gap-main-2">
       <div className="flex items-center gap-main">
@@ -92,61 +93,64 @@ const CustomNewsTest = ({ token }: { token: JwtToken | null }) => {
           </div>
         )}
 
-        {customNews.slice(0, 3).map((news, index) => {
-          return (
-            <Link
-              href={`/news/${news.news_id}`}
-              className="flex flex-col gap-main hover:scale-102 transition-all duration-500 ease-in-out"
-              key={`custom-news-${index}`}
-            >
-              <div className="bg-black w-full aspect-[1.8/1] rounded-main shrink-0 relative">
-                <div className="absolute size-full bg-black/5 z-10 rounded-main inset-shadow-2xs" />
-                <Image
-                  src={news.image || "https://placehold.co/250x150"}
-                  alt={`${news.title}-image`}
-                  fill
-                  sizes="100%"
-                  className="object-cover rounded-main"
-                />
-              </div>
-
-              <div className="flex flex-wrap gap-main">
-                {news.recommend_reasons.map((reason, index) => {
-                  return (
-                    <span
-                      key={index}
-                      className="bg-main-blue/20 rounded-full px-2 py-1 font-semibold text-main-blue text-sm-custom"
-                    >
-                      {reason}
-                    </span>
-                  );
-                })}
-              </div>
-
-              <div className="w-full flex flex-col gap-main justify-around">
-                <p className={clsx("text-start font-semibold", "line-clamp-2")}>
-                  {news.title}
-                </p>
-
-                <p
-                  className={clsx(
-                    "line-clamp-2 text-start text-main-dark-gray text-xs-custom"
-                  )}
-                >
-                  {news.summary}
-                </p>
-
-                <div className="flex items-center text-main-dark-gray text-xs-custom">
-                  <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
-                  <span className="text-main-dark-gray">
-                    {news.wdate && formatDate(news.wdate)} · {news.press}
-                  </span>
+        {customNews.length > 0 &&
+          customNews.slice(0, 3).map((news, index) => {
+            return (
+              <Link
+                href={`/news/${news.news_id}`}
+                className="flex flex-col gap-main hover:scale-102 transition-all duration-500 ease-in-out"
+                key={`custom-news-${index}`}
+              >
+                <div className="bg-black w-full aspect-[1.8/1] rounded-main shrink-0 relative">
+                  <div className="absolute size-full bg-black/5 z-10 rounded-main inset-shadow-2xs" />
+                  <Image
+                    src={news.image || "https://placehold.co/250x150"}
+                    alt={`${news.title}-image`}
+                    fill
+                    sizes="100%"
+                    className="object-cover rounded-main"
+                  />
                 </div>
-              </div>
 
-              <div className="w-full h-px bg-main-dark-gray/10" />
+                <div className="flex flex-wrap gap-main">
+                  {news.recommend_reasons.map((reason, index) => {
+                    return (
+                      <span
+                        key={index}
+                        className="bg-main-blue/20 rounded-full px-2 py-1 font-semibold text-main-blue text-sm-custom"
+                      >
+                        {reason}
+                      </span>
+                    );
+                  })}
+                </div>
 
-              {/* <div className="flex-1 flex flex-col gap-main">
+                <div className="w-full flex flex-col gap-main justify-around">
+                  <p
+                    className={clsx("text-start font-semibold", "line-clamp-2")}
+                  >
+                    {news.title}
+                  </p>
+
+                  <p
+                    className={clsx(
+                      "line-clamp-2 text-start text-main-dark-gray text-xs-custom"
+                    )}
+                  >
+                    {news.summary}
+                  </p>
+
+                  <div className="flex items-center text-main-dark-gray text-xs-custom">
+                    <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
+                    <span className="text-main-dark-gray">
+                      {news.wdate && formatDate(news.wdate)} · {news.press}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="w-full h-px bg-main-dark-gray/10" />
+
+                {/* <div className="flex-1 flex flex-col gap-main">
                   {news.relatedNews.length > 0 ? (
                     news.relatedNews.slice(0, 2).map((relatedNews, index) => {
                       return (
@@ -201,9 +205,9 @@ const CustomNewsTest = ({ token }: { token: JwtToken | null }) => {
                     {news.relatedNews.length - 2} more...
                   </p>
                 )} */}
-            </Link>
-          );
-        })}
+              </Link>
+            );
+          })}
       </div>
     </div>
   );
