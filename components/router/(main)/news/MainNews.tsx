@@ -217,56 +217,57 @@ const MainNews = ({
           과거 유사 뉴스
         </h2>
         {gridNews.length === 0 && (
-          <div className="grid grid-rows-3 w-full h-[390px] items-center justify-center">
-            <p className="text-main-dark-gray row-span-3">
+          <div className="size-full flex items-center justify-center bg-main-light-gray/30 rounded-main p-main">
+            <span className="text-main-dark-gray">
               과거 유사뉴스가 없습니다.
-            </p>
+            </span>
           </div>
         )}
         <div
           className={clsx(
-            "grid grid-rows-3 transition-opacity duration-200 ease-in-out flex-1 bg-main-light-gray/30 rounded-main"
+            "grid grid-rows-3 transition-opacity duration-200 ease-in-out flex-1 bg-main-light-gray/30 rounded-main size-full"
           )}
         >
-          {gridNews.slice(0, 3).map((item, idx) => (
-            <button
-              onClick={() => {
-                setSelectedNews(item as News);
-                setIsOpenNewsModal(true);
-              }}
-              className="flex items-center gap-main hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group"
-              key={`main-news-${item.newsId}`}
-            >
-              <div className="h-full w-full max-w-[180px] rounded-main shrink-0 relative">
-                <Image
-                  src={item.press || "https://placehold.co/200x150"}
-                  alt={`${item.title}-image`}
-                  fill
-                  sizes="100%"
-                  className="object-cover rounded-main group-hover:scale-102 duration-300 ease-in-out"
-                />
-                <div className="absolute top-0 left-0 size-full bg-black/5 rounded-main group-hover:bg-transparent group-hover:scale-102 duration-300 ease-in-out" />
-              </div>
-              <div className="w-full h-full flex flex-col gap-main justify-around">
-                <div className="flex flex-col gap-1">
-                  <span className="font-semibold text-sm-custom text-main-blue bg-main-blue/10 rounded-main px-main py-0.5 w-fit">
-                    유사도: {Number(item.similarity * 100).toFixed(2)}%
-                  </span>
-                  <p className="line-clamp-2 font-semibold text-lg-custom text-left">
-                    {item.title}
-                  </p>
+          {gridNews.length > 0 &&
+            gridNews.slice(0, 3).map((item, idx) => (
+              <button
+                onClick={() => {
+                  setSelectedNews(item as News);
+                  setIsOpenNewsModal(true);
+                }}
+                className="flex items-center gap-main hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group"
+                key={`main-news-${item.newsId}`}
+              >
+                <div className="h-full w-full max-w-[180px] rounded-main shrink-0 relative">
+                  <Image
+                    src={item.press || "https://placehold.co/200x150"}
+                    alt={`${item.title}-image`}
+                    fill
+                    sizes="100%"
+                    className="object-cover rounded-main group-hover:scale-102 duration-300 ease-in-out"
+                  />
+                  <div className="absolute top-0 left-0 size-full bg-black/5 rounded-main group-hover:bg-transparent group-hover:scale-102 duration-300 ease-in-out" />
                 </div>
+                <div className="w-full h-full flex flex-col gap-main justify-around">
+                  <div className="flex flex-col gap-1">
+                    <span className="font-semibold text-sm-custom text-main-blue bg-main-blue/10 rounded-main px-main py-0.5 w-fit">
+                      유사도: {Number(item.similarity * 100).toFixed(2)}%
+                    </span>
+                    <p className="line-clamp-2 font-semibold text-lg-custom text-left">
+                      {item.title}
+                    </p>
+                  </div>
 
-                <div className="flex items-center text-main-dark-gray text-xs-custom">
-                  <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
-                  <span className="text-main-dark-gray">
-                    {item.wdate && new Date(item.wdate).toLocaleDateString()} ·{" "}
-                    {item.article}
-                  </span>
+                  <div className="flex items-center text-main-dark-gray text-xs-custom">
+                    <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
+                    <span className="text-main-dark-gray">
+                      {item.wdate && new Date(item.wdate).toLocaleDateString()}{" "}
+                      · {item.article}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            ))}
           <NewsModal
             newsId={selectedNews?.newsId || null}
             newsSummary={selectedNews?.image || null}
