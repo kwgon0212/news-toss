@@ -131,8 +131,6 @@ const MainNews = ({
   };
 
   const mainNews = news[currentPage].news;
-
-  console.log(mainNews, "mainNews");
   const gridNews = news[currentPage].related;
 
   return (

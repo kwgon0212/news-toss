@@ -1,5 +1,6 @@
 export interface News {
   newsId: string;
+  news_id?: string;
   title: string;
   url: string;
   content: string;
@@ -11,6 +12,8 @@ export interface News {
   date?: string; // 작성일
   impact_score?: number; // 중요도
   summary?: string; // 요약
+  recommend_reasons?: string[]; // 추천 이유
+  click_score?: number; // 클릭 점수
 }
 
 export interface HighlightNews {

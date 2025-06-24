@@ -30,14 +30,25 @@ const MetaDataNews = ({
   relatedNews,
   external,
 }: TestProps) => {
-  const [selectedNews, setSelectedNews] = useState<News>(relatedNews[0]);
+  const [selectedNews, setSelectedNews] = useState<News | null>(
+    relatedNews[0] || null
+  );
   const [selectedStockName, setSelectedStockName] = useState<string>(
-    mainStockList[0].stockName
+    mainStockList[0]?.stockName || ""
   );
   const [isOpenPastNewsDetail, setIsOpenPastNewsDetail] = useState(false);
   const handleNewsChange = (news: News) => {
     setSelectedNews(news);
   };
+
+  // 필수 데이터가 없는 경우 early return
+  if (!selectedNews || !selectedStockName) {
+    return (
+      <div className="size-full flex items-center justify-center">
+        <p className="text-gray-500">관련 뉴스 데이터가 없습니다.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="size-full flex flex-col gap-main-2">
@@ -120,7 +131,7 @@ const MetaDataNews = ({
         >
           <div className="col-span-2 size-full rounded-main shrink-0 relative">
             <Image
-              src={selectedNews.press || "https://placehold.co/200x150"}
+              src={selectedNews.press ?? "https://placehold.co/200x150"}
               alt={`${selectedNews.title}-image`}
               fill
               sizes="100%"

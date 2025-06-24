@@ -28,17 +28,16 @@ const CustomNewsTest = ({ token }: { token: JwtToken | null }) => {
 
   useEffect(() => {
     const fetchCustomNews = async () => {
-      const res = await fetch("/test/news/v2/recommend", {
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await fetch(
+        `/test/news/v2/recommend?user_id=${token?.memberId}`
+      );
       const json: TestNews[] = await res.json();
       setCustomNews(json);
     };
     fetchCustomNews();
   }, []);
+
+  console.log(token?.memberId, "token");
 
   // useEffect(() => {
   //   if (customNews.length === 0) return;
@@ -72,9 +71,9 @@ const CustomNewsTest = ({ token }: { token: JwtToken | null }) => {
     <div className="flex flex-col gap-main-2">
       <div className="flex items-center gap-main">
         <h2 className="text-3xl-custom font-bold">
-          <b className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
             {token && token.memberName ? token.memberName : "홍길동"}
-          </b>
+          </span>
           님을 위한 맞춤 뉴스
         </h2>
         <Tooltip
@@ -101,8 +100,8 @@ const CustomNewsTest = ({ token }: { token: JwtToken | null }) => {
                 className="flex flex-col gap-main hover:scale-102 transition-all duration-500 ease-in-out"
                 key={`custom-news-${index}`}
               >
-                <div className="bg-black w-full aspect-[1.8/1] rounded-main shrink-0 relative">
-                  <div className="absolute size-full bg-black/5 z-10 rounded-main inset-shadow-2xs" />
+                <div className="bg-black w-full aspect-[1.5/1] rounded-main shrink-0 relative">
+                  <div className="absolute size-full bg-black/10 z-10 rounded-main inset-shadow-2xs" />
                   <Image
                     src={news.image || "https://placehold.co/250x150"}
                     alt={`${news.title}-image`}
@@ -110,24 +109,24 @@ const CustomNewsTest = ({ token }: { token: JwtToken | null }) => {
                     sizes="100%"
                     className="object-cover rounded-main"
                   />
-                </div>
 
-                <div className="flex flex-wrap gap-main">
-                  {news.recommend_reasons.map((reason, index) => {
-                    return (
-                      <span
-                        key={index}
-                        className="bg-main-blue/20 rounded-full px-2 py-1 font-semibold text-main-blue text-sm-custom"
-                      >
-                        {reason}
-                      </span>
-                    );
-                  })}
+                  <div className="absolute right-main-1/2 top-main-1/2 flex flex-col gap-1">
+                    {news.recommend_reasons.map((reason, index) => {
+                      return (
+                        <span
+                          key={index}
+                          className="bg-main-blue rounded-full px-2 py-1 font-semibold text-white text-sm-custom w-fit"
+                        >
+                          # {reason}
+                        </span>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 <div className="w-full flex flex-col gap-main justify-around">
                   <p
-                    className={clsx("text-start font-semibold", "line-clamp-2")}
+                    className={clsx("text-start font-semibold", "line-clamp-1")}
                   >
                     {news.title}
                   </p>

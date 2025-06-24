@@ -35,8 +35,8 @@ const HomePage = async () => {
 
       {token && (
         <div className="p-main">
-          {/* <CustomNews token={token} /> */}
-          <CustomNewsTest token={token} />
+          <CustomNews token={token} />
+          {/* <CustomNewsTest token={token} /> */}
         </div>
       )}
 

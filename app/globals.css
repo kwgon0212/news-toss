@@ -12,6 +12,7 @@
     rgba(15, 15, 15, 0.1) 0px 2px 4px;
   --container-main-max: 1280px;
   --container-main-min: 940px;
+  --spacing-main-1/2: 5px;
   --spacing-main: 10px;
   --spacing-main-2: 20px;
   --spacing-main-3: 30px;
