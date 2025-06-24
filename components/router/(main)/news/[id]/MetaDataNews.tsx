@@ -116,7 +116,7 @@ const MetaDataNews = ({
           onClick={() => {
             setIsOpenPastNewsDetail(true);
           }}
-          className="grid grid-cols-6 gap-main-2 hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group"
+          className="grid grid-cols-6 gap-main-2 hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group h-[160px]"
         >
           <div className="col-span-2 size-full rounded-main shrink-0 relative">
             <Image
