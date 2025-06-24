@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,7 +11,8 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { NewsExternal } from "@/type/news";
+import { News, NewsExternal } from "@/type/news";
+import Button from "@/components/ui/shared/Button";
 
 ChartJS.register(
   CategoryScale,
@@ -35,8 +36,30 @@ const labels = [
   "D+5",
 ];
 
-const External = ({ external }: { external: NewsExternal }) => {
-  const [selected, setSelected] = useState<keyof typeof dataMap>("close");
+const External = ({
+  external,
+  selectedNews,
+}: {
+  external: NewsExternal;
+  selectedNews: News;
+}) => {
+  const [selectedType, setSelectedType] =
+    useState<keyof typeof dataMap>("close");
+  const [pastNewsExternal, setPastNewsExternal] = useState<NewsExternal | null>(
+    null
+  );
+
+  useEffect(() => {
+    const fetchPastNewsExternal = async () => {
+      const res = await fetch(
+        `/proxy/news/v2/external?newsId=${selectedNews.newsId}`
+      );
+      const json = await res.json();
+      setPastNewsExternal(json.data);
+      console.log(json.data, "json.data");
+    };
+    fetchPastNewsExternal();
+  }, [selectedNews]);
 
   const dataMap = {
     close: {
@@ -121,14 +144,124 @@ const External = ({ external }: { external: NewsExternal }) => {
     },
   };
 
+  const pastDataMap = pastNewsExternal
+    ? {
+        close: {
+          label: "종가 (과거 뉴스)",
+          data: [
+            pastNewsExternal.dMinus5Close,
+            pastNewsExternal.dMinus4Close,
+            pastNewsExternal.dMinus3Close,
+            pastNewsExternal.dMinus2Close,
+            pastNewsExternal.dMinus1Close,
+            pastNewsExternal.dPlus1Close,
+            pastNewsExternal.dPlus2Close,
+            pastNewsExternal.dPlus3Close,
+            pastNewsExternal.dPlus4Close,
+            pastNewsExternal.dPlus5Close,
+          ],
+          color: "#a5b4fc", // 연한 남색 계열
+        },
+        volume: {
+          label: "거래량 (과거 뉴스)",
+          data: [
+            pastNewsExternal.dMinus5Volume,
+            pastNewsExternal.dMinus4Volume,
+            pastNewsExternal.dMinus3Volume,
+            pastNewsExternal.dMinus2Volume,
+            pastNewsExternal.dMinus1Volume,
+            null,
+            null,
+            null,
+            null,
+            null,
+          ],
+          color: "#f1a8d1", // 연한 핑크
+        },
+        foreign: {
+          label: "외국인 (과거 뉴스)",
+          data: [
+            pastNewsExternal.dMinus5Foreign,
+            pastNewsExternal.dMinus4Foreign,
+            pastNewsExternal.dMinus3Foreign,
+            pastNewsExternal.dMinus2Foreign,
+            pastNewsExternal.dMinus1Foreign,
+            null,
+            null,
+            null,
+            null,
+            null,
+          ],
+          color: "#86efac", // 연한 초록
+        },
+        institution: {
+          label: "기관 (과거 뉴스)",
+          data: [
+            pastNewsExternal.dMinus5Institution,
+            pastNewsExternal.dMinus4Institution,
+            pastNewsExternal.dMinus3Institution,
+            pastNewsExternal.dMinus2Institution,
+            pastNewsExternal.dMinus1Institution,
+            null,
+            null,
+            null,
+            null,
+            null,
+          ],
+          color: "#fcd34d", // 연한 노랑
+        },
+        individual: {
+          label: "개인 (과거 뉴스)",
+          data: [
+            pastNewsExternal.dMinus5Individual,
+            pastNewsExternal.dMinus4Individual,
+            pastNewsExternal.dMinus3Individual,
+            pastNewsExternal.dMinus2Individual,
+            pastNewsExternal.dMinus1Individual,
+            null,
+            null,
+            null,
+            null,
+            null,
+          ],
+          color: "#7dd3fc", // 연한 파랑
+        },
+      }
+    : null;
+
+  // null이 아닌 데이터만 필터링
+  const currentData = dataMap[selectedType].data;
+  const pastData = pastDataMap?.[selectedType].data;
+
+  const filteredLabels: string[] = [];
+  const filteredCurrentData: (number | null)[] = [];
+  const filteredPastData: (number | null)[] = [];
+
+  currentData.forEach((value, index) => {
+    if (value !== null) {
+      filteredLabels.push(labels[index]);
+      filteredCurrentData.push(value);
+      filteredPastData.push(pastData?.[index] || null);
+    }
+  });
+
   const chartData = {
-    labels,
+    labels: filteredLabels,
     datasets: [
       {
-        label: dataMap[selected].label,
-        data: dataMap[selected].data,
-        backgroundColor: dataMap[selected].color,
+        label: dataMap[selectedType].label + " (현재 뉴스)",
+        data: filteredCurrentData,
+        backgroundColor: dataMap[selectedType].color,
       },
+      ...(pastDataMap
+        ? [
+            {
+              label: pastDataMap[selectedType].label,
+              data: filteredPastData,
+              backgroundColor: pastDataMap[selectedType].color,
+            },
+          ]
+        : []),
     ],
   };
 
@@ -137,11 +270,15 @@ const External = ({ external }: { external: NewsExternal }) => {
     plugins: {
       legend: {
         position: "top" as const,
+        labels: {
+          usePointStyle: true,
+          pointStyle: "rectRounded",
+        },
       },
-      title: {
-        display: true,
-        text: `뉴스 전후 ${dataMap[selected].label} 변화`,
-      },
+      // title: {
+      //   display: true,
+      //   text: `뉴스 전후 ${dataMap[selectedType].label} 변화`,
+      // },
     },
   };
 
@@ -160,22 +297,16 @@ const External = ({ external }: { external: NewsExternal }) => {
       </h2>
       <div className="flex justify-center gap-2 mb-4 flex-wrap">
         {buttons.map((key) => (
-          <button
+          <Button
+            variant={selectedType === key ? "primary" : "ghost"}
             key={key}
-            onClick={() => setSelected(key)}
-            className={`px-4 py-2 rounded-full text-sm-custom transition-all duration-200 ${
-              selected === key
-                ? "bg-main-blue text-white"
-                : "bg-main-light-gray text-gray-700 hover:bg-gray-200"
-            }`}
+            onClick={() => setSelectedType(key)}
           >
             {dataMap[key].label}
-          </button>
+          </Button>
         ))}
+        <Bar data={chartData} options={chartOptions} />
       </div>
-
-      {/* 차트 */}
-      <Bar data={chartData} options={chartOptions} />
     </div>
   );
 };

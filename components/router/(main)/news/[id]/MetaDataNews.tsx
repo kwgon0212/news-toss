@@ -2,7 +2,7 @@
 
 import Dropdown from "@/components/ui/shared/Dropdown";
 import Tooltip from "@/components/ui/Tooltip";
-import { News } from "@/type/news";
+import { News, NewsExternal } from "@/type/news";
 import { StockData } from "@/type/stocks/stockData";
 import { StockSearchResult } from "@/type/stocks/StockSearchResult";
 import clsx from "clsx";
@@ -13,12 +13,14 @@ import React, { useEffect, useState } from "react";
 import { formatDate } from "@/utils/formatDate";
 import Chart from "./Chart";
 import NewsModal from "../NewsModal";
+import External from "./External";
 
 interface TestProps {
   mainStockList: StockSearchResult[];
   relatedStockList: StockSearchResult[];
   stockChartList: { stockName: string; stockCode: string; data: StockData[] }[];
   relatedNews: News[];
+  external: NewsExternal;
 }
 
 const MetaDataNews = ({
@@ -26,6 +28,7 @@ const MetaDataNews = ({
   relatedStockList,
   stockChartList,
   relatedNews,
+  external,
 }: TestProps) => {
   const [selectedNews, setSelectedNews] = useState<News>(relatedNews[0]);
   const [selectedStockName, setSelectedStockName] = useState<string>(
@@ -149,6 +152,8 @@ const MetaDataNews = ({
           </div>
         </button>
       </div>
+
+      <External external={external} selectedNews={selectedNews} />
 
       <NewsModal
         isOpen={isOpenPastNewsDetail}

@@ -128,8 +128,9 @@ const NewsDetailPage = async ({
           relatedStockList={relatedStockList}
           stockChartList={stockChartList}
           relatedNews={relatedNewsJson.data}
+          external={externalJson.data}
         />
-        <External external={externalJson.data} />
+        {/* <External external={externalJson.data} /> */}
       </div>
     </div>
   );
