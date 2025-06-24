@@ -7,6 +7,7 @@ import "@/components/router/(main)/calendar/calendar.css";
 import clsx from "clsx";
 import Dropdown from "@/components/ui/shared/Dropdown";
 import Chatbot from "@/components/router/(main)/calendar/Chatbot";
+import { CalendarIcon } from "lucide-react";
 
 interface IRData {
   companyName: string;
@@ -18,75 +19,165 @@ interface IRData {
   title: string; // "SK이노베이션 2025년 1분기 실적 발표"
 }
 
+interface CalendarData {
+  irId: number;
+  companyEventName: string;
+  date: string;
+  category: "이벤트" | "배당" | "IPO" | "분할" | "실적";
+}
+
 const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [irDataList, setIrDataList] = useState<IRData[]>([]);
-  const [selectedMarket, setSelectedMarket] = useState<string>("전체");
+  // const [irDataList, setIrDataList] = useState<IRData[]>([]);
+  const [calendarData, setCalendarData] = useState<CalendarData[]>([]);
+  // const [selectedMarket, setSelectedMarket] = useState<string>("전체");
+  const [selectedCategory, setSelectedCategory] = useState<string>("전체");
 
   const year = selectedDate.getFullYear();
   const month = selectedDate.getMonth() + 1;
   const day = selectedDate.getDate();
 
-  const marketOptions = ["전체", "KOSPI", "KOSDAQ"];
+  const categoryOptions = ["전체", "이벤트", "배당", "IPO", "분할"];
 
-  const filteredIrDataList = irDataList.filter((data) => {
+  const categoryLegend = {
+    이벤트: {
+      bgColor: "bg-main-blue",
+      textColor: "text-main-blue",
+      text: "이벤트",
+    },
+    배당: {
+      bgColor: "bg-green-500",
+      textColor: "text-green-500",
+      text: "배당",
+    },
+    IPO: {
+      bgColor: "bg-main-red",
+      textColor: "text-main-red",
+      text: "IPO",
+    },
+    분할: {
+      bgColor: "bg-yellow-500",
+      textColor: "text-yellow-500",
+      text: "분할",
+    },
+    실적: {
+      bgColor: "bg-purple-500",
+      textColor: "text-purple-500",
+      text: "실적",
+    },
+  };
+
+  const filteredCalendarData = calendarData.filter((data) => {
     const dataDate = new Date(data.date);
     const matchesDate =
-      dataDate.getFullYear() === selectedDate.getFullYear() &&
-      dataDate.getMonth() === selectedDate.getMonth() &&
-      dataDate.getDate() === selectedDate.getDate();
+      dataDate.getFullYear() === year &&
+      dataDate.getMonth() + 1 === month &&
+      dataDate.getDate() === day;
 
-    const matchesMarket =
-      selectedMarket === "전체" ||
-      (selectedMarket === "KOSPI" && data.market === "코스피") ||
-      (selectedMarket === "KOSDAQ" && data.market === "코스닥");
+    const matchesCategory =
+      selectedCategory === "전체" || data.category === selectedCategory;
 
-    return matchesDate && matchesMarket;
+    return matchesDate && matchesCategory;
   });
 
-  const datesWithIrData = new Set(irDataList.map((data) => data.date));
+  console.log("filteredCalendarData", filteredCalendarData);
+
+  // const marketOptions = ["전체", "KOSPI", "KOSDAQ"];
+
+  // const filteredIrDataList = irDataList.filter((data) => {
+  //   const dataDate = new Date(data.date);
+  //   const matchesDate =
+  //     dataDate.getFullYear() === selectedDate.getFullYear() &&
+  //     dataDate.getMonth() === selectedDate.getMonth() &&
+  //     dataDate.getDate() === selectedDate.getDate();
+
+  //   const matchesMarket =
+  //     selectedMarket === "전체" ||
+  //     (selectedMarket === "KOSPI" && data.market === "코스피") ||
+  //     (selectedMarket === "KOSDAQ" && data.market === "코스닥");
+
+  //   return matchesDate && matchesMarket;
+  // });
+
+  // const datesWithIrData = new Set(irDataList.map((data) => data.date));
 
   useEffect(() => {
     if (!year || !month) return;
 
-    const fetchIRData = async () => {
+    const fetchCalendarData = async () => {
       const res = await fetch(`/proxy/calen?year=${year}&month=${month}`);
-      const json = await res.json();
 
+      const json: { data: CalendarData[] } = await res.json();
       if (res.ok) {
-        setIrDataList(json);
+        setCalendarData(json.data);
+        console.log(json.data);
       }
     };
-    fetchIRData();
-  }, [month, year]);
+
+    fetchCalendarData();
+  }, [year, month]);
+
+  // useEffect(() => {
+  //   if (!year || !month) return;
+
+  //   const fetchIRData = async () => {
+  //     const res = await fetch(`/proxy/calen?year=${year}&month=${month}`);
+  //     const json = await res.json();
+
+  //     if (res.ok) {
+  //       setIrDataList(json);
+  //     }
+  //   };
+  //   fetchIRData();
+  // }, [month, year]);
 
   return (
     <div className="grid grid-cols-2 gap-main-4">
       <div className="w-full flex flex-col gap-main h-[calc(100vh-140px)]">
-        <div className="flex items-start justify-between">
-          <div className="flex flex-col gap-[5px]">
-            {/* <h2 className="font-semibold text-2xl-custom bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">{`${year}년 ${month}월 ${day}일 IR 일정`}</h2> */}
+        <div className="flex flex-col gap-[5px]">
+          {/* <h2 className="font-semibold text-2xl-custom bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">{`${year}년 ${month}월 ${day}일 IR 일정`}</h2> */}
+          <div className="flex items-center justify-between gap-main">
             <h2 className="font-semibold text-2xl-custom bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
               오늘의 일정
             </h2>
-            <p className="text-main-dark-gray/70">
-              총 {filteredIrDataList.length}건의 일정
-            </p>
+
+            <Dropdown
+              groups={categoryOptions}
+              selected={selectedCategory}
+              onSelect={(category) => {
+                setSelectedCategory(category);
+              }}
+              className="shadow-color py-1"
+              textColor="text-main-blue font-semibold"
+              maxHeight={300}
+            />
           </div>
-          <Dropdown
-            groups={marketOptions}
-            selected={selectedMarket}
-            onSelect={(market) => {
-              setSelectedMarket(market);
-            }}
-            className="shadow-color py-1"
-            textColor="text-main-blue font-semibold"
-            maxHeight={300}
-          />
+          <div className="flex items-center gap-main justify-between w-full">
+            <span className="text-main-dark-gray/70">
+              총 {filteredCalendarData.length}건의{" "}
+              {selectedCategory === "전체" ? "" : selectedCategory} 일정
+            </span>
+
+            <div className="flex items-center gap-main">
+              {Object.entries(categoryLegend).map(
+                ([category, { bgColor, textColor, text }]) => (
+                  <div
+                    key={category}
+                    className={`flex items-center gap-1 bg-main-light-gray/20 px-2 py-0.5 rounded-full`}
+                  >
+                    <div
+                      className={`w-2 h-2 rounded-full shadow-sm ${bgColor}`}
+                    />
+                    <span>{text}</span>
+                  </div>
+                )
+              )}
+            </div>
+          </div>
         </div>
 
-        <div className="flex justify-center px-main">
-          <div className="border border-main-light-gray bg-main-light-gray p-main pt-0 rounded-main">
+        <div className="flex justify-center">
+          <div className="bg-main-light-gray/50 p-main pt-0 rounded-main">
             <Calendar
               prev2Label={null}
               next2Label={null}
@@ -110,14 +201,27 @@ const CalendarPage = () => {
                   date.getMonth() + 1
                 ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 
-                if (datesWithIrData.has(dateString)) {
+                const categoriesForDate = [
+                  ...new Set(
+                    calendarData
+                      .filter((data) => data.date === dateString)
+                      .map((data) => data.category)
+                  ),
+                ];
+
+                if (categoriesForDate.length > 0) {
                   return (
-                    <div className="absolute top-main left-[10px] w-full flex justify-center">
-                      <div className="size-[5px] rounded-full bg-main-blue animate-pulse" />
+                    <div className="w-full flex justify-center gap-1">
+                      {categoriesForDate.map((category, index) => (
+                        <div
+                          key={`${category}-${index}`}
+                          className={`size-[6px] rounded-full ${categoryLegend[category].bgColor}`}
+                        />
+                      ))}
                     </div>
                   );
                 } else {
-                  return null;
+                  return <div className="size-[6px] bg-transparent" />;
                 }
               }}
               showNeighboringMonth={false}
@@ -131,50 +235,77 @@ const CalendarPage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-main overflow-y-auto px-main pb-main">
-          {filteredIrDataList.length > 0 ? (
-            filteredIrDataList.map((irData) => (
+        <div className="grid grid-cols-2 gap-main overflow-y-auto px-px pb-main">
+          {filteredCalendarData.length > 0 ? (
+            filteredCalendarData.map((calendarData) => (
               <div
-                key={`IR-${irData.irId}-${irData.date}`}
-                className="w-full flex flex-col gap-main bg-white rounded-main shadow-sm p-main-2"
+                key={`IR-${calendarData.irId}-${calendarData.date}`}
+                className={clsx(
+                  "w-full flex flex-col justify-between gap-main rounded-main border border-main-light-gray/50 p-main-2",
+                  selectedCategory === "이벤트" && "col-span-2 bg-main-blue/5",
+                  selectedCategory === "전체" &&
+                    calendarData.category === "이벤트" &&
+                    "col-span-2 bg-main-blue/5"
+                )}
               >
-                <p className="text-xl-custom font-semibold flex items-center gap-2">
-                  {irData.title}
-                </p>
+                <div className="flex flex-col gap-1">
+                  {calendarData.category === "이벤트" ? (
+                    <p className="text-xl-custom font-semibold">
+                      {calendarData.companyEventName}
+                    </p>
+                  ) : (
+                    <>
+                      <p className="text-xl-custom font-semibold line-clamp-1">
+                        {calendarData.companyEventName.replace(/ \(\d+\)$/, "")}
+                      </p>
+                      {calendarData.companyEventName.match(/\((\d+)\)$/) && (
+                        <p className="text-sm text-gray-500">
+                          {
+                            calendarData.companyEventName.match(
+                              /\((\d+)\)$/
+                            )?.[1]
+                          }
+                        </p>
+                      )}
+                    </>
+                  )}
+                </div>
 
-                <div className="grid grid-cols-[auto_1fr] gap-y-[5px] gap-x-main-2 text-sm-custom text-gray-500">
-                  <p>
-                    회사:{" "}
-                    <span className="text-main-blue font-semibold">
-                      {irData.companyName}
-                    </span>
-                  </p>
-
-                  <p>
-                    시장:{" "}
+                <div className="grid grid-cols-[auto_1fr] gap-main text-sm-custom text-gray-500">
+                  <div className="flex items-center gap-1">
+                    <div
+                      className={clsx(
+                        "size-2 rounded-full",
+                        categoryLegend[calendarData.category].bgColor
+                      )}
+                    />
                     <span
                       className={clsx(
-                        "text-xs-custom text-main-blue bg-main-blue/10 px-2 py-1 rounded-full w-fit",
-                        irData.market === "코스피"
-                          ? "bg-main-blue/10 text-main-blue"
-                          : "bg-main-red/10 text-main-red"
+                        "font-semibold",
+                        categoryLegend[calendarData.category].textColor
                       )}
                     >
-                      {irData.market === "코스피" ? "KOSPI" : "KOSDAQ"}
+                      {calendarData.category}
                     </span>
-                  </p>
+                  </div>
 
-                  <p>날짜: {irData.date}</p>
-
-                  <p>장소: {irData.place}</p>
-
-                  <p>시간: {irData.time ? irData.time : "정보 없음"}</p>
+                  <div className="flex items-center gap-1">
+                    <CalendarIcon
+                      className="text-main-dark-gray/70"
+                      size={14}
+                    />
+                    <span>{calendarData.date}</span>
+                  </div>
                 </div>
               </div>
             ))
           ) : (
-            <div className="w-full bg-white text-center text-main-dark-gray/60">
-              <p>IR 일정이 없습니다.</p>
+            <div className="w-full col-span-2 bg-white text-center text-main-dark-gray/60 pt-main-3">
+              <p>
+                {selectedCategory === "전체"
+                  ? "일정이 없습니다."
+                  : `${selectedCategory} 일정이 없습니다.`}
+              </p>
             </div>
           )}
         </div>
