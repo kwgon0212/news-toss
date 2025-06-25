@@ -92,8 +92,6 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
     gcTime: 10 * 60 * 1000, // 10분
   });
 
-  console.log("customNews", customNews);
-
   if (!token) return null;
 
   return (

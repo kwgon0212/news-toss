@@ -9,11 +9,31 @@ import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import { AnimatePresence, motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 
 const RealTime = ({ initialNews }: { initialNews: News[] }) => {
   const [news, setNews] = useState<News[]>(initialNews.slice(0, 10));
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { data: newsCount = { news_count_total: 0, news_count_today: 0 } } =
+    useQuery({
+      queryKey: ["newsCount"],
+      queryFn: async () => {
+        const res = await fetch("/proxy/news/v2/count");
+        const json: {
+          data: { news_count_total: number; news_count_today: number };
+        } = await res.json();
+        return json.data;
+      },
+      staleTime: 0,
+      gcTime: 0,
+    });
+
+  const [localNewsCount, setLocalNewsCount] = useState(newsCount);
+
+  useEffect(() => {
+    setLocalNewsCount(newsCount);
+  }, [newsCount]);
 
   const startRotation = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -34,19 +54,26 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
   useEffect(() => {
     const sse = new EventSource("https://news-toss.click/api/sse/realtime");
 
-    sse.onopen = () => console.log("✅ 실시간 뉴스 SSE 연결 완료");
+    sse.onopen = () => console.log("실시간 뉴스 SSE 연결 완료");
 
     sse.addEventListener("news", (event) => {
       try {
         const data = JSON.parse(event.data);
+        console.log("실시간", data);
         setNews((prev) => {
-          const updated = [data, ...prev];
+          const updated = [{ ...data, stock_list: [data.stock] }, ...prev];
           return updated.slice(0, 10); // 새 뉴스 추가 후 최대 10개 유지
         });
 
+        setLocalNewsCount((prev) => ({
+          news_count_today: prev.news_count_today + 1,
+          news_count_total: prev.news_count_total + 1,
+        }));
+
         toast.success("📰 실시간 뉴스가 도착했어요!", {
           position: "top-left",
-          autoClose: 2000,
+          autoClose: 10000,
+          hideProgressBar: true,
         });
       } catch (err) {
         console.error("❌ SSE 파싱 에러:", err);
@@ -57,7 +84,6 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
 
     return () => {
       sse.close();
-      console.log("🛑 SSE 연결 종료");
     };
   }, []);
 
@@ -82,11 +108,17 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
       <div className="grid grid-cols-[1fr_auto] h-fit gap-x-main justify-end text-end font-semibold text-sm-custom">
         <p>오늘 수집된 뉴스:</p>
         <span>
-          <b className="text-main-blue">{3}</b>개
+          <b className="text-main-blue">
+            {localNewsCount.news_count_today.toLocaleString()}
+          </b>
+          개
         </span>
         <p>전체 수집된 뉴스:</p>
         <span>
-          <b className="text-main-blue">{news.length}</b>개
+          <b className="text-main-blue">
+            {localNewsCount.news_count_total.toLocaleString()}
+          </b>
+          개
         </span>
       </div>
 
@@ -106,11 +138,11 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
               transition={{ duration: 0.4 }}
               className="flex flex-col absolute top-0 left-0 w-full"
             >
-              {news.slice(0, 5).map((item, idx) => (
+              {news.map((item, idx) => (
                 <div
                   key={`realtime-news-${item.newsId}-${idx}`}
                   className={clsx(
-                    "grid grid-cols-[100px_1fr_120px_80px] gap-main",
+                    "grid grid-cols-[120px_1fr_120px_80px] gap-main",
                     idx % 2 === 1 ? "bg-main-light-gray/50 rounded-sm" : ""
                   )}
                 >
@@ -129,8 +161,8 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
                     </Link>
                   </div>
 
-                  <div className="text-center text-main-blue p-2 text-sm-custom font-semibold">
-                    중요도:{" "}
+                  <div className="text-left text-main-blue p-2 text-sm-custom font-semibold">
+                    중요도{" "}
                     {item.impact_score
                       ? `${(item.impact_score * 100).toFixed(2)} %`
                       : "--.-- %"}

@@ -23,8 +23,6 @@ const HomePage = async () => {
   const allInitialNews: News[] = allInitialNewsJson.data;
   const allInitialNewsError = allNewsRes.ok ? false : true;
 
-  console.log("allInitialNews", allInitialNews);
-
   return (
     <div className="grid gap-main-4 max-w-[1000px] mx-auto">
       <IsLoginToast />
