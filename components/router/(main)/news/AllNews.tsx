@@ -129,22 +129,29 @@ const AllNews = ({
                 />
               </div>
               <div className="w-full flex flex-col gap-main justify-around">
-                <div className="flex items-center gap-main">
+                <div className="flex items-center gap-main truncate">
                   {[
                     ...new Map(
                       news.stock_list?.map((item) => [item.stock_name, item])
                     ).values(),
-                  ].map((stock) => (
-                    <span
-                      className={clsx(
-                        "bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent font-bold",
-                        cols > 3 ? "text-sm-custom" : "text-lg-custom"
-                      )}
-                      key={stock.stock_name}
-                    >
-                      {stock.stock_name}
+                  ]
+                    .slice(0, 2)
+                    .map((stock) => (
+                      <span
+                        className={clsx(
+                          "bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent font-bold",
+                          cols > 3 ? "text-sm-custom" : "text-lg-custom"
+                        )}
+                        key={stock.stock_name}
+                      >
+                        {stock.stock_name}
+                      </span>
+                    ))}
+                  {(news.stock_list?.length ?? 0) > 2 && (
+                    <span className="text-main-dark-gray text-xs-custom">
+                      외 {(news.stock_list?.length ?? 0) - 2}개의 종목
                     </span>
-                  ))}
+                  )}
                 </div>
 
                 <p
