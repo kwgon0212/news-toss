@@ -5,47 +5,65 @@ import { News } from "@/type/news";
 import { formatDate } from "@/utils/formatDate";
 import clsx from "clsx";
 import { CircleHelp, Clock } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
+import { AnimatePresence, motion } from "framer-motion";
 
 const RealTime = ({ initialNews }: { initialNews: News[] }) => {
-  const [news, setNews] = useState<News[]>(initialNews);
+  const [news, setNews] = useState<News[]>(initialNews.slice(0, 10));
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const startRotation = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setNews((prev) => {
+        const next = [...prev];
+        const first = next.shift();
+        if (first) next.push(first);
+        return next.slice(0, 10); // 최대 10개 유지
+      });
+    }, 4500);
+  };
+
+  const stopRotation = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+  };
 
   useEffect(() => {
     const sse = new EventSource("https://news-toss.click/api/sse/realtime");
 
-    sse.onopen = () => {
-      console.log("실시간 뉴스 sse 연결 완료");
-    };
+    sse.onopen = () => console.log("✅ 실시간 뉴스 SSE 연결 완료");
 
     sse.addEventListener("news", (event) => {
       try {
         const data = JSON.parse(event.data);
-        setNews((prev) => [data, ...prev]);
-        toast.success("실시간 뉴스가 추가되었어요!", {
+        setNews((prev) => {
+          const updated = [data, ...prev];
+          return updated.slice(0, 10); // 새 뉴스 추가 후 최대 10개 유지
+        });
+
+        toast.success("📰 실시간 뉴스가 도착했어요!", {
           position: "top-left",
-          autoClose: 500,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
+          autoClose: 2000,
         });
       } catch (err) {
-        console.error("❌ JSON 파싱 에러:", err);
+        console.error("❌ SSE 파싱 에러:", err);
       }
     });
 
-    sse.onerror = (event) => {
-      console.error("❌ SSE 에러 발생:", event);
-    };
+    sse.onerror = (e) => console.error("❌ SSE 에러:", e);
 
     return () => {
       sse.close();
-      console.log("🛑 실시간 뉴스 SSE 연결 종료");
+      console.log("🛑 SSE 연결 종료");
     };
+  }, []);
+
+  useEffect(() => {
+    startRotation();
+    return () => stopRotation();
   }, []);
 
   return (
@@ -62,65 +80,70 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
       </div>
 
       <div className="grid grid-cols-[1fr_auto] h-fit gap-x-main justify-end text-end font-semibold text-sm-custom">
-        <p>오늘 수집된 뉴스:</p>{" "}
+        <p>오늘 수집된 뉴스:</p>
         <span>
           <b className="text-main-blue">{3}</b>개
         </span>
-        <p>전체 수집된 뉴스:</p>{" "}
+        <p>전체 수집된 뉴스:</p>
         <span>
-          <b className="text-main-blue">{13}</b>개
+          <b className="text-main-blue">{news.length}</b>개
         </span>
       </div>
 
       <div className="col-span-2">
-        <div className="flex flex-col overflow-y-scroll h-[160px]">
-          {news.length === 0 && (
-            <div className="text-center py-main">
-              <p className="text-sm-custom text-main-dark-gray">
-                실시간으로 수집된 뉴스가 없습니다.
-              </p>
-            </div>
-          )}
-          {news.map((item, idx) => (
-            <div
-              key={`realtime-news-${item.newsId}`}
-              className={clsx(
-                "grid grid-cols-[100px_1fr_80px_80px] gap-main",
-                idx === 0
-                  ? "fade-bg"
-                  : idx % 2 === 1
-                  ? "bg-main-light-gray/50 rounded-sm"
-                  : ""
-              )}
+        <div
+          ref={containerRef}
+          className="relative h-[160px] overflow-y-auto"
+          onMouseEnter={stopRotation}
+          onMouseLeave={startRotation}
+        >
+          <AnimatePresence initial={false}>
+            <motion.div
+              key={news[0]?.newsId}
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "-100%", opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-col absolute top-0 left-0 w-full"
             >
-              <div className="text-center p-2 truncate text-sm-custom">
-                삼성전자
-              </div>
-
-              <div className="p-2">
-                <Link
-                  href={item.url}
-                  className="hover:text-main-blue transition-colors duration-300 text-sm-custom"
-                  target="_blank"
-                  rel="noopener noreferrer"
+              {news.slice(0, 5).map((item, idx) => (
+                <div
+                  key={`realtime-news-${item.newsId}-${idx}`}
+                  className={clsx(
+                    "grid grid-cols-[100px_1fr_120px_80px] gap-main",
+                    idx % 2 === 1 ? "bg-main-light-gray/50 rounded-sm" : ""
+                  )}
                 >
-                  {item.title}
-                </Link>
-              </div>
+                  <div className="text-center p-2 truncate text-sm-custom">
+                    삼성전자
+                  </div>
 
-              <div className="text-center text-main-blue p-2 text-sm-custom font-semibold">
-                {item.impact_score
-                  ? Number(item.impact_score * 100).toFixed(2)
-                  : "--.--"}{" "}
-                %
-              </div>
+                  <div className="p-2">
+                    <Link
+                      href={item.url}
+                      className="hover:text-main-blue transition-colors duration-300 text-sm-custom"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {item.title}
+                    </Link>
+                  </div>
 
-              <div className="flex items-center gap-1 text-xs-custom">
-                <Clock className="text-main-dark-gray" size={12} />
-                {item.wdate && formatDate(item.wdate)}
-              </div>
-            </div>
-          ))}
+                  <div className="text-center text-main-blue p-2 text-sm-custom font-semibold">
+                    중요도:{" "}
+                    {item.impact_score
+                      ? `${(item.impact_score * 100).toFixed(2)} %`
+                      : "--.-- %"}
+                  </div>
+
+                  <div className="flex items-center gap-1 text-xs-custom">
+                    <Clock className="text-main-dark-gray" size={12} />
+                    {item.wdate && formatDate(item.wdate)}
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </div>

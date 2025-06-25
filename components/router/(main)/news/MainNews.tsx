@@ -165,16 +165,13 @@ const MainNews = ({
                   sizes="100%"
                   className={clsx(
                     invertedStyle["inverted-radius"],
-                    "object-cover h-full hover:scale-103 duration-300 ease-in-out"
+                    "object-contain h-full hover:scale-103 duration-300 ease-in-out"
                   )}
                 />
 
                 <p className="absolute top-main right-main bg-white w-fit rounded-main text-main-dark-gray/80 text-base-custom font-semibold px-main py-2 shadow-md">
-                  <span>현재</span> <span className="text-main-blue">± </span>
-                  <b className="text-main-blue">
-                    {Number(mainNews.impact_score * 100).toFixed(2)}%
-                  </b>{" "}
-                  <span>변동 예측</span>
+                  현재 ±{Number(mainNews.impact_score * 100).toFixed(2)}% 변동
+                  예측
                 </p>
 
                 <div className="absolute w-full h-full bottom-0 left-0 bg-gradient-to-t from-black/70 to-transparent hover:to-black/70 pointer-events-none flex items-end transition-all duration-300 ease-in-out">

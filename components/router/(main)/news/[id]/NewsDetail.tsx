@@ -263,7 +263,7 @@ const NewsDetail = ({
 
               <p className="flex-1 flex text-2xl-custom font-bold items-center justify-center">
                 <span className="bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent">
-                  {(impactScore * 100).toFixed(1)}%
+                  ±{(impactScore * 100).toFixed(1)}%
                 </span>
               </p>
             </div>
