@@ -37,7 +37,7 @@ const CalendarPage = () => {
   const month = selectedDate.getMonth() + 1;
   const day = selectedDate.getDate();
 
-  const categoryOptions = ["전체", "이벤트", "배당", "IPO", "분할"];
+  const categoryOptions = ["전체", "이벤트", "배당", "IPO", "분할", "실적"];
 
   const categoryLegend = {
     이벤트: {
