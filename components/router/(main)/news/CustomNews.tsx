@@ -182,7 +182,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                     ).values(),
                   ].map((stock) => (
                     <span
-                      className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent text-lg-custom font-semibold"
+                      className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent text-lg-custom font-bold"
                       key={stock.stock_name}
                     >
                       {stock.stock_name}
@@ -194,7 +194,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                   {news.mainNews.title}
                 </p>
 
-                <p className="line-clamp-2 text-start text-main-dark-gray text-xs-custom">
+                <p className="line-clamp-2 text-start text-main-dark-gray text-xs-custom min-h-[calc(1em*1.5*2)]">
                   {news.mainNews.summary}
                 </p>
 

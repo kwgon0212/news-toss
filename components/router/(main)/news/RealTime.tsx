@@ -114,8 +114,8 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
                     idx % 2 === 1 ? "bg-main-light-gray/50 rounded-sm" : ""
                   )}
                 >
-                  <div className="text-center p-2 truncate text-sm-custom">
-                    삼성전자
+                  <div className="text-center p-2 truncate text-base-custom font-semibold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+                    {item.stock_list?.[0]?.stock_name}
                   </div>
 
                   <div className="p-2">

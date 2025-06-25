@@ -129,10 +129,27 @@ const AllNews = ({
                 />
               </div>
               <div className="w-full flex flex-col gap-main justify-around">
+                <div className="flex items-center gap-main">
+                  {[
+                    ...new Map(
+                      news.stock_list?.map((item) => [item.stock_name, item])
+                    ).values(),
+                  ].map((stock) => (
+                    <span
+                      className={clsx(
+                        "bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent font-bold",
+                        cols > 3 ? "text-sm-custom" : "text-lg-custom"
+                      )}
+                      key={stock.stock_name}
+                    >
+                      {stock.stock_name}
+                    </span>
+                  ))}
+                </div>
+
                 <p
                   className={clsx(
-                    "text-start font-semibold",
-                    cols < 5 ? "line-clamp-2" : "line-clamp-1",
+                    "text-start font-semibold line-clamp-1",
                     cols > 3 ? "text-sm-custom" : "text-base-custom"
                   )}
                 >
@@ -141,7 +158,7 @@ const AllNews = ({
 
                 <p
                   className={clsx(
-                    "line-clamp-2 text-start text-main-dark-gray text-xs-custom"
+                    "line-clamp-2 text-start text-main-dark-gray text-xs-custom min-h-[calc(1em*1.5*2)]"
                   )}
                 >
                   {news.article}
