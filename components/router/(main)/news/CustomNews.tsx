@@ -142,7 +142,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                   className="object-cover rounded-main"
                 />
 
-                <div className="absolute right-main-1/2 top-main-1/2 flex flex-col gap-1 z-30">
+                <div className="absolute right-main-1/2 top-main-1/2 flex flex-col items-end gap-1 z-30">
                   {news.mainNews.recommend_reasons?.map((reason, index) => (
                     <span
                       key={index}
