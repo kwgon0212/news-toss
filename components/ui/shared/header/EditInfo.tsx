@@ -37,9 +37,9 @@ const EditInfo = ({ token }: { token: JwtToken }) => {
 
   return (
     <>
-      <button onClick={() => setIsOpen(true)}>
+      {/* <button onClick={() => setIsOpen(true)}>
         <Edit className="text-main-dark-gray" size={15} />
-      </button>
+      </button> */}
 
       <Modal
         isOpen={isOpen}
