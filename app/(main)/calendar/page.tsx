@@ -1,23 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Calendar from "react-calendar";
 import "@/components/router/(main)/calendar/calendar.css";
 
 import clsx from "clsx";
 import Dropdown from "@/components/ui/shared/Dropdown";
 import Chatbot from "@/components/router/(main)/calendar/Chatbot";
-import { CalendarIcon } from "lucide-react";
-
-interface IRData {
-  companyName: string;
-  date: string; //"2025-04-30"
-  irId: number;
-  market: string; // "코스피"
-  place: string;
-  time: string; // "17:00:00"
-  title: string; // "SK이노베이션 2025년 1분기 실적 발표"
-}
+import { CalendarIcon, Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 interface CalendarData {
   irId: number;
@@ -28,14 +19,30 @@ interface CalendarData {
 
 const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  // const [irDataList, setIrDataList] = useState<IRData[]>([]);
-  const [calendarData, setCalendarData] = useState<CalendarData[]>([]);
-  // const [selectedMarket, setSelectedMarket] = useState<string>("전체");
   const [selectedCategory, setSelectedCategory] = useState<string>("전체");
 
   const year = selectedDate.getFullYear();
   const month = selectedDate.getMonth() + 1;
   const day = selectedDate.getDate();
+
+  const {
+    data: calendarData = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["calendar", year, month],
+    queryFn: async () => {
+      const res = await fetch(`/proxy/calen?year=${year}&month=${month}`);
+      if (!res.ok) {
+        throw new Error("캘린더 데이터를 불러오는데 실패했습니다.");
+      }
+      const json: { data: CalendarData[] } = await res.json();
+      return json.data;
+    },
+    staleTime: 5 * 60 * 1000, // 5분
+    gcTime: 10 * 60 * 1000, // 10분
+  });
 
   const categoryOptions = ["전체", "이벤트", "배당", "IPO", "분할", "실적"];
 
@@ -80,62 +87,63 @@ const CalendarPage = () => {
     return matchesDate && matchesCategory;
   });
 
-  console.log("filteredCalendarData", filteredCalendarData);
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-2 gap-main-4">
+        <div className="w-full flex flex-col gap-main h-[calc(100vh-140px)]">
+          <div className="flex items-center justify-center h-full">
+            <div className="flex flex-col items-center gap-main">
+              <Loader2 className="size-8 animate-spin text-main-blue" />
+              <p className="text-main-dark-gray">
+                캘린더 데이터를 불러오는 중...
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="w-full relative">
+          <div className="sticky top-0 right-0 h-[calc(100vh-140px)]">
+            <Chatbot isOpen={true} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  // const marketOptions = ["전체", "KOSPI", "KOSDAQ"];
-
-  // const filteredIrDataList = irDataList.filter((data) => {
-  //   const dataDate = new Date(data.date);
-  //   const matchesDate =
-  //     dataDate.getFullYear() === selectedDate.getFullYear() &&
-  //     dataDate.getMonth() === selectedDate.getMonth() &&
-  //     dataDate.getDate() === selectedDate.getDate();
-
-  //   const matchesMarket =
-  //     selectedMarket === "전체" ||
-  //     (selectedMarket === "KOSPI" && data.market === "코스피") ||
-  //     (selectedMarket === "KOSDAQ" && data.market === "코스닥");
-
-  //   return matchesDate && matchesMarket;
-  // });
-
-  // const datesWithIrData = new Set(irDataList.map((data) => data.date));
-
-  useEffect(() => {
-    if (!year || !month) return;
-
-    const fetchCalendarData = async () => {
-      const res = await fetch(`/proxy/calen?year=${year}&month=${month}`);
-
-      const json: { data: CalendarData[] } = await res.json();
-      if (res.ok) {
-        setCalendarData(json.data);
-        console.log(json.data);
-      }
-    };
-
-    fetchCalendarData();
-  }, [year, month]);
-
-  // useEffect(() => {
-  //   if (!year || !month) return;
-
-  //   const fetchIRData = async () => {
-  //     const res = await fetch(`/proxy/calen?year=${year}&month=${month}`);
-  //     const json = await res.json();
-
-  //     if (res.ok) {
-  //       setIrDataList(json);
-  //     }
-  //   };
-  //   fetchIRData();
-  // }, [month, year]);
+  if (isError) {
+    return (
+      <div className="grid grid-cols-2 gap-main-4">
+        <div className="w-full flex flex-col gap-main h-[calc(100vh-140px)]">
+          <div className="flex items-center justify-center h-full">
+            <div className="flex flex-col items-center gap-main text-center">
+              <div className="text-red-500 text-4xl">⚠️</div>
+              <p className="text-red-500 font-semibold">
+                데이터를 불러오는데 실패했습니다
+              </p>
+              <p className="text-main-dark-gray text-sm">
+                {error?.message || "알 수 없는 오류가 발생했습니다."}
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-main-blue text-white px-main py-2 rounded-main hover:bg-main-blue/90 transition-colors"
+              >
+                다시 시도
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="w-full relative">
+          <div className="sticky top-0 right-0 h-[calc(100vh-140px)]">
+            <Chatbot isOpen={true} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-2 gap-main-4">
       <div className="w-full flex flex-col gap-main h-[calc(100vh-140px)]">
         <div className="flex flex-col gap-[5px]">
-          {/* <h2 className="font-semibold text-2xl-custom bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">{`${year}년 ${month}월 ${day}일 IR 일정`}</h2> */}
           <div className="flex items-center justify-between gap-main">
             <h2 className="font-semibold text-2xl-custom bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
               오늘의 일정
