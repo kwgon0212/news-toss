@@ -51,28 +51,29 @@ const MetaDataNews = ({
   }
 
   return (
-    <div className="size-full flex flex-col gap-main-2">
-      <h2 className="text-3xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
-        과거 뉴스
-      </h2>
-
-      <div className="flex items-center gap-main text-xl-custom">
-        <Dropdown
-          groups={mainStockList.map((stock) => stock.stockName)}
-          selected={selectedStockName}
-          onSelect={(stock) => {
-            setSelectedStockName(stock);
-          }}
-          className="border border-main-light-gray py-0.5 text-base-custom"
-        />
-        <span className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
-          의 주가 경향성
-        </span>
-        <Tooltip
-          message="과거 유사 사건 뉴스 시점의 주가 경향성을 제공해드렸어요."
-          icon={<HelpCircle size={16} />}
-          position="top"
-        />
+    <div className="size-full flex flex-col gap-main-4">
+      <div className="flex flex-col gap-main">
+        <h2 className="text-3xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+          과거 뉴스 분석
+        </h2>
+        <div className="flex items-center gap-main text-xl-custom">
+          <Dropdown
+            groups={mainStockList.map((stock) => stock.stockName)}
+            selected={selectedStockName}
+            onSelect={(stock) => {
+              setSelectedStockName(stock);
+            }}
+            className="border border-main-light-gray py-0.5 text-base-custom"
+          />
+          <span className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+            의 주가 경향성
+          </span>
+          <Tooltip
+            message="과거 유사 사건 뉴스 시점의 주가 경향성을 제공해드렸어요."
+            icon={<HelpCircle size={16} />}
+            position="top"
+          />
+        </div>
       </div>
 
       <div className="w-full h-[320px]">
@@ -89,8 +90,8 @@ const MetaDataNews = ({
 
       <div className="flex flex-col gap-main">
         <div className="flex items-center gap-main text-xl-custom">
-          <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
-            과거 유사 뉴스
+          <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+            유사 뉴스 목록
           </h2>
           <Tooltip
             message="시장 상황을 반영하여 가장 유사한 과거 뉴스를 예측했어요."

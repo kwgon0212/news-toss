@@ -258,12 +258,12 @@ const NewsDetail = ({
           {impactScore && (
             <div className="flex items-baseline gap-main">
               <span className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
-                예측 변동률
+                중요도
               </span>
 
               <p className="flex-1 flex text-2xl-custom font-bold items-center justify-center">
                 <span className="bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent">
-                  ±{(impactScore * 100).toFixed(1)}%
+                  {(impactScore * 100).toFixed(1)}%
                 </span>
               </p>
             </div>

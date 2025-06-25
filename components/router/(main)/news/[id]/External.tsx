@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -49,7 +49,14 @@ const External = ({
   const [selectedType, setSelectedType] =
     useState<keyof typeof dataMap>("close");
 
-  // React Query로 과거 뉴스 외부 데이터 패칭
+  const pinImageRef = useRef<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = "/pin.png";
+    pinImageRef.current = img;
+  }, []);
+
   const {
     data: pastNewsExternal,
     isLoading,
@@ -67,8 +74,8 @@ const External = ({
       const json = await res.json();
       return json.data as NewsExternal;
     },
-    staleTime: 5 * 60 * 1000, // 5분
-    gcTime: 10 * 60 * 1000, // 10분
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
   const dataMap = {
@@ -170,7 +177,7 @@ const External = ({
             pastNewsExternal.dPlus4Close,
             pastNewsExternal.dPlus5Close,
           ],
-          color: "#a5b4fc", // 연한 남색 계열
+          color: "#a5b4fc",
         },
         volume: {
           label: "거래량 (과거 뉴스)",
@@ -186,7 +193,7 @@ const External = ({
             null,
             null,
           ],
-          color: "#f1a8d1", // 연한 핑크
+          color: "#f1a8d1",
         },
         foreign: {
           label: "외국인 (과거 뉴스)",
@@ -202,7 +209,7 @@ const External = ({
             null,
             null,
           ],
-          color: "#86efac", // 연한 초록
+          color: "#86efac",
         },
         institution: {
           label: "기관 (과거 뉴스)",
@@ -218,7 +225,7 @@ const External = ({
             null,
             null,
           ],
-          color: "#fcd34d", // 연한 노랑
+          color: "#fcd34d",
         },
         individual: {
           label: "개인 (과거 뉴스)",
@@ -234,12 +241,11 @@ const External = ({
             null,
             null,
           ],
-          color: "#7dd3fc", // 연한 파랑
+          color: "#7dd3fc",
         },
       }
     : null;
 
-  // null이 아닌 데이터만 필터링
   const currentData = dataMap[selectedType].data;
   const pastData = pastDataMap?.[selectedType].data;
 
@@ -275,6 +281,35 @@ const External = ({
     ],
   };
 
+  const pinPlugin = {
+    id: "customPin",
+    afterDatasetsDraw(chart: any) {
+      const { ctx, scales } = chart;
+      const xAxis = scales["x"];
+      const yAxis = scales["y"];
+
+      const index = chart.data.labels.findIndex(
+        (label: string) => label === "D-1"
+      );
+
+      if (index === -1 || !pinImageRef.current) return;
+
+      // 현재 선택된 dataset의 D-1 값이 0인 경우만 핀 꽂기
+      const currentDataset = chart.data.datasets[0]; // 첫 번째 데이터셋 (현재 뉴스)
+      const dMinus1Value = currentDataset.data[index];
+
+      if (dMinus1Value !== 0) return;
+
+      const x = xAxis.getPixelForValue(index);
+      const y = yAxis.getPixelForValue(dMinus1Value); // 0 위치 위에 핀
+
+      ctx.save();
+      const size = 30;
+      ctx.drawImage(pinImageRef.current, x - size / 2, y - size, size, size);
+      ctx.restore();
+    },
+  };
+
   const chartOptions = {
     responsive: true,
     plugins: {
@@ -285,10 +320,6 @@ const External = ({
           pointStyle: "rectRounded",
         },
       },
-      // title: {
-      //   display: true,
-      //   text: `뉴스 전후 ${dataMap[selectedType].label} 변화`,
-      // },
     },
   };
 
@@ -304,7 +335,7 @@ const External = ({
     return (
       <div className="size-full flex flex-col gap-main-2">
         <div className="flex items-center gap-main">
-          <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+          <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
             현재 vs 과거 변동률
           </h2>
           <Tooltip
@@ -314,12 +345,7 @@ const External = ({
           />
         </div>
         <div className="flex items-center justify-center min-h-[300px]">
-          <div className="flex flex-col items-center gap-main">
-            <Loader2 className="size-8 animate-spin text-main-blue" />
-            <p className="text-main-dark-gray">
-              과거 뉴스 데이터를 불러오는 중...
-            </p>
-          </div>
+          <Loader2 className="size-8 animate-spin text-main-blue" />
         </div>
       </div>
     );
@@ -328,33 +354,21 @@ const External = ({
   if (isError) {
     return (
       <div className="size-full flex flex-col gap-main-2">
-        <div className="flex items-center gap-main">
-          <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
-            현재 vs 과거 변동률
-          </h2>
-          <Tooltip
-            message="각 일자의 지표는 이전 거래일(D-1) 대비 변동률입니다."
-            icon={<HelpCircle size={16} />}
-            position="right"
-          />
-        </div>
-        <div className="flex items-center justify-center min-h-[300px]">
-          <div className="flex flex-col items-center gap-main text-center">
-            <div className="text-red-500 text-4xl">⚠️</div>
-            <p className="text-red-500 font-semibold">
-              과거 뉴스 데이터를 불러오는데 실패했습니다
-            </p>
-            <p className="text-main-dark-gray text-sm">
-              {error?.message || "알 수 없는 오류가 발생했습니다."}
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-main-blue text-white px-main py-2 rounded-main hover:bg-main-blue/90 transition-colors"
-            >
-              다시 시도
-            </button>
-          </div>
-        </div>
+        <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+          현재 vs 과거 변동률
+        </h2>
+        <p className="text-red-500 font-semibold">
+          과거 뉴스 데이터를 불러오는데 실패했습니다
+        </p>
+        <p className="text-main-dark-gray text-sm">
+          {error?.message || "알 수 없는 오류가 발생했습니다."}
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="bg-main-blue text-white px-main py-2 rounded-main hover:bg-main-blue/90 transition-colors"
+        >
+          다시 시도
+        </button>
       </div>
     );
   }
@@ -362,7 +376,7 @@ const External = ({
   return (
     <div className="size-full flex flex-col gap-main-2">
       <div className="flex items-center gap-main">
-        <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+        <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
           현재 vs 과거 변동률
         </h2>
         <Tooltip
@@ -383,9 +397,8 @@ const External = ({
             </Button>
           ))}
         </div>
-
         <div className="w-full min-h-[300px]">
-          <Bar data={chartData} options={chartOptions} />
+          <Bar data={chartData} options={chartOptions} plugins={[pinPlugin]} />
         </div>
       </div>
     </div>
