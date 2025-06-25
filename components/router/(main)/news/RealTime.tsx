@@ -74,7 +74,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
         </span>
         <Tooltip
           position="right"
-          message="네이버 증권 뉴스에서 실시간으로 수집됩니다."
+          message="네이버 증권 뉴스에서 실시간으로 수집되며 최대 10개만 표시됩니다."
           icon={<CircleHelp size={16} />}
         />
       </div>
