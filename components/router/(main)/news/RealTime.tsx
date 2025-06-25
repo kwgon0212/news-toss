@@ -70,7 +70,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
           news_count_total: prev.news_count_total + 1,
         }));
 
-        toast.success("📰 실시간 뉴스가 도착했어요!", {
+        toast.success(`📰 ${data.stock.stock_name}관련 뉴스가 도착했어요!`, {
           position: "top-left",
           autoClose: 10000,
           hideProgressBar: true,
