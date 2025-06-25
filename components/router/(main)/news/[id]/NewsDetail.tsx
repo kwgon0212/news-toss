@@ -8,6 +8,7 @@ import {
   Bookmark,
   StarIcon,
   BarChart2,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -20,40 +21,45 @@ import { formatDate } from "@/utils/formatDate";
 import { StockSearchResult } from "@/type/stocks/StockSearchResult";
 import UpPrice from "@/components/ui/shared/UpPrice";
 import DownPrice from "@/components/ui/shared/DownPrice";
+import { useQuery } from "@tanstack/react-query";
 
 const NewsDetail = ({
-  // news,
   token,
   newsId,
   mainStockList,
   impactScore,
   summary,
 }: {
-  // news: News;
   token: JwtToken | null;
   newsId: string;
   mainStockList: StockSearchResult[];
   impactScore: number;
   summary: string;
 }) => {
-  const [news, setNews] = useState<News | null>(null);
-  const [isOpenNewsDetail, setIsOpenNewsDetail] = useState(false);
   const [isScrap, setIsScrap] = useState(false);
   const { scraps, setScraps } = useScrapStore();
   const newsDetailRef = useRef<HTMLDivElement>(null);
 
-  console.log(token?.memberId, "token memberId");
-
-  useEffect(() => {
-    const fetchNews = async () => {
-      const newsRes = await fetch(`/proxy/news/v2/detail?newsId=${newsId}`, {
+  const {
+    data: news,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["newsDetail", newsId],
+    queryFn: async () => {
+      const res = await fetch(`/proxy/news/v2/detail?newsId=${newsId}`, {
         credentials: "include",
       });
-      const newsJson: { data: News } = await newsRes.json();
-      setNews(newsJson.data);
-    };
-    fetchNews();
-  }, [newsId]);
+      if (!res.ok) {
+        throw new Error("뉴스 상세 정보를 불러오는데 실패했습니다.");
+      }
+      const json: { data: News } = await res.json();
+      return json.data;
+    },
+    staleTime: 5 * 60 * 1000, // 5분
+    gcTime: 10 * 60 * 1000, // 10분
+  });
 
   useEffect(() => {
     if (scraps.find((scrap) => scrap.newsId === newsId)) {
@@ -121,7 +127,50 @@ const NewsDetail = ({
     }
   };
 
-  if (!news) return null;
+  if (isLoading) {
+    return (
+      <div className="w-full flex flex-col gap-main overflow-x-hidden overflow-y-scroll">
+        <h2 className="text-3xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+          현재 뉴스
+        </h2>
+        <div className="flex items-center justify-center py-main-4">
+          <div className="flex flex-col items-center gap-main">
+            <Loader2 className="size-8 animate-spin text-main-blue" />
+            <p className="text-main-dark-gray">
+              뉴스 상세 정보를 불러오는 중...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !news) {
+    return (
+      <div className="w-full flex flex-col gap-main overflow-x-hidden overflow-y-scroll">
+        <h2 className="text-3xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+          현재 뉴스
+        </h2>
+        <div className="flex items-center justify-center py-main-4">
+          <div className="flex flex-col items-center gap-main text-center">
+            <div className="text-red-500 text-4xl">⚠️</div>
+            <p className="text-red-500 font-semibold">
+              뉴스 상세 정보를 불러오는데 실패했습니다
+            </p>
+            <p className="text-main-dark-gray text-sm">
+              {error?.message || "알 수 없는 오류가 발생했습니다."}
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-main-blue text-white px-main py-2 rounded-main hover:bg-main-blue/90 transition-colors"
+            >
+              다시 시도
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col gap-main overflow-x-hidden overflow-y-scroll">

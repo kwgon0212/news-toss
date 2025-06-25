@@ -44,10 +44,6 @@ const AllNews = ({
     }
   };
 
-  // useEffect(() => {
-  //   fetchMoreNews(0);
-  // }, []);
-
   const visibleCount = rows * cols;
   const visibleNews = newsList.slice(0, visibleCount);
 

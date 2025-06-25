@@ -6,7 +6,6 @@ import { MetaData, News, NewsExternal } from "@/type/news";
 import { StockSearchResult } from "@/type/stocks/StockSearchResult";
 import { StockData } from "@/type/stocks/stockData";
 import MetaDataNews from "@/components/router/(main)/news/[id]/MetaDataNews";
-import External from "@/components/router/(main)/news/[id]/External";
 
 const NewsDetailPage = async ({
   params,
@@ -130,7 +129,6 @@ const NewsDetailPage = async ({
           relatedNews={relatedNewsJson.data}
           external={externalJson.data}
         />
-        {/* <External external={externalJson.data} /> */}
       </div>
     </div>
   );

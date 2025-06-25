@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,7 +14,8 @@ import { Bar } from "react-chartjs-2";
 import { News, NewsExternal } from "@/type/news";
 import Button from "@/components/ui/shared/Button";
 import Tooltip from "@/components/ui/Tooltip";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 ChartJS.register(
   CategoryScale,
@@ -47,21 +48,28 @@ const External = ({
 }) => {
   const [selectedType, setSelectedType] =
     useState<keyof typeof dataMap>("close");
-  const [pastNewsExternal, setPastNewsExternal] = useState<NewsExternal | null>(
-    null
-  );
 
-  useEffect(() => {
-    const fetchPastNewsExternal = async () => {
+  // React Query로 과거 뉴스 외부 데이터 패칭
+  const {
+    data: pastNewsExternal,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["pastNewsExternal", selectedNews.newsId],
+    queryFn: async () => {
       const res = await fetch(
         `/proxy/news/v2/external?newsId=${selectedNews.newsId}`
       );
+      if (!res.ok) {
+        throw new Error("과거 뉴스 데이터를 불러오는데 실패했습니다.");
+      }
       const json = await res.json();
-      setPastNewsExternal(json.data);
-      console.log(json.data, "json.data");
-    };
-    fetchPastNewsExternal();
-  }, [selectedNews]);
+      return json.data as NewsExternal;
+    },
+    staleTime: 5 * 60 * 1000, // 5분
+    gcTime: 10 * 60 * 1000, // 10분
+  });
 
   const dataMap = {
     close: {
@@ -291,6 +299,65 @@ const External = ({
     "institution",
     "individual",
   ];
+
+  if (isLoading) {
+    return (
+      <div className="size-full flex flex-col gap-main-2">
+        <div className="flex items-center gap-main">
+          <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+            현재 vs 과거 변동률
+          </h2>
+          <Tooltip
+            message="각 일자의 지표는 이전 거래일(D-1) 대비 변동률입니다."
+            icon={<HelpCircle size={16} />}
+            position="right"
+          />
+        </div>
+        <div className="flex items-center justify-center min-h-[300px]">
+          <div className="flex flex-col items-center gap-main">
+            <Loader2 className="size-8 animate-spin text-main-blue" />
+            <p className="text-main-dark-gray">
+              과거 뉴스 데이터를 불러오는 중...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="size-full flex flex-col gap-main-2">
+        <div className="flex items-center gap-main">
+          <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+            현재 vs 과거 변동률
+          </h2>
+          <Tooltip
+            message="각 일자의 지표는 이전 거래일(D-1) 대비 변동률입니다."
+            icon={<HelpCircle size={16} />}
+            position="right"
+          />
+        </div>
+        <div className="flex items-center justify-center min-h-[300px]">
+          <div className="flex flex-col items-center gap-main text-center">
+            <div className="text-red-500 text-4xl">⚠️</div>
+            <p className="text-red-500 font-semibold">
+              과거 뉴스 데이터를 불러오는데 실패했습니다
+            </p>
+            <p className="text-main-dark-gray text-sm">
+              {error?.message || "알 수 없는 오류가 발생했습니다."}
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-main-blue text-white px-main py-2 rounded-main hover:bg-main-blue/90 transition-colors"
+            >
+              다시 시도
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="size-full flex flex-col gap-main-2">

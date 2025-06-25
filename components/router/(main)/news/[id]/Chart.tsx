@@ -9,6 +9,7 @@ import {
   Time,
   LineSeries,
   createSeriesMarkers,
+  LineType,
 } from "lightweight-charts";
 import { News } from "@/type/news";
 
@@ -94,6 +95,7 @@ const Chart = ({
       crosshairMarkerRadius: 4,
       crosshairMarkerBorderColor: "rgb(240, 66, 81)",
       crosshairMarkerBackgroundColor: "white",
+      lineType: 2,
     });
 
     // 데이터 변환 및 설정 (종가만 사용)
