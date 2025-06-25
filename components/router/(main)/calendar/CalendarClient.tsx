@@ -257,7 +257,7 @@ const CalendarClient = ({ initialData }: CalendarClientProps) => {
               <div
                 key={`IR-${calendarData.irId}-${calendarData.date}`}
                 className={clsx(
-                  "w-full flex flex-col justify-between gap-main rounded-main border border-main-light-gray/50 p-main-2",
+                  "w-full flex flex-col justify-between gap-main rounded-main border border-main-light-gray/50 px-main-2 py-main",
                   selectedCategory === "이벤트" && "col-span-2 bg-main-blue/5",
                   selectedCategory === "전체" &&
                     calendarData.category === "이벤트" &&
@@ -291,8 +291,9 @@ const CalendarClient = ({ initialData }: CalendarClientProps) => {
                   <div className="flex items-center gap-1">
                     <div
                       className={clsx(
-                        "size-2 rounded-full",
-                        categoryLegend[calendarData.category].bgColor
+                        "size-2 rounded-full flex items-center justify-center",
+                        categoryLegend[calendarData.category].bgColor,
+                        calendarData.category === "이벤트" && "animate-pulse"
                       )}
                     />
                     <span
