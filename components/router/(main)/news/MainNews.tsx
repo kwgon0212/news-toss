@@ -170,7 +170,7 @@ const MainNews = ({
                 />
 
                 <p className="absolute top-main right-main bg-main-blue  w-fit rounded-full text-[#e4ecf8] text-base-custom font-semibold px-main py-1">
-                  중요도 {Number(mainNews.impact_score * 100).toFixed(2)}%
+                  중요도 {Number(mainNews.impact_score).toFixed(2)}%
                 </p>
 
                 <div className="absolute w-full h-full bottom-0 left-0 bg-gradient-to-t from-black/70 to-transparent hover:to-black/70 pointer-events-none flex items-end transition-all duration-300 ease-in-out">
@@ -251,7 +251,7 @@ const MainNews = ({
                 <div className="w-full h-full flex flex-col gap-main justify-around">
                   <div className="flex flex-col gap-1">
                     <span className="font-semibold text-sm-custom text-main-blue bg-main-blue/10 rounded-main px-main py-0.5 w-fit">
-                      유사도: {Number(item.similarity * 100).toFixed(2)}%
+                      유사도 {Number(item.similarity * 100).toFixed(2)}%
                     </span>
                     <p className="line-clamp-2 font-semibold text-lg-custom text-left">
                       {item.title}

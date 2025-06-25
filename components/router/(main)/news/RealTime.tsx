@@ -164,7 +164,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
                   <div className="text-left text-main-blue p-2 text-sm-custom font-semibold">
                     중요도{" "}
                     {item.impact_score
-                      ? `${(item.impact_score * 100).toFixed(2)} %`
+                      ? `${item.impact_score.toFixed(2)}%`
                       : "--.-- %"}
                   </div>
 

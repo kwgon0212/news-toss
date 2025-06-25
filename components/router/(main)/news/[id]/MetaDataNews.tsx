@@ -54,7 +54,7 @@ const MetaDataNews = ({
     <div className="size-full flex flex-col gap-main-4">
       <div className="flex flex-col gap-main">
         <h2 className="text-3xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
-          과거 뉴스 분석
+          <span className="text-black">📋</span> 과거 뉴스 분석
         </h2>
         <div className="flex items-center gap-main text-xl-custom">
           <Dropdown
