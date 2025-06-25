@@ -149,7 +149,7 @@ const MainNews = ({
             <Link
               href={`/news/${mainNews.news_id}`}
               rel="noopener noreferrer"
-              className="block w-full h-full relative filter-[drop-shadow(2px_2px_3px_rgba(0,0,0,0.5))] group min-h-[400px]"
+              className="block w-full h-full relative group min-h-[400px]"
             >
               <div
                 className={clsx(
@@ -165,13 +165,12 @@ const MainNews = ({
                   sizes="100%"
                   className={clsx(
                     invertedStyle["inverted-radius"],
-                    "object-contain h-full hover:scale-103 duration-300 ease-in-out"
+                    "object-cover h-full hover:scale-103 duration-300 ease-in-out"
                   )}
                 />
 
-                <p className="absolute top-main right-main bg-white w-fit rounded-main text-main-dark-gray/80 text-base-custom font-semibold px-main py-2 shadow-md">
-                  현재 ±{Number(mainNews.impact_score * 100).toFixed(2)}% 변동
-                  예측
+                <p className="absolute top-main right-main bg-main-blue  w-fit rounded-full text-[#e4ecf8] text-base-custom font-semibold px-main py-1">
+                  중요도 {Number(mainNews.impact_score * 100).toFixed(2)}%
                 </p>
 
                 <div className="absolute w-full h-full bottom-0 left-0 bg-gradient-to-t from-black/70 to-transparent hover:to-black/70 pointer-events-none flex items-end transition-all duration-300 ease-in-out">

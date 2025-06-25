@@ -92,6 +92,8 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
     gcTime: 10 * 60 * 1000, // 10분
   });
 
+  console.log("customNews", customNews);
+
   if (!token) return null;
 
   return (
@@ -157,7 +159,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                   <div className="absolute bottom-0 left-0 w-full p-2 z-20 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out">
                     <div className="w-full bg-main-light-gray/50 rounded-full h-2 relative">
                       <span className="absolute bottom-full left-0 text-white text-sm-custom font-semibold">
-                        유저 관심도{" "}
+                        클릭확률{" "}
                         {Number(news.mainNews.click_score * 100).toFixed(2)}%
                       </span>
                       <div
@@ -170,6 +172,24 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
               </div>
 
               <div className="w-full flex flex-col gap-main justify-around">
+                <div className="flex items-center gap-main">
+                  {[
+                    ...new Map(
+                      news.mainNews.stock_list?.map((item) => [
+                        item.stock_name,
+                        item,
+                      ])
+                    ).values(),
+                  ].map((stock) => (
+                    <span
+                      className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent text-lg-custom font-semibold"
+                      key={stock.stock_name}
+                    >
+                      {stock.stock_name}
+                    </span>
+                  ))}
+                </div>
+
                 <p className={clsx("text-start font-semibold", "line-clamp-1")}>
                   {news.mainNews.title}
                 </p>
@@ -233,12 +253,6 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                   </div>
                 )}
               </div>
-
-              {news.relatedNews.length > 2 && (
-                <p className="text-main-dark-gray text-xs-custom text-center">
-                  {news.relatedNews.length - 2} more...
-                </p>
-              )}
             </Link>
           ))
         )}

@@ -89,7 +89,7 @@ const CalendarPage = () => {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 gap-main-4">
+      <div className="grid grid-cols-2 gap-main-6">
         <div className="w-full flex flex-col gap-main h-[calc(100vh-140px)]">
           <div className="flex items-center justify-center h-full">
             <div className="flex flex-col items-center gap-main">
@@ -111,7 +111,7 @@ const CalendarPage = () => {
 
   if (isError) {
     return (
-      <div className="grid grid-cols-2 gap-main-4">
+      <div className="grid grid-cols-2 gap-main-6">
         <div className="w-full flex flex-col gap-main h-[calc(100vh-140px)]">
           <div className="flex items-center justify-center h-full">
             <div className="flex flex-col items-center gap-main text-center">
@@ -141,7 +141,7 @@ const CalendarPage = () => {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-main-4">
+    <div className="grid grid-cols-2 gap-main-6">
       <div className="w-full flex flex-col gap-main h-[calc(100vh-140px)]">
         <div className="flex flex-col gap-[5px]">
           <div className="flex items-center justify-between gap-main">

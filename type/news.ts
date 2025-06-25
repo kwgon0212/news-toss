@@ -14,6 +14,7 @@ export interface News {
   summary?: string; // 요약
   recommend_reasons?: string[]; // 추천 이유
   click_score?: number; // 클릭 점수
+  stock_list?: { stock_id: string; stock_name: string }[];
 }
 
 export interface HighlightNews {

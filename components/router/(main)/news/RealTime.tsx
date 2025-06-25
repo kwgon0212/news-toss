@@ -24,7 +24,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
         if (first) next.push(first);
         return next.slice(0, 10); // 최대 10개 유지
       });
-    }, 4500);
+    }, 2500);
   };
 
   const stopRotation = () => {
@@ -103,7 +103,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: "-100%", opacity: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.4 }}
               className="flex flex-col absolute top-0 left-0 w-full"
             >
               {news.slice(0, 5).map((item, idx) => (
