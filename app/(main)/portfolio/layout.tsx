@@ -7,9 +7,9 @@ const PortfolioLayout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="px-[30px] flex gap-[40px]">
-      <aside className="flex flex-col gap-main">
+      {/* <aside className="flex flex-col gap-main">
         <SideMenus token={token} />
-      </aside>
+      </aside> */}
       <div className="flex-1">{children}</div>
     </div>
   );

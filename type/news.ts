@@ -41,8 +41,8 @@ export interface HighlightNews {
 export interface MetaData {
   newsId: string;
   summary: string;
-  stockList: { stockName: string; stock_id: string }[];
-  stockListView: { stockName: string; stock_id: string }[];
+  stockList: { stock_name: string; stock_id: string }[];
+  stockListView: { stock_name: string; stock_id: string }[];
   industryList: {
     stock_id: string;
     industry_id: string;

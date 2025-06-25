@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getJwtToken } from "./utils/auth";
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -9,8 +10,14 @@ export async function middleware(req: NextRequest) {
       userAgent
     );
 
+  const token = await getJwtToken();
+
   if (isMobile && pathname !== "/only-desktop") {
     return NextResponse.redirect(new URL("/only-desktop", req.url));
+  }
+
+  if (pathname.startsWith("/portfolio") && !token) {
+    return NextResponse.redirect(new URL("/news?login=false", req.url));
   }
 
   if (pathname.startsWith("/stock/")) {

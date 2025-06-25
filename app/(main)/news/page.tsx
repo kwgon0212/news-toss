@@ -4,6 +4,7 @@ import AllNews from "@/components/router/(main)/news/AllNews";
 import { getJwtToken } from "@/utils/auth";
 import { HighlightNews, News } from "@/type/news";
 import RealTime from "@/components/router/(main)/news/RealTime";
+import IsLoginToast from "@/components/router/(main)/news/IsLoginToast";
 
 const HomePage = async () => {
   const token = await getJwtToken();
@@ -24,6 +25,8 @@ const HomePage = async () => {
 
   return (
     <div className="grid gap-main-4 max-w-[1000px] mx-auto">
+      <IsLoginToast />
+
       <div className="p-main">
         <RealTime initialNews={allInitialNews.slice(0, 4)} />
       </div>
