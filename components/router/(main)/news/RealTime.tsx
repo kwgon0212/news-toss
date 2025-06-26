@@ -48,41 +48,49 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
   };
 
   useEffect(() => {
-    const sse = new EventSource("https://news-toss.click/api/sse/realtime");
+    let sse: EventSource | null = null;
+    let retryTimeout: NodeJS.Timeout;
 
-    sse.onopen = () => console.log("실시간 뉴스 SSE 연결 완료");
+    const connectSSE = () => {
+      sse = new EventSource("https://news-toss.click/api/sse/realtime");
 
-    sse.addEventListener("news", (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        console.log("실시간", data);
-        setNews((prev) => {
-          const updated = [data, ...prev];
-          return updated.slice(0, 10); // 새 뉴스 추가 후 최대 10개 유지
-        });
+      sse.onopen = () => {
+        console.log("✅ 실시간 뉴스 SSE 연결 완료");
+      };
 
-        setNewsCount((prev) => ({
-          news_count_today: prev.news_count_today + 1,
-          news_count_total: prev.news_count_total + 1,
-        }));
+      sse.addEventListener("news", (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          console.log("🆕 실시간 뉴스:", data);
 
-        toast.success(
-          `📰 ${data.stock_list[0].stock_name}관련 뉴스가 도착했어요!`,
-          {
+          setNews((prev) => [data, ...prev].slice(0, 10));
+          setNewsCount((prev) => ({
+            news_count_today: prev.news_count_today + 1,
+            news_count_total: prev.news_count_total + 1,
+          }));
+
+          toast.success(`📰 ${data.stock_list[0].stock_name}관련 뉴스 도착!`, {
             position: "top-left",
             autoClose: 10000,
             hideProgressBar: true,
-          }
-        );
-      } catch (err) {
-        console.error("❌ SSE 파싱 에러:", err);
-      }
-    });
+          });
+        } catch (err) {
+          console.error("❌ SSE 데이터 파싱 에러:", err);
+        }
+      });
 
-    sse.onerror = (e) => console.error("❌ SSE 에러:", e);
+      sse.onerror = (err) => {
+        console.error("❌ SSE 연결 에러 발생:", err);
+        sse?.close();
+        retryTimeout = setTimeout(connectSSE, 5000);
+      };
+    };
+
+    connectSSE();
 
     return () => {
-      sse.close();
+      if (sse) sse.close();
+      clearTimeout(retryTimeout);
     };
   }, []);
 
