@@ -6,7 +6,7 @@ import { News, NewsExternal } from "@/type/news";
 import { StockData } from "@/type/stocks/stockData";
 import { StockSearchResult } from "@/type/stocks/StockSearchResult";
 import clsx from "clsx";
-import { Clock, HelpCircle, Info } from "lucide-react";
+import { ChevronRight, Clock, HelpCircle, Info } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -128,8 +128,14 @@ const MetaDataNews = ({
           onClick={() => {
             setIsOpenPastNewsDetail(true);
           }}
-          className="grid grid-cols-6 gap-main-2 hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group h-[160px]"
+          className="grid grid-cols-6 gap-main-2 hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group h-[160px] relative group"
         >
+          <div className="absolute flex items-center gap-1 pl-3 pr-2 py-1 rounded-full bg-main-blue top-1/2 -translate-y-1/2 right-main text-white group-hover:opacity-100 opacity-0 duration-500 ease-in-out">
+            <span className="font-semibold text-sm-custom whitespace-nowrap">
+              상세보기
+            </span>
+            <ChevronRight size={14} className="animate-bounce-x" />
+          </div>
           <div className="col-span-2 size-full rounded-main shrink-0 relative">
             <Image
               src={selectedNews.press ?? "https://placehold.co/200x150"}

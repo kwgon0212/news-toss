@@ -51,6 +51,29 @@ const External = ({
 
   const pinImageRef = useRef<HTMLImageElement | null>(null);
 
+  // external 데이터가 없거나 비어있는 경우 처리
+  if (!external || Object.keys(external).length === 0) {
+    return (
+      <div className="size-full flex flex-col gap-main-2">
+        <div className="flex items-center gap-main">
+          <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+            현재 vs 과거 변동률
+          </h2>
+          <Tooltip
+            message="각 일자의 지표는 이전 거래일(D-1) 대비 변동률입니다."
+            icon={<HelpCircle size={16} />}
+            position="right"
+          />
+        </div>
+        <div className="flex items-center justify-center min-h-[300px]">
+          <p className="text-main-dark-gray">
+            외부 데이터를 불러올 수 없습니다.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   useEffect(() => {
     const img = new Image();
     img.src = "/pin.png";
@@ -351,7 +374,7 @@ const External = ({
     );
   }
 
-  if (isError) {
+  if (isError || !pastNewsExternal) {
     return (
       <div className="size-full flex flex-col gap-main-2">
         <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">

@@ -15,41 +15,104 @@ const NewsDetailPage = async ({
   const { id: newsId } = await params;
   const token = await getJwtToken();
 
-  const [newsDetailRes, relatedNewsRes, metaDataRes, externalRes] =
-    await Promise.all([
+  const [newsDetailResult, relatedNewsResult, metaDataResult, externalResult] =
+    await Promise.allSettled([
       fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/detail?newsId=${newsId}`,
         {
           next: { revalidate: 60 * 60 * 24 },
         }
-      ),
+      ).then((res) => res.json()),
       fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/related/news?newsId=${newsId}`,
         {
           next: { revalidate: 60 * 60 * 24 },
         }
-      ),
+      ).then((res) => res.json()),
       fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/meta?newsId=${newsId}`,
         {
           next: { revalidate: 60 * 60 * 24 },
         }
-      ),
+      ).then((res) => res.json()),
       fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/external?newsId=${newsId}`,
         {
           next: { revalidate: 60 * 60 * 24 },
         }
-      ),
+      ).then((res) => res.json()),
     ]);
 
-  const [newsDetailJson, relatedNewsJson, metaDataJson, externalJson] =
-    await Promise.all([
-      newsDetailRes.json() as Promise<{ data: News }>,
-      relatedNewsRes.json() as Promise<{ data: News[] }>,
-      metaDataRes.json() as Promise<{ data: MetaData }>,
-      externalRes.json() as Promise<{ data: NewsExternal }>,
-    ]);
+  const newsDetailJson: { data: News } =
+    newsDetailResult.status === "fulfilled"
+      ? newsDetailResult.value
+      : { data: {} as News };
+
+  const relatedNewsJson: { data: News[] } =
+    relatedNewsResult.status === "fulfilled"
+      ? relatedNewsResult.value
+      : { data: [] };
+
+  const metaDataJson: { data: MetaData } =
+    metaDataResult.status === "fulfilled"
+      ? metaDataResult.value
+      : {
+          data: {
+            newsId: newsId,
+            stockListView: [],
+            stockList: [],
+            impactScore: 0,
+            summary: "",
+            industryList: [],
+          } as MetaData,
+        };
+
+  const externalJson: { data: NewsExternal | null } =
+    externalResult.status === "fulfilled"
+      ? externalResult.value
+      : { data: null };
+
+  // 에러 로깅
+  if (newsDetailResult.status === "rejected") {
+    console.error("뉴스 상세 정보 로드 실패:", newsDetailResult.reason);
+    Sentry.captureException(
+      new Error(`뉴스 상세 정보 로드 실패: ${newsDetailResult.reason}`),
+      {
+        tags: { section: "news_detail" },
+        extra: { newsId },
+      }
+    );
+  }
+  if (relatedNewsResult.status === "rejected") {
+    console.error("관련 뉴스 로드 실패:", relatedNewsResult.reason);
+    Sentry.captureException(
+      new Error(`관련 뉴스 로드 실패: ${relatedNewsResult.reason}`),
+      {
+        tags: { section: "related_news" },
+        extra: { newsId },
+      }
+    );
+  }
+  if (metaDataResult.status === "rejected") {
+    console.error("메타데이터 로드 실패:", metaDataResult.reason);
+    Sentry.captureException(
+      new Error(`메타데이터 로드 실패: ${metaDataResult.reason}`),
+      {
+        tags: { section: "metadata" },
+        extra: { newsId },
+      }
+    );
+  }
+  if (externalResult.status === "rejected") {
+    console.error("외부 뉴스 로드 실패:", externalResult.reason);
+    Sentry.captureException(
+      new Error(`외부 뉴스 로드 실패: ${externalResult.reason}`),
+      {
+        tags: { section: "external_news" },
+        extra: { newsId },
+      }
+    );
+  }
 
   const stockListView = metaDataJson.data.stockListView.map((stock) => {
     return {
@@ -82,13 +145,22 @@ const NewsDetailPage = async ({
         {
           next: { revalidate: 60 * 60 * 24 },
         }
-      ).then((res) => res.json() as Promise<{ data: StockSearchResult[] }>)
+      )
+        .then((res) => res.json())
+        .catch((error) => {
+          console.error(`주식 정보 로드 실패 (${stock.stock_id}):`, error);
+          return { data: [] };
+        })
     );
 
-    const stockInfoResults = await Promise.all(stockInfoPromises);
+    const stockInfoResults = await Promise.allSettled(stockInfoPromises);
     stockInfoResults.forEach((result) => {
-      if (result.data && result.data[0]) {
-        addInfoStockList.push(result.data[0]);
+      if (
+        result.status === "fulfilled" &&
+        result.value.data &&
+        result.value.data[0]
+      ) {
+        addInfoStockList.push(result.value.data[0]);
       }
     });
   }
@@ -109,35 +181,52 @@ const NewsDetailPage = async ({
 
   const cutoffDate = new Date("2024-01-01");
 
+  // 주식 차트 데이터 요청들을 개별 에러 처리
   if (mainStockList.length > 0) {
     const stockChartPromises = mainStockList.map(async (stock) => {
-      const stockListRes = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/${stock.stockCode}?period=M`,
-        {
-          next: { revalidate: 60 * 60 * 24 * 2 },
-        }
-      );
-      const stockListJson: { data: StockData[] } = await stockListRes.json();
+      try {
+        const stockListRes = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/${stock.stockCode}?period=M`,
+          {
+            next: { revalidate: 60 * 60 * 24 * 2 },
+          }
+        );
+        const stockListJson: { data: StockData[] } = await stockListRes.json();
 
-      const filteredData = stockListJson.data.filter((item) => {
-        const dateStr = item.stck_bsop_date; // ex) '20230428'
-        const year = parseInt(dateStr.slice(0, 4));
-        const month = parseInt(dateStr.slice(4, 6)) - 1;
-        const day = parseInt(dateStr.slice(6, 8));
-        const itemDate = new Date(year, month, day);
+        const filteredData = stockListJson.data.filter((item) => {
+          const dateStr = item.stck_bsop_date; // ex) '20230428'
+          const year = parseInt(dateStr.slice(0, 4));
+          const month = parseInt(dateStr.slice(4, 6)) - 1;
+          const day = parseInt(dateStr.slice(6, 8));
+          const itemDate = new Date(year, month, day);
 
-        return itemDate >= cutoffDate;
-      });
+          return itemDate >= cutoffDate;
+        });
 
-      return {
-        stockName: stock.stockName,
-        stockCode: stock.stockCode,
-        data: filteredData,
-      };
+        return {
+          stockName: stock.stockName,
+          stockCode: stock.stockCode,
+          data: filteredData,
+        };
+      } catch (error) {
+        console.error(
+          `주식 차트 데이터 로드 실패 (${stock.stockCode}):`,
+          error
+        );
+        return {
+          stockName: stock.stockName,
+          stockCode: stock.stockCode,
+          data: [],
+        };
+      }
     });
 
-    const stockChartResults = await Promise.all(stockChartPromises);
-    stockChartList.push(...stockChartResults);
+    const stockChartResults = await Promise.allSettled(stockChartPromises);
+    stockChartResults.forEach((result) => {
+      if (result.status === "fulfilled") {
+        stockChartList.push(result.value);
+      }
+    });
   }
 
   return (
@@ -158,7 +247,7 @@ const NewsDetailPage = async ({
           relatedStockList={relatedStockList}
           stockChartList={stockChartList}
           relatedNews={relatedNewsJson.data}
-          external={externalJson.data}
+          external={externalJson.data || ({} as NewsExternal)}
         />
       </div>
     </div>
