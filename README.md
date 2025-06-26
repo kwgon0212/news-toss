@@ -85,10 +85,11 @@ const successful = results
   - **ISR 적용**: 뉴스 상세 및 캘린더 페이지 정적 캐싱
   - **TanStack Query**: 클라이언트 캐싱 및 상태 동기화
   - **Vercel 리전**: `ap-northeast-2`로 설정해 응답 속도 단축
-  개선 이전
-  <img width="865" alt="Image" src="https://github.com/user-attachments/assets/491e7f71-62fe-41f1-b740-9c3d31d89d3a" />
-  개선 이후
-  <img width="478" alt="Image" src="https://github.com/user-attachments/assets/f3ffd51a-531c-41fa-a537-d87c19183848" />
+    <p>개선 이전</p>
+  <img src="https://github.com/user-attachments/assets/491e7f71-62fe-41f1-b740-9c3d31d89d3a" width="600" />
+
+<p>개선 이후</p>
+<img src="https://github.com/user-attachments/assets/f3ffd51a-531c-41fa-a537-d87c19183848" width="400" />
   ⏱ 평균 로딩 속도 **2초 이상 개선**
 
 ### 3. CSS 깨짐 (미들웨어 리다이렉트 이슈)
