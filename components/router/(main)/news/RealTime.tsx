@@ -10,6 +10,8 @@ import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import { AnimatePresence, motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
+import { CountingNumber } from "@/components/animate-ui/text/counting-number";
+import { SlidingNumber } from "@/components/animate-ui/text/sliding-number";
 
 const RealTime = ({ initialNews }: { initialNews: News[] }) => {
   const [news, setNews] = useState<News[]>(initialNews.slice(0, 10));
@@ -112,23 +114,27 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
         />
       </div>
 
-      <div className="grid grid-cols-[1fr_auto] h-fit gap-x-main justify-end text-end font-semibold text-sm-custom">
+      <div className="grid grid-cols-[1fr_60px] h-fit gap-x-main justify-end text-end font-semibold text-sm-custom">
         <p>오늘 수집된 뉴스:</p>
         <span>
           <b className="text-main-blue">
-            {newsCount.news_count_today
-              ? newsCount.news_count_today.toLocaleString()
-              : "..."}
-          </b>
+            {newsCount.news_count_today ? (
+              <CountingNumber number={newsCount.news_count_today} />
+            ) : (
+              "..."
+            )}
+          </b>{" "}
           개
         </span>
         <p>전체 수집된 뉴스:</p>
         <span>
           <b className="text-main-blue">
-            {newsCount.news_count_total
-              ? newsCount.news_count_total.toLocaleString()
-              : "..."}
-          </b>
+            {newsCount.news_count_total ? (
+              <CountingNumber number={newsCount.news_count_total} />
+            ) : (
+              "..."
+            )}
+          </b>{" "}
           개
         </span>
       </div>
@@ -172,9 +178,14 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
                     </Link>
                   </div>
 
-                  <div className="text-left text-main-blue p-2 text-sm-custom font-semibold">
+                  <div className="text-left text-main-blue p-2 text-sm-custom font-semibold flex items-center gap-1">
                     중요도 점수 |{" "}
-                    {item.impact_score ? `${item.impact_score}점` : "--"}
+                    {item.impact_score ? (
+                      <SlidingNumber number={item.impact_score} padStart />
+                    ) : (
+                      "--- "
+                    )}
+                    점
                   </div>
 
                   <div className="flex items-center gap-1 text-xs-custom">

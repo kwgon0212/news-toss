@@ -10,6 +10,9 @@ import Link from "next/link";
 import { formatDate } from "@/utils/formatDate";
 import Tooltip from "@/components/ui/Tooltip";
 import NewsModal from "./NewsModal";
+import { HighlightText } from "@/components/animate-ui/text/highlight";
+import { SlidingNumber } from "@/components/animate-ui/text/sliding-number";
+import { WritingText } from "@/components/animate-ui/text/writing";
 
 const MainNews = ({
   news,
@@ -169,8 +172,9 @@ const MainNews = ({
                   )}
                 />
 
-                <p className="absolute top-main right-main bg-main-blue w-fit rounded-full text-white text-base-custom font-semibold px-main py-1">
-                  중요도 점수 | {mainNews.impact_score}점
+                <p className="absolute top-main right-main bg-main-blue w-fit rounded-full text-white text-base-custom flex items-baseline gap-1 font-semibold px-main py-1">
+                  중요도 |
+                  <SlidingNumber number={mainNews.impact_score} padStart />점
                 </p>
 
                 <div className="absolute w-full h-full bottom-0 left-0 bg-gradient-to-t from-black/70 to-transparent hover:to-black/70 pointer-events-none flex items-end transition-all duration-300 ease-in-out">
@@ -180,9 +184,18 @@ const MainNews = ({
                       invertedStyle["inverted-radius"]
                     )}
                   >
-                    <p className="text-2xl-custom font-bold line-clamp-1 text-white drop-shadow w-full">
-                      {mainNews.title}
-                    </p>
+                    <WritingText
+                      className="text-2xl-custom font-bold line-clamp-1 text-white drop-shadow w-full"
+                      text={mainNews.title}
+                      spacing={5}
+                      transition={{
+                        duration: 0.4,
+                        ease: "easeOut",
+                      }}
+                    />
+                    {/* <p className="text-2xl-custom font-bold line-clamp-1 text-white drop-shadow w-full">
+                        {mainNews.title}
+                      </p> */}
 
                     <div className="flex items-center gap-main truncate">
                       {[
@@ -195,12 +208,15 @@ const MainNews = ({
                       ]
                         .slice(0, 2)
                         .map((stock) => (
-                          <span
-                            className="bg-gradient-to-r from-main-blue to-purple-600 font-bold text-lg-custom text-white px-main py-0.5 rounded-full"
-                            key={stock.stock_name}
-                          >
-                            {stock.stock_name}
-                          </span>
+                          <HighlightText
+                            key={`highlight-news-${stock.stock_name}`}
+                            transition={{
+                              duration: 1,
+                              ease: "easeInOut",
+                            }}
+                            className="text-lg font-semibold bg-gradient-to-r from-main-blue to-purple-600 text-white"
+                            text={stock.stock_name}
+                          />
                         ))}
                       {/* {(mainNews.stock_list?.length ?? 0) > 2 && (
                         <span className="text-main-dark-gray text-xs-custom">
@@ -281,12 +297,26 @@ const MainNews = ({
                 </div>
                 <div className="w-full h-full flex flex-col gap-main justify-around">
                   <div className="flex flex-col gap-1">
-                    <span className="font-semibold text-base-custom text-main-blue bg-main-blue/10 rounded-main px-main py-0.5 w-fit">
-                      유사도 | {Number(item.similarity * 100).toFixed(2)}%
+                    <span className="font-semibold text-base-custom text-main-blue bg-main-blue/10 flex items-baseline gap-1 rounded-main px-main py-0.5 w-fit">
+                      유사도 |
+                      <SlidingNumber
+                        number={Number(item.similarity * 100).toFixed(2)}
+                        padStart
+                      />
+                      %
                     </span>
-                    <p className="line-clamp-2 font-semibold text-lg-custom text-left">
+                    <WritingText
+                      className="text-lg-custom font-semibold text-left line-clamp-2"
+                      text={item.title}
+                      spacing={5}
+                      transition={{
+                        duration: 0.7,
+                        ease: "easeInOut",
+                      }}
+                    />
+                    {/* <p className="line-clamp-2 font-semibold text-lg-custom text-left">
                       {item.title}
-                    </p>
+                    </p> */}
                   </div>
 
                   <div className="flex items-center gap-main truncate">

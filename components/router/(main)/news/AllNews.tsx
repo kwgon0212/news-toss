@@ -9,6 +9,7 @@ import { formatDate } from "@/utils/formatDate";
 import Image from "next/image";
 import Dropdown from "@/components/ui/shared/Dropdown";
 import clsx from "clsx";
+import { SlidingNumber } from "@/components/animate-ui/text/sliding-number";
 
 const AllNews = ({
   initialNews,
@@ -127,8 +128,9 @@ const AllNews = ({
                   sizes="100%"
                   className="object-cover rounded-main"
                 />
-                <p className="absolute top-main right-main bg-main-blue w-fit rounded-full text-white text-sm-custom font-semibold px-main py-1 z-20">
-                  중요도 점수 | {news.impact_score}점
+                <p className="absolute top-main right-main bg-main-blue w-fit rounded-full text-white text-base-custom flex items-baseline gap-1 font-semibold px-main py-1">
+                  중요도 |
+                  <SlidingNumber number={news.impact_score ?? 0} padStart />점
                 </p>
               </div>
               <div className="w-full flex flex-col gap-main justify-around">
