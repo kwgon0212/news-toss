@@ -22,7 +22,7 @@ const Chatbot = ({
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "bot",
-      content: "안녕하세요! NewsToss 챗봇입니다.",
+      content: "안녕하세요! NewsToss 챗봇이에요.",
     },
     { role: "bot", content: "무엇이든 물어보세요!" },
   ]);
@@ -161,9 +161,9 @@ const Chatbot = ({
             <br />
             과거 유사 뉴스를 검색해보세요!
           </p>
-          <p className="text-main-dark-gray/80 text-sm-custom text-center break-keep">
-            ex) 25년 8월에 SK플라즈마가 IPO주관사 선정 작업을 한다는데 과거
-            유사사건을 알려줘!
+          <p className="w-[300px] text-main-dark-gray/80 text-sm-custom text-center break-keep">
+            ex) 곧 삼성전자 실적 발표일인데, 실적 발표일 주가 변동과 관련해서
+            참고할만한 뉴스 알려줘!
           </p>
         </div>
 
@@ -194,19 +194,23 @@ const Chatbot = ({
         <div ref={endRef} />
       </div>
 
-      <form className="flex gap-2" onSubmit={handleSend}>
+      <form className="flex gap-2 relative" onSubmit={handleSend}>
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="메시지 입력"
           ref={inputRef}
-          className="outline-none border border-main-light-gray flex-1 px-main py-2 rounded-main"
+          className="outline-none border border-main-light-gray flex-1 pl-main-2 pr-main-6 py-main rounded-full shadow-xs"
         />
+
         <Button
           type="submit"
           variant="primary"
           disabled={isLoading}
-          className={clsx(isLoading && "bg-gray-400 cursor-not-allowed")}
+          className={clsx(
+            "absolute right-main top-1/2 aspect-square size-8 !p-0 flex items-center justify-center !rounded-full -translate-y-1/2",
+            isLoading && "bg-gray-400 cursor-not-allowed"
+          )}
         >
           {isLoading ? (
             <Loader2 className="text-white animate-spin" size={16} />
