@@ -14,15 +14,22 @@ interface RecentViewState {
 export const useRecentViewStore = create<RecentViewState>((set) => ({
   recentViewStocks:
     typeof window !== "undefined" && localStorage.getItem("latestViewStocks")
-      ? JSON.parse(localStorage.getItem("latestViewStocks") || "[]")
+      ? JSON.parse(localStorage.getItem("latestViewStocks") || "[]").filter(
+          (stock: any) => stock && stock.stockCode && stock.stockName
+        )
       : [],
   setRecentViewStocks: (stocks) => {
-    if (stocks.length > 5) {
-      stocks.pop();
+    // 유효한 데이터만 필터링
+    const validStocks = stocks.filter(
+      (stock) => stock && stock.stockCode && stock.stockName
+    );
+
+    if (validStocks.length > 5) {
+      validStocks.pop();
     }
-    set({ recentViewStocks: stocks });
+    set({ recentViewStocks: validStocks });
     if (typeof window !== "undefined") {
-      localStorage.setItem("latestViewStocks", JSON.stringify(stocks));
+      localStorage.setItem("latestViewStocks", JSON.stringify(validStocks));
     }
   },
 }));

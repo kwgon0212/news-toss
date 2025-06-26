@@ -87,17 +87,17 @@ const RecentView = () => {
                     ) : (
                       <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
                         <span className="text-main-blue font-semibold">
-                          {stock.stockName[0]}
+                          {stock.stockName?.[0] || "?"}
                         </span>
                       </div>
                     )}
                   </div>
                   <div className="flex flex-col flex-1 truncate text-sm">
                     <span className="font-bold text-gray-800 truncate w-full">
-                      {stock.stockName}
+                      {stock.stockName || "알 수 없는 종목"}
                     </span>
                     <span className="text-main-dark-gray">
-                      {stock.stockCode}
+                      {stock.stockCode || ""}
                     </span>
                   </div>
                 </div>
