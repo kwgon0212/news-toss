@@ -25,13 +25,13 @@ import { useQuery } from "@tanstack/react-query";
 
 const NewsDetail = ({
   token,
-  newsId,
+  news,
   mainStockList,
   impactScore,
   summary,
 }: {
   token: JwtToken | null;
-  newsId: string;
+  news: News;
   mainStockList: StockSearchResult[];
   impactScore: number;
   summary: string;
@@ -40,32 +40,27 @@ const NewsDetail = ({
   const { scraps, setScraps } = useScrapStore();
   const newsDetailRef = useRef<HTMLDivElement>(null);
 
-  const {
-    data: news,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["newsDetail", newsId],
-    queryFn: async () => {
-      const res = await fetch(`/proxy/news/v2/detail?newsId=${newsId}`, {
+  useEffect(() => {
+    const sendLog = async () => {
+      await fetch(`/proxy/newsLogs/record`, {
+        method: "POST",
+        body: JSON.stringify({
+          newsId: news.newsId,
+        }),
         credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
-      if (!res.ok) {
-        throw new Error("뉴스 상세 정보를 불러오는데 실패했습니다.");
-      }
-      const json: { data: News } = await res.json();
-      return json.data;
-    },
-    staleTime: 5 * 60 * 1000, // 5분
-    gcTime: 10 * 60 * 1000, // 10분
-  });
+    };
+    sendLog();
+  }, [news.newsId]);
 
   useEffect(() => {
-    if (scraps.find((scrap) => scrap.newsId === newsId)) {
+    if (scraps.find((scrap) => scrap.newsId === news.newsId)) {
       setIsScrap(true);
     }
-  }, [scraps, newsId]);
+  }, [scraps, news.newsId]);
 
   const handleScrap = async () => {
     if (!news) return;
@@ -80,7 +75,7 @@ const NewsDetail = ({
         method: "DELETE",
         body: JSON.stringify({
           memberId: token.memberId,
-          newsId: newsId,
+          newsId: news.newsId,
         }),
         credentials: "include",
         headers: {
@@ -89,7 +84,7 @@ const NewsDetail = ({
       });
 
       if (deleteScrapRes.ok) {
-        setScraps(scraps.filter((scrap) => scrap.newsId !== newsId));
+        setScraps(scraps.filter((scrap) => scrap.newsId !== news.newsId));
         toast.success("스크랩 취소되었습니다");
         setIsScrap(!isScrap);
       } else {
@@ -102,7 +97,7 @@ const NewsDetail = ({
       method: "POST",
       body: JSON.stringify({
         memberId: token.memberId,
-        newsId: newsId,
+        newsId: news.newsId,
       }),
       credentials: "include",
       headers: {
@@ -115,7 +110,7 @@ const NewsDetail = ({
         ...scraps,
         {
           title: news.title,
-          newsId: newsId,
+          newsId: news.newsId,
           wdate: news.wdate,
           image: news.image,
         },
@@ -126,51 +121,6 @@ const NewsDetail = ({
       toast.error("스크랩에 실패했습니다");
     }
   };
-
-  if (isLoading) {
-    return (
-      <div className="w-full flex flex-col gap-main overflow-x-hidden overflow-y-scroll">
-        <h2 className="text-3xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
-          현재 뉴스
-        </h2>
-        <div className="flex items-center justify-center py-main-4">
-          <div className="flex flex-col items-center gap-main">
-            <Loader2 className="size-8 animate-spin text-main-blue" />
-            <p className="text-main-dark-gray">
-              뉴스 상세 정보를 불러오는 중...
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (isError || !news) {
-    return (
-      <div className="w-full flex flex-col gap-main overflow-x-hidden overflow-y-scroll">
-        <h2 className="text-3xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
-          현재 뉴스
-        </h2>
-        <div className="flex items-center justify-center py-main-4">
-          <div className="flex flex-col items-center gap-main text-center">
-            <div className="text-red-500 text-4xl">⚠️</div>
-            <p className="text-red-500 font-semibold">
-              뉴스 상세 정보를 불러오는데 실패했습니다
-            </p>
-            <p className="text-main-dark-gray text-sm">
-              {error?.message || "알 수 없는 오류가 발생했습니다."}
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-main-blue text-white px-main py-2 rounded-main hover:bg-main-blue/90 transition-colors"
-            >
-              다시 시도
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="w-full flex flex-col gap-main overflow-x-hidden overflow-y-scroll">

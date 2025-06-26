@@ -15,15 +15,42 @@ const NewsDetailPage = async ({
   const { id: newsId } = await params;
   const token = await getJwtToken();
 
-  const relatedNewsRes = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/related/news?newsId=${newsId}`
-  );
-  const relatedNewsJson: { data: News[] } = await relatedNewsRes.json();
+  const [newsDetailRes, relatedNewsRes, metaDataRes, externalRes] =
+    await Promise.all([
+      fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/detail?newsId=${newsId}`,
+        {
+          next: { revalidate: 60 * 60 * 24 },
+        }
+      ),
+      fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/related/news?newsId=${newsId}`,
+        {
+          next: { revalidate: 60 * 60 * 24 },
+        }
+      ),
+      fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/meta?newsId=${newsId}`,
+        {
+          next: { revalidate: 60 * 60 * 24 },
+        }
+      ),
+      fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/external?newsId=${newsId}`,
+        {
+          next: { revalidate: 60 * 60 * 24 },
+        }
+      ),
+    ]);
 
-  const metaDataRes = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/meta?newsId=${newsId}`
-  );
-  const metaDataJson: { data: MetaData } = await metaDataRes.json();
+  const [newsDetailJson, relatedNewsJson, metaDataJson, externalJson] =
+    await Promise.all([
+      newsDetailRes.json() as Promise<{ data: News }>,
+      relatedNewsRes.json() as Promise<{ data: News[] }>,
+      metaDataRes.json() as Promise<{ data: MetaData }>,
+      externalRes.json() as Promise<{ data: NewsExternal }>,
+    ]);
+
   const stockListView = metaDataJson.data.stockListView.map((stock) => {
     return {
       ...stock,
@@ -49,17 +76,21 @@ const NewsDetailPage = async ({
   const addInfoStockList: StockSearchResult[] = [];
 
   if (allStockListView.length !== 0) {
-    for (const stock of allStockListView) {
-      const stockListRes = await fetch(
+    const stockInfoPromises = allStockListView.map((stock) =>
+      fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/search?keyword=${stock.stock_id}`,
         {
           next: { revalidate: 60 * 60 * 24 },
         }
-      );
-      const stockListJson: { data: StockSearchResult[] } =
-        await stockListRes.json();
-      addInfoStockList.push(stockListJson.data[0]);
-    }
+      ).then((res) => res.json() as Promise<{ data: StockSearchResult[] }>)
+    );
+
+    const stockInfoResults = await Promise.all(stockInfoPromises);
+    stockInfoResults.forEach((result) => {
+      if (result.data && result.data[0]) {
+        addInfoStockList.push(result.data[0]);
+      }
+    });
   }
 
   const mainStockList = addInfoStockList.filter((stock) =>
@@ -78,42 +109,42 @@ const NewsDetailPage = async ({
 
   const cutoffDate = new Date("2024-01-01");
 
-  for (const stock of mainStockList) {
-    const stockListRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/${stock.stockCode}?period=M`,
-      {
-        next: { revalidate: 60 * 60 * 24 * 2 },
-      }
-    );
-    const stockListJson: { data: StockData[] } = await stockListRes.json();
+  if (mainStockList.length > 0) {
+    const stockChartPromises = mainStockList.map(async (stock) => {
+      const stockListRes = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/${stock.stockCode}?period=M`,
+        {
+          next: { revalidate: 60 * 60 * 24 * 2 },
+        }
+      );
+      const stockListJson: { data: StockData[] } = await stockListRes.json();
 
-    const filteredData = stockListJson.data.filter((item) => {
-      const dateStr = item.stck_bsop_date; // ex) '20230428'
-      const year = parseInt(dateStr.slice(0, 4));
-      const month = parseInt(dateStr.slice(4, 6)) - 1;
-      const day = parseInt(dateStr.slice(6, 8));
-      const itemDate = new Date(year, month, day);
+      const filteredData = stockListJson.data.filter((item) => {
+        const dateStr = item.stck_bsop_date; // ex) '20230428'
+        const year = parseInt(dateStr.slice(0, 4));
+        const month = parseInt(dateStr.slice(4, 6)) - 1;
+        const day = parseInt(dateStr.slice(6, 8));
+        const itemDate = new Date(year, month, day);
 
-      return itemDate >= cutoffDate;
+        return itemDate >= cutoffDate;
+      });
+
+      return {
+        stockName: stock.stockName,
+        stockCode: stock.stockCode,
+        data: filteredData,
+      };
     });
 
-    stockChartList.push({
-      stockName: stock.stockName,
-      stockCode: stock.stockCode,
-      data: filteredData,
-    });
+    const stockChartResults = await Promise.all(stockChartPromises);
+    stockChartList.push(...stockChartResults);
   }
-
-  const externalRes = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/external?newsId=${newsId}`
-  );
-  const externalJson: { data: NewsExternal } = await externalRes.json();
 
   return (
     <div className="size-full grid grid-cols-[1fr_1px_1fr] gap-main-2">
       <NewsDetail
         token={token}
-        newsId={newsId}
+        news={newsDetailJson.data}
         mainStockList={mainStockList}
         impactScore={metaDataJson.data.impactScore}
         summary={metaDataJson.data.summary}

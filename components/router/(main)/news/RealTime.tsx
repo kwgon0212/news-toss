@@ -15,25 +15,21 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
   const [news, setNews] = useState<News[]>(initialNews.slice(0, 10));
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { data: newsCount = { news_count_total: 0, news_count_today: 0 } } =
-    useQuery({
-      queryKey: ["newsCount"],
-      queryFn: async () => {
-        const res = await fetch("/proxy/news/v2/count");
-        const json: {
-          data: { news_count_total: number; news_count_today: number };
-        } = await res.json();
-        return json.data;
-      },
-      staleTime: 0,
-      gcTime: 0,
-    });
-
-  const [localNewsCount, setLocalNewsCount] = useState(newsCount);
+  const [newsCount, setNewsCount] = useState<{
+    news_count_total: number;
+    news_count_today: number;
+  }>({ news_count_total: 0, news_count_today: 0 });
 
   useEffect(() => {
-    setLocalNewsCount(newsCount);
-  }, [newsCount]);
+    const fetchNewsCount = async () => {
+      const res = await fetch("/proxy/news/v2/count");
+      const json: {
+        data: { news_count_total: number; news_count_today: number };
+      } = await res.json();
+      setNewsCount(json.data);
+    };
+    fetchNewsCount();
+  }, []);
 
   const startRotation = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -65,7 +61,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
           return updated.slice(0, 10); // 새 뉴스 추가 후 최대 10개 유지
         });
 
-        setLocalNewsCount((prev) => ({
+        setNewsCount((prev) => ({
           news_count_today: prev.news_count_today + 1,
           news_count_total: prev.news_count_total + 1,
         }));
@@ -109,14 +105,18 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
         <p>오늘 수집된 뉴스:</p>
         <span>
           <b className="text-main-blue">
-            {localNewsCount.news_count_today.toLocaleString()}
+            {newsCount.news_count_today
+              ? newsCount.news_count_today.toLocaleString()
+              : "..."}
           </b>
           개
         </span>
         <p>전체 수집된 뉴스:</p>
         <span>
           <b className="text-main-blue">
-            {localNewsCount.news_count_total.toLocaleString()}
+            {newsCount.news_count_total
+              ? newsCount.news_count_total.toLocaleString()
+              : "..."}
           </b>
           개
         </span>
