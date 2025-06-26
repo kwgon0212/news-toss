@@ -185,7 +185,7 @@ const MainNews = ({
                     )}
                   >
                     <WritingText
-                      className="text-2xl-custom font-bold line-clamp-1 text-white drop-shadow w-full"
+                      className="text-2xl font-bold line-clamp-1 text-white drop-shadow w-full"
                       text={mainNews.title}
                       spacing={5}
                       transition={{
@@ -279,7 +279,7 @@ const MainNews = ({
                 className="flex items-center gap-main-2 hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group relative"
                 key={`main-news-${item.newsId}`}
               >
-                <div className="absolute flex items-center gap-1 pl-3 pr-2 py-1 rounded-full bg-main-blue top-1/2 -translate-y-1/2 right-main text-white group-hover:opacity-100 opacity-0 duration-500 ease-in-out">
+                <div className="absolute flex items-center gap-1 pl-3 pr-2 py-1 rounded-full bg-main-blue top-1/2 -translate-y-1/2 right-main text-white group-hover:opacity-100 opacity-0 duration-500 ease-in-out z-20">
                   <span className="font-semibold text-sm-custom whitespace-nowrap">
                     상세보기
                   </span>
@@ -295,7 +295,7 @@ const MainNews = ({
                   />
                   <div className="absolute top-0 left-0 size-full bg-black/5 rounded-main group-hover:bg-transparent group-hover:scale-102 duration-300 ease-in-out" />
                 </div>
-                <div className="w-full h-full flex flex-col gap-main justify-around">
+                <div className="w-full h-full flex flex-col justify-around">
                   <div className="flex flex-col gap-1">
                     <span className="font-semibold text-base-custom text-main-blue bg-main-blue/10 flex items-baseline gap-1 rounded-main px-main py-0.5 w-fit">
                       유사도 |
@@ -314,9 +314,6 @@ const MainNews = ({
                         ease: "easeInOut",
                       }}
                     />
-                    {/* <p className="line-clamp-2 font-semibold text-lg-custom text-left">
-                      {item.title}
-                    </p> */}
                   </div>
 
                   <div className="flex items-center gap-main truncate">
@@ -327,12 +324,17 @@ const MainNews = ({
                     ]
                       .slice(0, 2)
                       .map((stock) => (
-                        <span
-                          className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent font-bold text-lg-custom"
-                          key={stock.stock_name}
-                        >
-                          {stock.stock_name}
-                        </span>
+                        <WritingText
+                          key={`highlight-news-related-${stock.stock_name}`}
+                          text={stock.stock_name}
+                          isGradient
+                          className="text-lg-custom font-bold"
+                          spacing={5}
+                          transition={{
+                            duration: 0.4,
+                            ease: "easeOut",
+                          }}
+                        />
                       ))}
                     {/* {(item.stock_list?.length ?? 0) > 2 && (
                       <span className="text-main-dark-gray text-xs-custom">

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 import {
   useSpring,
   useTransform,
@@ -9,16 +9,17 @@ import {
   type MotionValue,
   type SpringOptions,
   type UseInViewOptions,
-} from 'motion/react';
-import useMeasure from 'react-use-measure';
+} from "motion/react";
+import useMeasure from "react-use-measure";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 type SlidingNumberRollerProps = {
   prevValue: number;
   value: number;
   place: number;
   transition: SpringOptions;
+  isGradient?: boolean;
 };
 
 function SlidingNumberRoller({
@@ -26,6 +27,7 @@ function SlidingNumberRoller({
   value,
   place,
   transition,
+  isGradient = false,
 }: SlidingNumberRollerProps) {
   const startNumber = Math.floor(prevValue / place) % 10;
   const targetNumber = Math.floor(value / place) % 10;
@@ -41,9 +43,21 @@ function SlidingNumberRoller({
     <span
       ref={measureRef}
       data-slot="sliding-number-roller"
-      className="relative inline-block w-[1ch] overflow-x-visible overflow-y-clip leading-none tabular-nums"
+      className={cn(
+        "relative inline-block w-[1ch] overflow-x-visible overflow-y-clip leading-none tabular-nums",
+        isGradient &&
+          "bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent"
+      )}
     >
-      <span className="invisible">0</span>
+      <span
+        className={cn(
+          "invisible",
+          isGradient &&
+            "bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent"
+        )}
+      >
+        0
+      </span>
       {Array.from({ length: 10 }, (_, i) => (
         <SlidingNumberDisplay
           key={i}
@@ -51,6 +65,7 @@ function SlidingNumberRoller({
           number={i}
           height={height}
           transition={transition}
+          isGradient={isGradient}
         />
       ))}
     </span>
@@ -62,6 +77,7 @@ type SlidingNumberDisplayProps = {
   number: number;
   height: number;
   transition: SpringOptions;
+  isGradient?: boolean;
 };
 
 function SlidingNumberDisplay({
@@ -69,6 +85,7 @@ function SlidingNumberDisplay({
   number,
   height,
   transition,
+  isGradient = false,
 }: SlidingNumberDisplayProps) {
   const y = useTransform(motionValue, (latest) => {
     if (!height) return 0;
@@ -87,23 +104,28 @@ function SlidingNumberDisplay({
     <motion.span
       data-slot="sliding-number-display"
       style={{ y }}
-      className="absolute inset-0 flex items-center justify-center"
-      transition={{ ...transition, type: 'spring' }}
+      className={cn(
+        "absolute inset-0 flex items-center justify-center",
+        isGradient &&
+          "bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent"
+      )}
+      transition={{ ...transition, type: "spring" }}
     >
       {number}
     </motion.span>
   );
 }
 
-type SlidingNumberProps = React.ComponentProps<'span'> & {
+type SlidingNumberProps = React.ComponentProps<"span"> & {
   number: number | string;
   inView?: boolean;
-  inViewMargin?: UseInViewOptions['margin'];
+  inViewMargin?: UseInViewOptions["margin"];
   inViewOnce?: boolean;
   padStart?: boolean;
   decimalSeparator?: string;
   decimalPlaces?: number;
   transition?: SpringOptions;
+  isGradient?: boolean;
 };
 
 function SlidingNumber({
@@ -111,16 +133,17 @@ function SlidingNumber({
   number,
   className,
   inView = false,
-  inViewMargin = '0px',
+  inViewMargin = "0px",
   inViewOnce = true,
   padStart = false,
-  decimalSeparator = '.',
+  decimalSeparator = ".",
   decimalPlaces = 0,
   transition = {
     stiffness: 200,
     damping: 20,
     mass: 0.4,
   },
+  isGradient = false,
   ...props
 }: SlidingNumberProps) {
   const localRef = React.useRef<HTMLSpanElement>(null);
@@ -136,38 +159,38 @@ function SlidingNumber({
 
   const effectiveNumber = React.useMemo(
     () => (!isInView ? 0 : Math.abs(Number(number))),
-    [number, isInView],
+    [number, isInView]
   );
 
   const formatNumber = React.useCallback(
     (num: number) =>
       decimalPlaces != null ? num.toFixed(decimalPlaces) : num.toString(),
-    [decimalPlaces],
+    [decimalPlaces]
   );
 
   const numberStr = formatNumber(effectiveNumber);
-  const [newIntStrRaw, newDecStrRaw = ''] = numberStr.split('.');
+  const [newIntStrRaw, newDecStrRaw = ""] = numberStr.split(".");
   const newIntStr =
-    padStart && newIntStrRaw?.length === 1 ? '0' + newIntStrRaw : newIntStrRaw;
+    padStart && newIntStrRaw?.length === 1 ? "0" + newIntStrRaw : newIntStrRaw;
 
   const prevFormatted = formatNumber(prevNumberRef.current);
-  const [prevIntStrRaw = '', prevDecStrRaw = ''] = prevFormatted.split('.');
+  const [prevIntStrRaw = "", prevDecStrRaw = ""] = prevFormatted.split(".");
   const prevIntStr =
     padStart && prevIntStrRaw.length === 1
-      ? '0' + prevIntStrRaw
+      ? "0" + prevIntStrRaw
       : prevIntStrRaw;
 
   const adjustedPrevInt = React.useMemo(() => {
     return prevIntStr.length > (newIntStr?.length ?? 0)
       ? prevIntStr.slice(-(newIntStr?.length ?? 0))
-      : prevIntStr.padStart(newIntStr?.length ?? 0, '0');
+      : prevIntStr.padStart(newIntStr?.length ?? 0, "0");
   }, [prevIntStr, newIntStr]);
 
   const adjustedPrevDec = React.useMemo(() => {
-    if (!newDecStrRaw) return '';
+    if (!newDecStrRaw) return "";
     return prevDecStrRaw.length > newDecStrRaw.length
       ? prevDecStrRaw.slice(0, newDecStrRaw.length)
-      : prevDecStrRaw.padEnd(newDecStrRaw.length, '0');
+      : prevDecStrRaw.padEnd(newDecStrRaw.length, "0");
   }, [prevDecStrRaw, newDecStrRaw]);
 
   React.useEffect(() => {
@@ -178,18 +201,18 @@ function SlidingNumber({
   const intPlaces = React.useMemo(
     () =>
       Array.from({ length: intDigitCount }, (_, i) =>
-        Math.pow(10, intDigitCount - i - 1),
+        Math.pow(10, intDigitCount - i - 1)
       ),
-    [intDigitCount],
+    [intDigitCount]
   );
   const decPlaces = React.useMemo(
     () =>
       newDecStrRaw
         ? Array.from({ length: newDecStrRaw.length }, (_, i) =>
-            Math.pow(10, newDecStrRaw.length - i - 1),
+            Math.pow(10, newDecStrRaw.length - i - 1)
           )
         : [],
-    [newDecStrRaw],
+    [newDecStrRaw]
   );
 
   const newDecValue = newDecStrRaw ? parseInt(newDecStrRaw, 10) : 0;
@@ -199,7 +222,7 @@ function SlidingNumber({
     <span
       ref={localRef}
       data-slot="sliding-number"
-      className={cn('flex items-center', className)}
+      className={cn("flex items-center", className)}
       {...props}
     >
       {isInView && Number(number) < 0 && <span className="mr-1">-</span>}
@@ -208,9 +231,10 @@ function SlidingNumber({
         <SlidingNumberRoller
           key={`int-${place}`}
           prevValue={parseInt(adjustedPrevInt, 10)}
-          value={parseInt(newIntStr ?? '0', 10)}
+          value={parseInt(newIntStr ?? "0", 10)}
           place={place}
           transition={transition}
+          isGradient={isGradient}
         />
       ))}
 
@@ -224,6 +248,7 @@ function SlidingNumber({
               value={newDecValue}
               place={place}
               transition={transition}
+              isGradient={isGradient}
             />
           ))}
         </>

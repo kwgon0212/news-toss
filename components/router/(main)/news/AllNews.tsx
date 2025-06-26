@@ -10,6 +10,7 @@ import Image from "next/image";
 import Dropdown from "@/components/ui/shared/Dropdown";
 import clsx from "clsx";
 import { SlidingNumber } from "@/components/animate-ui/text/sliding-number";
+import { WritingText } from "@/components/animate-ui/text/writing";
 
 const AllNews = ({
   initialNews,
@@ -142,15 +143,20 @@ const AllNews = ({
                   ]
                     .slice(0, 2)
                     .map((stock) => (
-                      <span
+                      <WritingText
+                        key={`all-news-${news.newsId}-${stock.stock_name}`}
+                        text={stock.stock_name}
+                        isGradient
                         className={clsx(
-                          "bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent font-bold",
+                          "text-lg-custom font-bold",
                           cols > 3 ? "text-sm-custom" : "text-lg-custom"
                         )}
-                        key={stock.stock_name}
-                      >
-                        {stock.stock_name}
-                      </span>
+                        spacing={5}
+                        transition={{
+                          duration: 0.4,
+                          ease: "easeOut",
+                        }}
+                      />
                     ))}
                   {(news.stock_list?.length ?? 0) > 2 && (
                     <span className="text-main-dark-gray text-xs-custom">

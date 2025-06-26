@@ -23,10 +23,7 @@ export async function fetchStockInfo(
   stockId: string
 ): Promise<{ data: StockSearchResult[] }> {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/search?keyword=${stockId}`,
-    {
-      next: { revalidate: 60 * 60 * 24 },
-    }
+    `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/search?keyword=${stockId}`
   );
 
   if (!res.ok) {
