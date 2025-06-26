@@ -41,6 +41,8 @@ const NewsDetail = ({
   const newsDetailRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!token) return;
+
     const sendLog = async () => {
       await fetch(`/proxy/newsLogs/record`, {
         method: "POST",
@@ -54,7 +56,7 @@ const NewsDetail = ({
       });
     };
     sendLog();
-  }, [news.newsId]);
+  }, [token, news]);
 
   useEffect(() => {
     if (scraps.find((scrap) => scrap.newsId === news.newsId)) {
