@@ -44,19 +44,16 @@ const NewsDetail = ({
     if (!token) return;
 
     const sendLog = async () => {
-      await fetch(`/proxy/newsLogs/record`, {
+      await fetch(`/proxy/newsLogs/record?newsId=${news.newsId}`, {
         method: "POST",
-        body: JSON.stringify({
-          newsId: news.newsId,
-        }),
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
       });
     };
     sendLog();
-  }, [token, news]);
+  }, [token, news.newsId]);
 
   useEffect(() => {
     if (scraps.find((scrap) => scrap.newsId === news.newsId)) {
