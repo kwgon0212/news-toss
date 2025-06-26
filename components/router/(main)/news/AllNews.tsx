@@ -129,7 +129,14 @@ const AllNews = ({
                   sizes="100%"
                   className="object-cover rounded-main"
                 />
-                <p className="absolute top-main right-main bg-main-blue w-fit rounded-full text-white text-base-custom flex items-baseline gap-1 font-semibold px-main py-1">
+                <p
+                  className={clsx(
+                    "absolute top-main right-main bg-main-blue w-fit rounded-full text-white flex items-baseline gap-1 font-semibold px-main py-1",
+                    cols === 3 && "text-base-custom",
+                    cols === 4 && "text-sm-custom",
+                    cols === 5 && "text-xs-custom"
+                  )}
+                >
                   중요도 |
                   <SlidingNumber number={news.impact_score ?? 0} padStart />점
                 </p>
