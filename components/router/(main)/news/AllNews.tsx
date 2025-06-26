@@ -131,7 +131,7 @@ const AllNews = ({
                 />
                 <p
                   className={clsx(
-                    "absolute top-main right-main bg-main-blue w-fit rounded-full text-white flex items-baseline gap-1 font-semibold px-main py-1",
+                    "absolute top-main right-main bg-main-blue w-fit rounded-full text-white flex items-baseline gap-1 font-semibold px-main py-1 z-20",
                     cols === 3 && "text-base-custom",
                     cols === 4 && "text-sm-custom",
                     cols === 5 && "text-xs-custom"
