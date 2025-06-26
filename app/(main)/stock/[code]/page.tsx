@@ -139,6 +139,8 @@ const StockDetailPage = () => {
     searchCount();
   }, []);
 
+  const [limit, setLimit] = useState(10);
+
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const candlestickRef = useRef<ISeriesApi<"Candlestick">>(null);
@@ -163,9 +165,6 @@ const StockDetailPage = () => {
   const { recentViewStocks, setRecentViewStocks } = useRecentViewStore();
   const [relatedNews, setRelatedNews] = useState<News[]>([]);
   const [skip, setSkip] = useState(0);
-  const [limit, setLimit] = useState(10);
-
-  console.log("priceDiff", priceDiff);
 
   // 차트 초기화
   useEffect(() => {

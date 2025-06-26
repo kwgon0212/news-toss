@@ -49,7 +49,7 @@ const PopularStock = ({
   // };
 
   const handleScrab = (code: string) => {
-    console.log(code);
+    // 스크랩 기능 구현 예정
   };
 
   // if (!popularStocks)

@@ -18,7 +18,6 @@ const WithdrawalForm = ({
   const router = useRouter();
 
   const handleWithdrawal = async (formData: FormData) => {
-    console.log(token.memberId);
     const res = await fetch("/proxy/auth/withdraw", {
       method: "DELETE",
       credentials: "include",

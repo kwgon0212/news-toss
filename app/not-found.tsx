@@ -1,5 +1,5 @@
-// app/not-found.tsx (혹은 pages/404.tsx)
 "use client";
+
 import React from "react";
 import { useRouter } from "next/navigation";
 
@@ -31,14 +31,6 @@ const NotFound = () => {
       >
         홈으로 돌아가기
       </button>
-
-      {/* <div className="mt-10 opacity-80">
-        <img
-          src="/404-illustration.svg"
-          alt="404 illustration"
-          className="w-60 mx-auto animate-fade-in"
-        />
-      </div> */}
     </div>
   );
 };

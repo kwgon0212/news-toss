@@ -179,8 +179,8 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
     );
   }
 
-  const handleScrab = (code: string) => {
-    console.log(code);
+  const handleClickSearchResult = (code: string) => {
+    router.push(`/stock/${code}`);
   };
 
   return (
@@ -268,7 +268,7 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
                 <div
                   className="w-full flex flex-col justify-around border border-transparent hover:border-main-blue/20 hover:scale-102 rounded-main transition-all duration-200 ease-in-out px-main-2 py-main gap-[5px] relative group"
                   key={selectedCategory + stock.stockCode}
-                  onClick={() => router.push(`/stock/${stock.stockCode}`)}
+                  onClick={() => handleClickSearchResult(stock.stockCode)}
                 >
                   <Scrab
                     type="stock"
@@ -276,7 +276,7 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
                     token={token}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleScrab(stock.stockCode);
+                      handleClickSearchResult(stock.stockCode);
                     }}
                   />
 

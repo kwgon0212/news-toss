@@ -46,8 +46,6 @@ const RegisterStep1 = ({
     }
 
     setStep(2);
-
-    console.log(userInfo);
   };
 
   return (

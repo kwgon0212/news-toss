@@ -55,7 +55,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
       sse = new EventSource("https://news-toss.click/api/sse/realtime");
 
       sse.onopen = () => {
-        console.log("✅ 실시간 뉴스 SSE 연결 완료");
+        console.log("실시간 뉴스 SSE 연결 완료");
       };
 
       sse.addEventListener("news", (event) => {

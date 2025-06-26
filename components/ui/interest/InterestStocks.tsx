@@ -84,7 +84,6 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
     const fetchGroups = async () => {
       const res = await fetch(`/proxy/favorite/${token.memberId}`);
       const json: { data: InterestGroup[] } = await res.json();
-      console.log(json.data);
       setInterestGroups(json.data);
     };
 

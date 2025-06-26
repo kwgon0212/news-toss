@@ -25,54 +25,6 @@ const MainNews = ({
   const [selectedNews, setSelectedNews] = useState<News | null>(null);
   const [isOpenNewsModal, setIsOpenNewsModal] = useState(false);
 
-  if (error) {
-    return (
-      <div className="grid grid-cols-3 w-full gap-main-2">
-        <div className="col-span-3 grid grid-cols-3 gap-main w-full relative">
-          <div className="col-span-3 flex items-center gap-main">
-            <div className="text-3xl-custom font-bold">
-              <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
-                주요 뉴스
-              </span>
-            </div>
-            <Tooltip
-              position="right"
-              message="AI 모델을 통해 예측된 주요 뉴스기사와 과거 유사뉴스입니다."
-              icon={<CircleHelp size={16} />}
-            />
-          </div>
-          <p className="text-main-red">
-            주요뉴스 데이터를 불러오는데 실패했습니다.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (news.length === 0) {
-    return (
-      <div className="grid grid-cols-3 w-full gap-main-2">
-        <div className="col-span-3 grid grid-cols-7 gap-main w-full relative">
-          <div className="col-span-4 flex items-center gap-main">
-            <div className="text-3xl-custom font-bold">
-              <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
-                주요 뉴스
-              </span>
-            </div>
-            <Tooltip
-              position="right"
-              message="AI 모델을 통해 예측된 주요 뉴스기사와 과거 유사뉴스입니다."
-              icon={<CircleHelp size={16} />}
-            />
-          </div>
-          <p className="col-span-3 text-main-red flex items-center justify-center">
-            주요뉴스가 없습니다.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   useEffect(() => {
     const startInterval = () => {
       intervalRef.current = setInterval(() => {
@@ -133,7 +85,53 @@ const MainNews = ({
   const mainNews = news[currentPage].news;
   const gridNews = news[currentPage].related;
 
-  console.log(mainNews, "mainNews");
+  if (error) {
+    return (
+      <div className="grid grid-cols-3 w-full gap-main-2">
+        <div className="col-span-3 grid grid-cols-3 gap-main w-full relative">
+          <div className="col-span-3 flex items-center gap-main">
+            <div className="text-3xl-custom font-bold">
+              <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+                주요 뉴스
+              </span>
+            </div>
+            <Tooltip
+              position="right"
+              message="AI 모델을 통해 예측된 주요 뉴스기사와 과거 유사뉴스입니다."
+              icon={<CircleHelp size={16} />}
+            />
+          </div>
+          <p className="text-main-red">
+            주요뉴스 데이터를 불러오는데 실패했습니다.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (news.length === 0) {
+    return (
+      <div className="grid grid-cols-3 w-full gap-main-2">
+        <div className="col-span-3 grid grid-cols-7 gap-main w-full relative">
+          <div className="col-span-4 flex items-center gap-main">
+            <div className="text-3xl-custom font-bold">
+              <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+                주요 뉴스
+              </span>
+            </div>
+            <Tooltip
+              position="right"
+              message="AI 모델을 통해 예측된 주요 뉴스기사와 과거 유사뉴스입니다."
+              icon={<CircleHelp size={16} />}
+            />
+          </div>
+          <p className="col-span-3 text-main-red flex items-center justify-center">
+            주요뉴스가 없습니다.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-2 gap-main-2 w-full relative">

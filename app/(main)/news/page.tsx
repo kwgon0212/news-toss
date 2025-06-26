@@ -5,25 +5,23 @@ import { getJwtToken } from "@/utils/auth";
 import { HighlightNews, News } from "@/type/news";
 import RealTime from "@/components/router/(main)/news/RealTime";
 import IsLoginToast from "@/components/router/(main)/news/IsLoginToast";
+import { fetchHighlightNews, fetchAllNews } from "@/api/news";
 
 const HomePage = async () => {
   const token = await getJwtToken();
 
-  const [highlightRes, allNewsRes] = await Promise.all([
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/highlight/redis`),
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/all?skip=0&limit=30`),
+  const [highlightResult, allNewsResult] = await Promise.allSettled([
+    fetchHighlightNews(),
+    fetchAllNews(0, 30),
   ]);
 
-  const [highlightJson, allInitialNewsJson] = await Promise.all([
-    highlightRes.json(),
-    allNewsRes.json(),
-  ]);
+  const highlightNews: HighlightNews[] =
+    highlightResult.status === "fulfilled" ? highlightResult.value.data : [];
+  const highlightNewsError = highlightResult.status === "rejected";
 
-  const highlightNews: HighlightNews[] = highlightJson.data;
-  const highlightNewsError = highlightRes.ok ? false : true;
-
-  const allInitialNews: News[] = allInitialNewsJson.data;
-  const allInitialNewsError = allNewsRes.ok ? false : true;
+  const allInitialNews: News[] =
+    allNewsResult.status === "fulfilled" ? allNewsResult.value.data : [];
+  const allInitialNewsError = allNewsResult.status === "rejected";
 
   return (
     <div className="grid gap-main-4 max-w-[1100px] mx-auto">

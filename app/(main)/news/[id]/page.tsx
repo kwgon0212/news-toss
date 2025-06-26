@@ -6,6 +6,13 @@ import { MetaData, News, NewsExternal } from "@/type/news";
 import { StockSearchResult } from "@/type/stocks/StockSearchResult";
 import { StockData } from "@/type/stocks/stockData";
 import MetaDataNews from "@/components/router/(main)/news/[id]/MetaDataNews";
+import {
+  fetchNewsDetail,
+  fetchRelatedNews,
+  fetchNewsMetadata,
+  fetchNewsExternal,
+} from "@/api/news";
+import { fetchStockInfo, fetchStockChartData } from "@/api/stocks";
 
 const NewsDetailPage = async ({
   params,
@@ -17,32 +24,13 @@ const NewsDetailPage = async ({
 
   const [newsDetailResult, relatedNewsResult, metaDataResult, externalResult] =
     await Promise.allSettled([
-      fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/detail?newsId=${newsId}`,
-        {
-          next: { revalidate: 60 * 60 * 24 },
-        }
-      ).then((res) => res.json()),
-      fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/related/news?newsId=${newsId}`,
-        {
-          next: { revalidate: 60 * 60 * 24 },
-        }
-      ).then((res) => res.json()),
-      fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/meta?newsId=${newsId}`,
-        {
-          next: { revalidate: 60 * 60 * 24 },
-        }
-      ).then((res) => res.json()),
-      fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/news/v2/external?newsId=${newsId}`,
-        {
-          next: { revalidate: 60 * 60 * 24 },
-        }
-      ).then((res) => res.json()),
+      fetchNewsDetail(newsId),
+      fetchRelatedNews(newsId),
+      fetchNewsMetadata(newsId),
+      fetchNewsExternal(newsId),
     ]);
 
+  // 각 결과 처리 및 기본값 설정
   const newsDetailJson: { data: News } =
     newsDetailResult.status === "fulfilled"
       ? newsDetailResult.value
@@ -140,17 +128,14 @@ const NewsDetailPage = async ({
 
   if (allStockListView.length !== 0) {
     const stockInfoPromises = allStockListView.map((stock) =>
-      fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/search?keyword=${stock.stock_id}`,
-        {
-          next: { revalidate: 60 * 60 * 24 },
-        }
-      )
-        .then((res) => res.json())
-        .catch((error) => {
-          console.error(`주식 정보 로드 실패 (${stock.stock_id}):`, error);
-          return { data: [] };
-        })
+      fetchStockInfo(stock.stock_id).catch((error) => {
+        console.error(`주식 정보 로드 실패 (${stock.stock_id}):`, error);
+        Sentry.captureException(error, {
+          tags: { section: "stock_info" },
+          extra: { stockId: stock.stock_id, newsId },
+        });
+        return { data: [] };
+      })
     );
 
     const stockInfoResults = await Promise.allSettled(stockInfoPromises);
@@ -185,13 +170,7 @@ const NewsDetailPage = async ({
   if (mainStockList.length > 0) {
     const stockChartPromises = mainStockList.map(async (stock) => {
       try {
-        const stockListRes = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/${stock.stockCode}?period=M`,
-          {
-            next: { revalidate: 60 * 60 * 24 * 2 },
-          }
-        );
-        const stockListJson: { data: StockData[] } = await stockListRes.json();
+        const stockListJson = await fetchStockChartData(stock.stockCode, "M");
 
         const filteredData = stockListJson.data.filter((item) => {
           const dateStr = item.stck_bsop_date; // ex) '20230428'
@@ -213,6 +192,14 @@ const NewsDetailPage = async ({
           `주식 차트 데이터 로드 실패 (${stock.stockCode}):`,
           error
         );
+        Sentry.captureException(error as Error, {
+          tags: { section: "stock_chart" },
+          extra: {
+            stockCode: stock.stockCode,
+            stockName: stock.stockName,
+            newsId,
+          },
+        });
         return {
           stockName: stock.stockName,
           stockCode: stock.stockCode,

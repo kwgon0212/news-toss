@@ -69,7 +69,6 @@ const InterestStock = ({ token }: { token: JwtToken | null }) => {
 
   useEffect(() => {
     if (token) {
-      console.log("멤버아이디", token.memberId);
       // 관심종목 그룹 조회
       const fetchInterestGroups = async () => {
         try {
@@ -77,7 +76,6 @@ const InterestStock = ({ token }: { token: JwtToken | null }) => {
           const result = await res.json();
 
           if (res.ok) {
-            console.log("그룹 조회 성공", result);
             const groupsData = result.data.map((group: any) => ({
               id: group.groupId,
               name: group.groupName,
