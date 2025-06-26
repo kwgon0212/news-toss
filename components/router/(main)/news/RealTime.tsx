@@ -57,7 +57,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
         const data = JSON.parse(event.data);
         console.log("실시간", data);
         setNews((prev) => {
-          const updated = [{ ...data, stock_list: [data.stock] }, ...prev];
+          const updated = [data, ...prev];
           return updated.slice(0, 10); // 새 뉴스 추가 후 최대 10개 유지
         });
 
@@ -66,11 +66,14 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
           news_count_total: prev.news_count_total + 1,
         }));
 
-        toast.success(`📰 ${data.stock.stock_name}관련 뉴스가 도착했어요!`, {
-          position: "top-left",
-          autoClose: 10000,
-          hideProgressBar: true,
-        });
+        toast.success(
+          `📰 ${data.stock_list[0].stock_name}관련 뉴스가 도착했어요!`,
+          {
+            position: "top-left",
+            autoClose: 10000,
+            hideProgressBar: true,
+          }
+        );
       } catch (err) {
         console.error("❌ SSE 파싱 에러:", err);
       }
