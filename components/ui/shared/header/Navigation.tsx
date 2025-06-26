@@ -171,17 +171,6 @@ const Navigation = () => {
           뉴스
         </Link>
         <Link
-          href="/stock"
-          className={clsx(
-            "text-base-custom",
-            pathname.startsWith("/stock")
-              ? "text-black font-semibold"
-              : "text-sub"
-          )}
-        >
-          증권
-        </Link>
-        <Link
           href="/calendar"
           className={clsx(
             "cursor-pointer text-base-custom",
@@ -190,8 +179,8 @@ const Navigation = () => {
               : "text-sub"
           )}
         >
-          <span>캘린더 </span>
-          <span className="text-xs-custom">with 챗봇</span>
+          <span className="pointer-events-none">캘린더 </span>
+          <span className="text-xs-custom pointer-events-none">with 챗봇</span>
         </Link>
         <Link
           href="/portfolio/my"
@@ -203,6 +192,17 @@ const Navigation = () => {
           )}
         >
           포트폴리오
+        </Link>
+        <Link
+          href="/stock"
+          className={clsx(
+            "text-base-custom",
+            pathname.startsWith("/stock")
+              ? "text-black font-semibold"
+              : "text-sub"
+          )}
+        >
+          증권
         </Link>
 
         <button
