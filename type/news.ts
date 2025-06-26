@@ -42,6 +42,22 @@ export interface HighlightNews {
   image?: string;
 }
 
+export interface CustomNews {
+  news_data: News[];
+  other_user_data: {
+    user_id: string;
+    user_pnl: number;
+    asset: number;
+    invest_score: number;
+    member_stocks: {
+      stock_id: string;
+      stock_name: string;
+    }[];
+  } | null;
+  use_other_user: boolean;
+  user_click_count: number;
+}
+
 export interface MetaData {
   newsId: string;
   summary: string;

@@ -3,7 +3,7 @@
 import React from "react";
 import { CircleHelp, Clock } from "lucide-react";
 import { JwtToken } from "@/type/jwt";
-import { News } from "@/type/news";
+import { CustomNews as CustomNewsType, News } from "@/type/news";
 import Image from "next/image";
 import { formatDate } from "@/utils/formatDate";
 import clsx from "clsx";
@@ -40,7 +40,6 @@ const SkeletonNewsCard = () => (
 );
 
 const CustomNews = ({ token }: { token: JwtToken | null }) => {
-  // React Query로 맞춤 뉴스 가져오기
   const {
     data: customNews = [],
     isLoading,
@@ -54,36 +53,46 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
       const res = await fetch(
         `/proxy/news/v2/recommend?userId=${token.memberId}`
       );
-      const json: { data: News[] } = await res.json();
-      const newsList = json.data.map((news: News) => ({
+      const response = await res.json();
+
+      const customNewsData = response.data as CustomNewsType;
+
+      const newsList = customNewsData.news_data.map((news: News) => ({
         mainNews: news,
         relatedNews: [],
       }));
 
       // 관련 뉴스 가져오기
-      const updatedNews = await Promise.all(
+      const relatedNewsResults = await Promise.allSettled(
         newsList.map(async (news: { mainNews: News; relatedNews: News[] }) => {
-          try {
-            const res = await fetch(
-              `/proxy/news/v2/related/news?newsId=${news.mainNews.news_id}`,
-              {
-                credentials: "include",
-              }
-            );
-            const json: { data: News[] } = await res.json();
-            return {
-              ...news,
-              relatedNews: json.data,
-            };
-          } catch (error) {
-            console.error(
-              `Error fetching related news for ${news.mainNews.news_id}:`,
-              error
-            );
-            return news; // 관련 뉴스 가져오기 실패시 원본 반환
-          }
+          const newsId = news.mainNews.news_id;
+          if (!newsId) return news;
+
+          const res = await fetch(
+            `/proxy/news/v2/related/news?newsId=${newsId}`,
+            {
+              credentials: "include",
+            }
+          );
+          const json: { data: News[] } = await res.json();
+          return {
+            ...news,
+            relatedNews: json.data,
+          };
         })
       );
+
+      const updatedNews = relatedNewsResults.map((result, index) => {
+        if (result.status === "fulfilled") {
+          return result.value;
+        } else {
+          console.error(
+            `Error fetching related news for ${newsList[index].mainNews.news_id}:`,
+            result.reason
+          );
+          return newsList[index];
+        }
+      });
 
       return updatedNews;
     },
@@ -128,7 +137,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
         ) : (
           customNews.slice(0, 3).map((news, index) => (
             <Link
-              href={`/news/${news.mainNews.news_id}`}
+              href={`/news/${news.mainNews.news_id || news.mainNews.newsId}`}
               className="flex flex-col gap-main hover:scale-102 transition-all duration-500 ease-in-out group"
               key={`custom-news-${index}`}
             >
