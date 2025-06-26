@@ -1,4 +1,4 @@
-# 📈 NewsToss
+# ![Image](https://github.com/user-attachments/assets/17c46d50-dcf3-406c-b715-b749fed81739) NewsToss
 
 > **AI 기반 맞춤형 주식 뉴스 & 포트폴리오 플랫폼**
 
@@ -40,6 +40,7 @@
 ### 📉 모니터링
 
 - **Sentry 연동**: 프론트 배포 후 사용자 환경의 예기치 못한 오류를 실시간 감지 Slack으로 에러 알림 전송
+  ![Image](https://github.com/user-attachments/assets/329e113f-f1d1-409a-ad99-69eb14dc2d0d)
 
 ## 🏗️ 시스템 아키텍처 & 구조
 
@@ -80,13 +81,15 @@ const successful = results
 ### 2. 페이지 속도 개선 (ISR + 캐싱)
 
 - 문제: 서버 요청 기반 렌더링으로 로딩 지연
-- 개선:
-
+- 개선
   - **ISR 적용**: 뉴스 상세 및 캘린더 페이지 정적 캐싱
   - **TanStack Query**: 클라이언트 캐싱 및 상태 동기화
   - **Vercel 리전**: `ap-northeast-2`로 설정해 응답 속도 단축
-
-⏱ 평균 로딩 속도 **2초 이상 개선**
+  개선 이전
+  <img width="865" alt="Image" src="https://github.com/user-attachments/assets/491e7f71-62fe-41f1-b740-9c3d31d89d3a" />
+  개선 이후
+  <img width="478" alt="Image" src="https://github.com/user-attachments/assets/f3ffd51a-531c-41fa-a537-d87c19183848" />
+  ⏱ 평균 로딩 속도 **2초 이상 개선**
 
 ### 3. CSS 깨짐 (미들웨어 리다이렉트 이슈)
 
