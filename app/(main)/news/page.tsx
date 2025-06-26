@@ -26,7 +26,7 @@ const HomePage = async () => {
   const allInitialNewsError = allNewsRes.ok ? false : true;
 
   return (
-    <div className="grid gap-main-4 max-w-[1000px] mx-auto">
+    <div className="grid gap-main-4 max-w-[1100px] mx-auto">
       <IsLoginToast />
 
       <div className="p-main">

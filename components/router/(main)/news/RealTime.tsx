@@ -40,7 +40,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
         if (first) next.push(first);
         return next.slice(0, 10); // 최대 10개 유지
       });
-    }, 2500);
+    }, 3000);
   };
 
   const stopRotation = () => {
@@ -158,7 +158,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
                   )}
                 >
                   <div className="text-center p-2 truncate text-base-custom font-semibold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
-                    {item.stock_list?.[0]?.stock_name}
+                    {item.stock_list && item.stock_list[0].stock_name}
                   </div>
 
                   <div className="p-2">
@@ -173,10 +173,8 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
                   </div>
 
                   <div className="text-left text-main-blue p-2 text-sm-custom font-semibold">
-                    중요도{" "}
-                    {item.impact_score
-                      ? `${item.impact_score.toFixed(2)}%`
-                      : "--.-- %"}
+                    중요도 점수 |{" "}
+                    {item.impact_score ? `${item.impact_score}점` : "--"}
                   </div>
 
                   <div className="flex items-center gap-1 text-xs-custom">

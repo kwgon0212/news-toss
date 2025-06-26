@@ -133,9 +133,11 @@ const MainNews = ({
   const mainNews = news[currentPage].news;
   const gridNews = news[currentPage].related;
 
+  console.log(mainNews, "mainNews");
+
   return (
-    <div className="grid grid-cols-7 gap-main-2 w-full relative">
-      <div className="col-span-4 flex flex-col gap-main">
+    <div className="grid grid-cols-2 gap-main-2 w-full relative">
+      <div className="col-span-1 flex flex-col gap-main">
         <div className="text-3xl-custom flex items-center gap-main bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
           <span className="font-bold">주요 뉴스</span>
           <Tooltip
@@ -169,14 +171,14 @@ const MainNews = ({
                   )}
                 />
 
-                <p className="absolute top-main right-main bg-main-blue  w-fit rounded-full text-[#e4ecf8] text-base-custom font-semibold px-main py-1">
-                  중요도 {Number(mainNews.impact_score).toFixed(2)}%
+                <p className="absolute top-main right-main bg-main-blue w-fit rounded-full text-white text-base-custom font-semibold px-main py-1">
+                  중요도 점수 | {mainNews.impact_score}점
                 </p>
 
                 <div className="absolute w-full h-full bottom-0 left-0 bg-gradient-to-t from-black/70 to-transparent hover:to-black/70 pointer-events-none flex items-end transition-all duration-300 ease-in-out">
                   <div
                     className={clsx(
-                      "relative flex flex-col justify-around gap-main px-main-2 py-main-2 z-10",
+                      "relative flex flex-col gap-main-1/2 p-main-2 z-10",
                       invertedStyle["inverted-radius"]
                     )}
                   >
@@ -184,7 +186,32 @@ const MainNews = ({
                       {mainNews.title}
                     </p>
 
-                    <div className="flex items-center gap-1 text-white text-sm-custom mb-main">
+                    <div className="flex items-center gap-main truncate">
+                      {[
+                        ...new Map(
+                          mainNews.stock_list?.map((item) => [
+                            item.stock_name,
+                            item,
+                          ])
+                        ).values(),
+                      ]
+                        .slice(0, 2)
+                        .map((stock) => (
+                          <span
+                            className="bg-gradient-to-r from-main-blue to-purple-600 font-bold text-lg-custom text-white px-main py-0.5 rounded-full"
+                            key={stock.stock_name}
+                          >
+                            {stock.stock_name}
+                          </span>
+                        ))}
+                      {/* {(mainNews.stock_list?.length ?? 0) > 2 && (
+                        <span className="text-main-dark-gray text-xs-custom">
+                          외 {(mainNews.stock_list?.length ?? 0) - 2}개의 종목
+                        </span>
+                      )} */}
+                    </div>
+
+                    <div className="flex items-center gap-1 text-white text-sm-custom">
                       <Clock className="h-3 w-3 mr-1" />
                       <span>
                         {mainNews.wdate && formatDate(mainNews.wdate)} ·{" "}
@@ -212,7 +239,7 @@ const MainNews = ({
         </div>
       </div>
 
-      <div className="col-span-3 flex flex-col gap-1">
+      <div className="col-span-1 flex flex-col gap-1">
         <h2 className="font-bold text-3xl-custom bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
           과거 유사 뉴스
         </h2>
@@ -225,20 +252,26 @@ const MainNews = ({
         )}
         <div
           className={clsx(
-            "grid grid-rows-3 transition-opacity duration-200 ease-in-out flex-1 bg-main-light-gray/30 rounded-main size-full"
+            "grid grid-rows-2 transition-opacity duration-200 ease-in-out flex-1 bg-main-light-gray/10 rounded-main size-full"
           )}
         >
           {gridNews.length > 0 &&
-            gridNews.slice(0, 3).map((item, idx) => (
+            gridNews.slice(0, 2).map((item, idx) => (
               <button
                 onClick={() => {
                   setSelectedNews(item as News);
                   setIsOpenNewsModal(true);
                 }}
-                className="flex items-center gap-main hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group"
+                className="flex items-center gap-main-2 hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group relative"
                 key={`main-news-${item.newsId}`}
               >
-                <div className="h-full w-full max-w-[180px] rounded-main shrink-0 relative">
+                <div className="absolute flex items-center gap-1 pl-3 pr-2 py-1 rounded-full bg-main-blue top-1/2 -translate-y-1/2 right-main text-white group-hover:opacity-100 opacity-0 duration-500 ease-in-out">
+                  <span className="font-semibold text-sm-custom whitespace-nowrap">
+                    상세보기
+                  </span>
+                  <ChevronRight size={14} className="animate-bounce-x" />
+                </div>
+                <div className="h-full w-[240px] rounded-main shrink-0 relative">
                   <Image
                     src={item.press || "https://placehold.co/200x150"}
                     alt={`${item.title}-image`}
@@ -250,13 +283,43 @@ const MainNews = ({
                 </div>
                 <div className="w-full h-full flex flex-col gap-main justify-around">
                   <div className="flex flex-col gap-1">
-                    <span className="font-semibold text-sm-custom text-main-blue bg-main-blue/10 rounded-main px-main py-0.5 w-fit">
-                      유사도 {Number(item.similarity * 100).toFixed(2)}%
+                    <span className="font-semibold text-base-custom text-main-blue bg-main-blue/10 rounded-main px-main py-0.5 w-fit">
+                      유사도 | {Number(item.similarity * 100).toFixed(2)}%
                     </span>
                     <p className="line-clamp-2 font-semibold text-lg-custom text-left">
                       {item.title}
                     </p>
                   </div>
+
+                  <div className="flex items-center gap-main truncate">
+                    {[
+                      ...new Map(
+                        item.stock_list?.map((item) => [item.stock_name, item])
+                      ).values(),
+                    ]
+                      .slice(0, 2)
+                      .map((stock) => (
+                        <span
+                          className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent font-bold text-lg-custom"
+                          key={stock.stock_name}
+                        >
+                          {stock.stock_name}
+                        </span>
+                      ))}
+                    {/* {(item.stock_list?.length ?? 0) > 2 && (
+                      <span className="text-main-dark-gray text-xs-custom">
+                        외 {(item.stock_list?.length ?? 0) - 2}개의 종목
+                      </span>
+                    )} */}
+                  </div>
+
+                  <p
+                    className={clsx(
+                      "line-clamp-2 text-start text-main-dark-gray text-xs-custom min-h-[calc(1em*1.5*2)]"
+                    )}
+                  >
+                    {item.image}
+                  </p>
 
                   <div className="flex items-center text-main-dark-gray text-xs-custom">
                     <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />

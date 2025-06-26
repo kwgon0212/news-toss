@@ -111,7 +111,7 @@ const AllNews = ({
       >
         {visibleNews.map((news, index) => (
           <div
-            className="hover:scale-102 transition-all duration-500 ease-in-out"
+            className="hover:scale-102 transition-all duration-500 ease-in-out group"
             key={`all-news-${index}`}
           >
             <Link
@@ -119,7 +119,7 @@ const AllNews = ({
               className="flex flex-col gap-main"
             >
               <div className="bg-black w-full aspect-[1.8/1] rounded-main shrink-0 relative">
-                <div className="absolute size-full bg-black/5 z-10 rounded-main inset-shadow-2xs" />
+                <div className="absolute size-full bg-black/5 z-10 rounded-main inset-shadow-2xs group-hover:bg-black/20 duration-300 ease-in-out" />
                 <Image
                   src={news.image || "https://placehold.co/250x150"}
                   alt={`${news.title}-image`}
@@ -127,6 +127,9 @@ const AllNews = ({
                   sizes="100%"
                   className="object-cover rounded-main"
                 />
+                <p className="absolute top-main right-main bg-main-blue w-fit rounded-full text-white text-sm-custom font-semibold px-main py-1 z-20">
+                  중요도 점수 | {news.impact_score}점
+                </p>
               </div>
               <div className="w-full flex flex-col gap-main justify-around">
                 <div className="flex items-center gap-main truncate">

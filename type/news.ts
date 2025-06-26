@@ -26,6 +26,7 @@ export interface HighlightNews {
     summary: string;
     news_id: string; //"20250513_0094";
     impact_score: number;
+    stock_list?: { stock_id: string; stock_name: string }[];
   };
   related: {
     newsId: string; //"20241015_0007";
@@ -36,7 +37,9 @@ export interface HighlightNews {
     press: string;
     image: string;
     similarity: number;
+    stock_list?: { stock_id: string; stock_name: string }[];
   }[];
+  image?: string;
 }
 
 export interface MetaData {
