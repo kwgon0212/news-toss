@@ -164,7 +164,9 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
                   )}
                 >
                   <div className="text-center p-2 truncate text-base-custom font-semibold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
-                    {item.stock_list && item.stock_list[0].stock_name}
+                    {item.stock_list
+                      ? item.stock_list[0].stock_name
+                      : "처리중..."}
                   </div>
 
                   <div className="p-2">

@@ -57,6 +57,8 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
 
       const customNewsData = response.data as CustomNewsType;
 
+      console.log(customNewsData);
+
       const newsList = customNewsData.news_data.map((news: News) => ({
         mainNews: news,
         relatedNews: [],

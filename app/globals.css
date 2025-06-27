@@ -200,7 +200,7 @@ body {
   -ms-overflow-style: none;
 }
 
-* {
+body {
   cursor: url("/cursor/default.png") 2 2, auto;
 }
 

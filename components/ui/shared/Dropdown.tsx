@@ -27,10 +27,10 @@ const Dropdown = ({
   maxHeight = 200,
 }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const groupRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<{ [group: string]: HTMLButtonElement | null }>({});
 
-  useOutsideClick(groupRef, () => setIsOpen(false));
+  useOutsideClick(wrapperRef, () => setIsOpen(false));
 
   useEffect(() => {
     if (isOpen && selected && buttonRefs.current[selected]) {
@@ -39,7 +39,9 @@ const Dropdown = ({
   }, [isOpen, selected]);
 
   return (
-    <div className="relative">
+    <div className="relative" ref={wrapperRef}>
+      {" "}
+      {/* ✅ ref 위치 변경 */}
       <button
         className={clsx(
           "flex items-center gap-main rounded-main pl-3 pr-2",
@@ -60,7 +62,6 @@ const Dropdown = ({
         />
       </button>
       <div
-        ref={groupRef}
         className={clsx(
           "absolute top-full left-0 pt-[5px] transition-opacity duration-200 z-50",
           isOpen

@@ -33,7 +33,7 @@ const Chatbot = ({
   const [isLoading, setIsLoading] = useState(false);
   const manuallyClosedRef = useRef(false);
   const endRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -195,12 +195,13 @@ const Chatbot = ({
       </div>
 
       <form className="flex gap-2 relative" onSubmit={handleSend}>
-        <input
+        <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="메시지 입력"
           ref={inputRef}
-          className="outline-none border border-main-light-gray flex-1 pl-main-2 pr-main-6 py-main rounded-full shadow-xs"
+          rows={2}
+          className="outline-none border border-main-light-gray flex-1 pl-main-2 pr-main-6 py-main rounded-main shadow-xs resize-none"
         />
 
         <Button
@@ -208,7 +209,7 @@ const Chatbot = ({
           variant="primary"
           disabled={isLoading}
           className={clsx(
-            "absolute right-main top-1/2 aspect-square size-8 !p-0 flex items-center justify-center !rounded-full -translate-y-1/2",
+            "absolute right-main bottom-main aspect-square size-8 !p-0 flex items-center justify-center !rounded-full",
             isLoading && "bg-gray-400 cursor-not-allowed"
           )}
         >
