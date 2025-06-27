@@ -92,7 +92,7 @@ const RegisterStep2 = ({
       return;
     }
 
-    if (passwordStrength < 4) {
+    if (passwordStrength < 3) {
       toast.error("더 강력한 비밀번호로 설정해주세요");
       return;
     }
@@ -247,7 +247,7 @@ const RegisterStep2 = ({
             </span>
           )}
         </div>
-        <div className="flex gap-main items-baseline">
+        <div className="flex gap-main items-baseline py-main-2">
           <input
             type="checkbox"
             id="agree"

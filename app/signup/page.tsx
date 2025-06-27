@@ -3,17 +3,26 @@
 import Modal from "@/components/ui/Modal";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import newsTossLogo from "@/public/news-toss-logo.png";
 import RegisterStep1 from "@/components/router/siginup/RegisterStep1";
 import RegisterStep2 from "@/components/router/siginup/RegisterStep2";
 import clsx from "clsx";
 import { UserInfo } from "@/type/userInfo";
+import {
+  Tab,
+  TabGroup,
+  TabList,
+  TabPanel,
+  TabPanels,
+} from "@/components/animate-ui/headless/tabs";
+import { toast } from "react-toastify";
 
 const SignUpPage = () => {
   const [isOpen, setIsOpen] = useState(true);
   const router = useRouter();
-  const [step, setStep] = useState(1);
+  // const [step, setStep] = useState(1);
+  const [selectedTab, setSelectedTab] = useState(0);
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: "",
     address: {
@@ -33,6 +42,35 @@ const SignUpPage = () => {
     agree: false,
   });
 
+  // 1단계 완료 조건 확인
+  const isStep1Complete =
+    userInfo.name.trim() !== "" &&
+    userInfo.address.zipcode !== "" &&
+    userInfo.address.address !== "" &&
+    userInfo.phone.phoneNumber1 !== "" &&
+    userInfo.phone.phoneNumber1.length === 4 &&
+    userInfo.phone.phoneNumber2 !== "" &&
+    userInfo.phone.phoneNumber2.length === 4 &&
+    userInfo.email.trim() !== "" &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userInfo.email);
+
+  useEffect(() => {
+    if (!isStep1Complete && selectedTab === 1) {
+      toast.error("유저정보를 모두 정확하게 입력해주세요.");
+      setSelectedTab(0);
+    }
+  }, [isStep1Complete, selectedTab]);
+
+  // 1단계가 완료되면 자동으로 2단계로 전환
+  // useEffect(() => {
+  //   if (isStep1Complete && selectedTab === 0) {
+  //     const timer = setTimeout(() => {
+  //       setSelectedTab(1);
+  //     }, 500); // 0.5초 딜레이
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [isStep1Complete, selectedTab]);
+
   return (
     <>
       <Modal
@@ -42,10 +80,9 @@ const SignUpPage = () => {
         }}
         hasBackdropBlur={false}
         isClickOutsideClose={false}
-        // hasCloseButton={false}
       >
-        <div className="grid grid-cols-[auto_1fr] gap-[40px]">
-          <div className="flex flex-col gap-[40px] items-center justify-center px-[40px]">
+        <div className="grid grid-cols-[auto_1fr] gap-main-2">
+          <div className="flex flex-col gap-main-4 items-center justify-center px-main-4">
             <div className="relative size-[200px]">
               <Image
                 src={newsTossLogo}
@@ -64,39 +101,43 @@ const SignUpPage = () => {
               </p>
             </div>
           </div>
-          <div className="flex flex-col gap-main overflow-y-scroll">
-            <h2 className="text-lg font-bold text-main-dark-gray">
-              회원가입 {step}/2
-            </h2>
-            <div className="relative min-w-[400px] min-h-[500px]">
-              <div
-                className={clsx(
-                  "absolute top-0 left-0 w-full h-full transition-transform duration-500",
-                  step === 1 ? "translate-x-0" : "-translate-x-full"
-                )}
-                style={{ zIndex: step === 1 ? 2 : 1 }}
-              >
+
+          <TabGroup
+            selectedIndex={selectedTab}
+            onChange={(index) => {
+              setSelectedTab(index);
+            }}
+            className="w-[30vw] rounded-main pt-main-2 px-main min-h-[570px]"
+          >
+            <TabList
+              className="grid w-full grid-cols-2"
+              activeClassName="bg-main-blue/10 shadow-none h-full"
+            >
+              <Tab index={0} className="data-selected:text-main-blue">
+                1. 유저정보 입력
+              </Tab>
+              <Tab index={1} className="data-selected:text-main-blue">
+                2. 계정 생성
+              </Tab>
+            </TabList>
+
+            <TabPanels className="mx-1 mb-1 -mt-2 rounded-main flex-1">
+              <TabPanel className="py-main-2">
                 <RegisterStep1
-                  setStep={setStep}
+                  setStep={setSelectedTab}
                   userInfo={userInfo}
                   setUserInfo={setUserInfo}
                 />
-              </div>
-              <div
-                className={clsx(
-                  "absolute top-0 left-0 w-full h-full transition-transform duration-500",
-                  step === 2 ? "translate-x-0" : "translate-x-full"
-                )}
-                style={{ zIndex: step === 2 ? 2 : 1 }}
-              >
+              </TabPanel>
+              <TabPanel className="py-main-2">
                 <RegisterStep2
-                  setStep={setStep}
+                  setStep={setSelectedTab}
                   userInfo={userInfo}
                   setUserInfo={setUserInfo}
                 />
-              </div>
-            </div>
-          </div>
+              </TabPanel>
+            </TabPanels>
+          </TabGroup>
         </div>
       </Modal>
     </>

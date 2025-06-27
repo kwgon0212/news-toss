@@ -60,7 +60,7 @@ const External = ({
             현재 vs 과거 변동률
           </h2>
           <Tooltip
-            message="각 일자의 지표는 이전 거래일(D-1) 대비 변동률입니다."
+            message="각 일자의 지표는 뉴스 발행일 전일(D-1) 대비 변동률입니다."
             icon={<HelpCircle size={16} />}
             position="right"
           />
@@ -135,7 +135,7 @@ const External = ({
       color: "#ec4899",
     },
     foreign: {
-      label: "외국인",
+      label: "외국인 순매수",
       data: [
         external.dMinus5Foreign,
         external.dMinus4Foreign,
@@ -151,7 +151,7 @@ const External = ({
       color: "#22c55e",
     },
     institution: {
-      label: "기관",
+      label: "기관 순매수",
       data: [
         external.dMinus5Institution,
         external.dMinus4Institution,
@@ -167,7 +167,7 @@ const External = ({
       color: "#f59e0b",
     },
     individual: {
-      label: "개인",
+      label: "개인 순매수",
       data: [
         external.dMinus5Individual,
         external.dMinus4Individual,
@@ -187,7 +187,7 @@ const External = ({
   const pastDataMap = pastNewsExternal
     ? {
         close: {
-          label: "종가 (과거 뉴스)",
+          label: "과거 뉴스",
           data: [
             pastNewsExternal.dMinus5Close,
             pastNewsExternal.dMinus4Close,
@@ -203,7 +203,7 @@ const External = ({
           color: "#a5b4fc",
         },
         volume: {
-          label: "거래량 (과거 뉴스)",
+          label: "과거 뉴스",
           data: [
             pastNewsExternal.dMinus5Volume,
             pastNewsExternal.dMinus4Volume,
@@ -219,7 +219,7 @@ const External = ({
           color: "#f1a8d1",
         },
         foreign: {
-          label: "외국인 (과거 뉴스)",
+          label: "과거 뉴스",
           data: [
             pastNewsExternal.dMinus5Foreign,
             pastNewsExternal.dMinus4Foreign,
@@ -235,7 +235,7 @@ const External = ({
           color: "#86efac",
         },
         institution: {
-          label: "기관 (과거 뉴스)",
+          label: "과거 뉴스",
           data: [
             pastNewsExternal.dMinus5Institution,
             pastNewsExternal.dMinus4Institution,
@@ -251,7 +251,7 @@ const External = ({
           color: "#fcd34d",
         },
         individual: {
-          label: "개인 (과거 뉴스)",
+          label: "과거 뉴스",
           data: [
             pastNewsExternal.dMinus5Individual,
             pastNewsExternal.dMinus4Individual,
@@ -288,7 +288,7 @@ const External = ({
     labels: filteredLabels,
     datasets: [
       {
-        label: dataMap[selectedType].label + " (현재 뉴스)",
+        label: "현재 뉴스",
         data: filteredCurrentData,
         backgroundColor: dataMap[selectedType].color,
       },
@@ -362,7 +362,7 @@ const External = ({
             현재 vs 과거 변동률
           </h2>
           <Tooltip
-            message="각 일자의 지표는 이전 거래일(D-1) 대비 변동률입니다."
+            message="각 일자의 지표는 뉴스 발행일 전일(D-1) 대비 변동률입니다."
             icon={<HelpCircle size={16} />}
             position="right"
           />
@@ -403,7 +403,7 @@ const External = ({
           현재 vs 과거 변동률
         </h2>
         <Tooltip
-          message="각 일자의 지표는 이전 거래일(D-1) 대비 변동률입니다."
+          message="각 일자의 지표는 뉴스 발행일 전일(D-1) 대비 변동률입니다."
           icon={<HelpCircle size={16} />}
           position="right"
         />

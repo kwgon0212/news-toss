@@ -32,9 +32,7 @@ const AllNews = ({
   ];
 
   const fetchMoreNews = async (nextSkip: number) => {
-    const res = await fetch(`/proxy/news/v2/all?skip=${nextSkip}&limit=30`, {
-      credentials: "include",
-    });
+    const res = await fetch(`/proxy/news/v2/all?skip=${nextSkip}&limit=30`);
     const json = await res.json();
     const newNews = json.data;
 

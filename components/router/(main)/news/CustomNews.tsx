@@ -51,7 +51,10 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
 
       // 메인 뉴스 가져오기
       const res = await fetch(
-        `/proxy/news/v2/recommend?userId=${token.memberId}`
+        `/proxy/news/v2/recommend?userId=${token.memberId}`,
+        {
+          credentials: "include",
+        }
       );
       const response = await res.json();
 
@@ -71,10 +74,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
           if (!newsId) return news;
 
           const res = await fetch(
-            `/proxy/news/v2/related/news?newsId=${newsId}`,
-            {
-              credentials: "include",
-            }
+            `/proxy/news/v2/related/news?newsId=${newsId}`
           );
           const json: { data: News[] } = await res.json();
           return {
@@ -118,7 +118,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
           position="right"
           message={`${
             token?.memberName ?? "홍길동"
-          }님이 조회한 뉴스 기사를 바탕으로 추천된 뉴스 기사입니다.`}
+          }님이 입력하신 투자 성향과 보유 종목을 바탕으로 추천된 뉴스입니다.`}
           icon={<CircleHelp size={16} />}
         />
       </div>

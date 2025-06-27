@@ -6,6 +6,7 @@ import AddressModal from "@/components/ui/shared/AddressModal";
 import { UserInfo } from "@/type/userInfo";
 import { toast } from "react-toastify";
 import Button from "@/components/ui/shared/Button";
+import Dropdown from "@/components/ui/shared/Dropdown";
 
 interface RegisterStep1Props {
   setStep: (step: number) => void;
@@ -35,6 +36,8 @@ const RegisterStep1 = ({
       !userInfo.address.address ||
       !userInfo.phone.phoneNumber1 ||
       !userInfo.phone.phoneNumber2 ||
+      userInfo.phone.phoneNumber1.length !== 4 ||
+      userInfo.phone.phoneNumber2.length !== 4 ||
       !userInfo.email
     ) {
       toast.error("입력되지 않은 항목이 있습니다");
@@ -45,7 +48,7 @@ const RegisterStep1 = ({
       return;
     }
 
-    setStep(2);
+    setStep(1);
   };
 
   return (
@@ -90,26 +93,12 @@ const RegisterStep1 = ({
       <div className="flex flex-col gap-[5px]">
         <label htmlFor="phone">전화번호</label>
         <div className="flex gap-main items-center">
-          <select className="border border-main-light-gray rounded-main p-main">
-            <option value="1" onClick={() => handlePhoneContryCode("010")}>
-              010
-            </option>
-            <option value="2" onClick={() => handlePhoneContryCode("011")}>
-              011
-            </option>
-            <option value="3" onClick={() => handlePhoneContryCode("016")}>
-              016
-            </option>
-            <option value="4" onClick={() => handlePhoneContryCode("017")}>
-              017
-            </option>
-            <option value="5" onClick={() => handlePhoneContryCode("018")}>
-              018
-            </option>
-            <option value="6" onClick={() => handlePhoneContryCode("019")}>
-              019
-            </option>
-          </select>
+          <Dropdown
+            groups={["010", "011", "016", "017", "018", "019"]}
+            selected={userInfo.phone.countryCode}
+            onSelect={handlePhoneContryCode}
+            className="border border-main-light-gray rounded-main p-main"
+          />
 
           <Input
             value={userInfo.phone.phoneNumber1}
@@ -157,9 +146,9 @@ const RegisterStep1 = ({
           onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
         />
       </div>
-      <Button onClick={handleNext} className="w-fit self-end">
+      {/* <Button onClick={handleNext} className="w-fit self-end mt-main-2">
         다음
-      </Button>
+      </Button> */}
 
       <AddressModal
         isOpen={isOpenAddressModal}
