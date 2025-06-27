@@ -6,6 +6,7 @@ import Image from "next/image";
 import React, { useRef, useState, useEffect } from "react";
 import MarkdownRenderer from "./MarkdownRenderer";
 import Button from "@/components/ui/shared/Button";
+import { Switch } from "@/components/animate-ui/radix/switch";
 
 interface Message {
   role: "user" | "bot";
@@ -34,6 +35,22 @@ const Chatbot = ({
   const manuallyClosedRef = useRef(false);
   const endRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const [enterToSend, setEnterToSend] = useState(false);
+
+  // localStorage에서 enterToSend 설정 불러오기
+  useEffect(() => {
+    const savedSetting = localStorage.getItem("chatbot-enter-to-send");
+    if (savedSetting !== null) {
+      setEnterToSend(JSON.parse(savedSetting));
+    }
+  }, []);
+
+  // enterToSend 변경 시 localStorage에 저장
+  const handleEnterToSendChange = (checked: boolean) => {
+    setEnterToSend(checked);
+    localStorage.setItem("chatbot-enter-to-send", JSON.stringify(checked));
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -86,36 +103,6 @@ const Chatbot = ({
         return updated;
       });
     });
-
-    // api router
-    // const sse = new EventSource(
-    //   `/api/sse/chatbot?message=${encodeURIComponent(input)}`
-    // );
-
-    // sse.onmessage = (event) => {
-    //   const parsed = JSON.parse(event.data);
-
-    //   if (parsed.is_last) {
-    //     sse.close();
-    //     setIsLoading(false);
-    //     return;
-    //   }
-
-    //   setMessages((prev) => {
-    //     const updated = [...prev];
-    //     const lastIdx = updated.length - 1;
-    //     updated[lastIdx] = {
-    //       ...updated[lastIdx],
-    //       content: updated[lastIdx].content + parsed.content,
-    //     };
-    //     return updated;
-    //   });
-    // };
-
-    // sse.addEventListener("end", () => {
-    //   sse.close();
-    //   setIsLoading(false);
-    // });
   };
 
   useEffect(() => {
@@ -161,9 +148,10 @@ const Chatbot = ({
             <br />
             과거 유사 뉴스를 검색해보세요!
           </p>
-          <p className="w-[300px] text-main-dark-gray/80 text-sm-custom text-center break-keep">
-            ex) 곧 삼성전자 실적 발표일인데, 실적 발표일 주가 변동과 관련해서
-            참고할만한 뉴스 알려줘!
+          <p className="text-main-dark-gray/80 text-sm-custom text-center break-keep">
+            ex) 곧 삼성전자 실적 발표일인데,
+            <br />
+            실적 발표일 주가 변동과 관련해서 참고할만한 뉴스 알려줘!
           </p>
         </div>
 
@@ -175,7 +163,6 @@ const Chatbot = ({
                 className="w-full flex justify-start items-start"
               >
                 <MarkdownRenderer message={msg.content} />
-                {/* <p>{msg.content}</p> */}
               </div>
             );
           } else {
@@ -194,32 +181,60 @@ const Chatbot = ({
         <div ref={endRef} />
       </div>
 
-      <form className="flex gap-2 relative" onSubmit={handleSend}>
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="메시지 입력"
-          ref={inputRef}
-          rows={2}
-          className="outline-none border border-main-light-gray flex-1 pl-main-2 pr-main-6 py-main rounded-main shadow-xs resize-none"
-        />
+      <div className="flex flex-col gap-main items-end">
+        <div className="flex items-center gap-2">
+          <label
+            htmlFor="enter-to-send"
+            className="text-sm-custom text-main-dark-gray/80"
+          >
+            Enter로 메세지 보내기
+          </label>
+          <Switch
+            id="enter-to-send"
+            className="z-10 data-[state=checked]:bg-main-blue data-[state=unchecked]:bg-gray-300 [&>[data-slot=switch-thumb]]:bg-white"
+            checked={enterToSend}
+            onCheckedChange={handleEnterToSendChange}
+          />
+        </div>
 
-        <Button
-          type="submit"
-          variant="primary"
-          disabled={isLoading}
-          className={clsx(
-            "absolute right-main bottom-main aspect-square size-8 !p-0 flex items-center justify-center !rounded-full",
-            isLoading && "bg-gray-400 cursor-not-allowed"
-          )}
-        >
-          {isLoading ? (
-            <Loader2 className="text-white animate-spin" size={16} />
-          ) : (
-            <Send className="text-white" size={16} />
-          )}
-        </Button>
-      </form>
+        <form className="w-full flex gap-2 relative" onSubmit={handleSend}>
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                if (enterToSend) {
+                  e.preventDefault();
+                  if (input.trim() && !isLoading) {
+                    handleSend(e as any);
+                  }
+                }
+                // enterToSend가 false면 줄넘김
+              }
+            }}
+            placeholder="메시지 입력"
+            ref={inputRef}
+            rows={2}
+            className="outline-none border border-main-light-gray flex-1 pl-main-2 pr-main-6 py-main rounded-main shadow-xs resize-none"
+          />
+
+          <Button
+            type="submit"
+            variant="primary"
+            disabled={isLoading}
+            className={clsx(
+              "absolute right-main bottom-main aspect-square size-8 !p-0 flex items-center justify-center !rounded-full",
+              isLoading && "bg-gray-400 cursor-not-allowed"
+            )}
+          >
+            {isLoading ? (
+              <Loader2 className="text-white animate-spin" size={16} />
+            ) : (
+              <Send className="text-white" size={16} />
+            )}
+          </Button>
+        </form>
+      </div>
     </div>
   );
 };
