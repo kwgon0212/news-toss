@@ -118,7 +118,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
           position="right"
           message={`${
             token?.memberName ?? "홍길동"
-          }님이 입력하신 투자 성향과 보유 종목을 바탕으로 추천된 뉴스입니다.`}
+          }님이 입력하신 투자 성향과 뉴스 조회 기록을 바탕으로 추천된 뉴스입니다.`}
           icon={<CircleHelp size={16} />}
         />
       </div>

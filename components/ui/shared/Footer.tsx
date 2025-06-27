@@ -1,10 +1,16 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import clsx from "clsx";
 
-const Footer = () => {
+const Footer = ({ className }: { className?: string }) => {
   return (
-    <footer className="w-full py-main-2 bg-main-light-gray/30 mt-[100px] flex flex-col gap-main items-center justify-center text-center text-main-dark-gray rounded-t-main">
+    <footer
+      className={clsx(
+        "w-full py-main-2 bg-main-light-gray/30 flex flex-col gap-main items-center justify-center text-center text-main-dark-gray rounded-t-main",
+        className
+      )}
+    >
       <div className="flex flex-col items-center gap-main-1/2">
         <div className="flex items-center gap-2">
           <Image
