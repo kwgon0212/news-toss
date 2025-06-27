@@ -77,31 +77,67 @@ const RegisterStep2 = ({
   };
 
   const handleSignup = async () => {
+    if (
+      !userInfo.id ||
+      !userInfo.password ||
+      !userInfo.passwordConfirm ||
+      !userInfo.name ||
+      !userInfo.email ||
+      !userInfo.address.zipcode ||
+      !userInfo.address.address
+    ) {
+      toast.error("입력되지 않은 항목이 있습니다");
+      return;
+    }
+
+    // 1. 아이디 중복 확인 여부
     if (isIdAvailable === null) {
       toast.error("아이디 중복확인을 해주세요");
       return;
     }
 
+    // 2. 필수 약관 동의 여부
     if (!userInfo.agree) {
       toast.error("필수 약관에 동의해주세요");
       return;
     }
 
+    // 3. 비밀번호 확인 불일치
     if (userInfo.password !== userInfo.passwordConfirm) {
       toast.error("비밀번호가 일치하지 않습니다");
       return;
     }
 
+    // 4. 비밀번호 보안 등급 (최소 3 이상)
     if (passwordStrength < 3) {
       toast.error("더 강력한 비밀번호로 설정해주세요");
       return;
     }
 
-    if (!userInfo.id || !userInfo.password || !userInfo.passwordConfirm) {
+    // 5. 필수 필드 입력 여부
+    if (
+      !userInfo.id.trim() ||
+      !userInfo.password.trim() ||
+      !userInfo.passwordConfirm.trim() ||
+      !userInfo.name.trim() ||
+      !userInfo.email.trim() ||
+      !userInfo.address.zipcode.trim() ||
+      !userInfo.address.address.trim()
+    ) {
       toast.error("입력되지 않은 항목이 있습니다");
       return;
     }
 
+    // 6. 휴대폰 번호 각 4자리 이상
+    if (
+      userInfo.phone.phoneNumber1.length < 4 ||
+      userInfo.phone.phoneNumber2.length < 4
+    ) {
+      toast.error("휴대폰 번호를 정확히 입력해주세요");
+      return;
+    }
+
+    // --- 모든 유효성 통과 후 회원가입 요청 ---
     const res = await fetch(`/proxy/auth/register`, {
       method: "POST",
       headers: {
@@ -117,11 +153,12 @@ const RegisterStep2 = ({
         address: {
           zipcode: userInfo.address.zipcode,
           address: userInfo.address.address,
-          addressDetail: userInfo.address.detail,
+          addressDetail: userInfo.address.detail || "",
         },
       }),
     });
 
+    // 회원가입 성공 시 → 바로 로그인
     if (res.ok) {
       const res = await fetch(`/proxy/auth/login`, {
         method: "POST",
