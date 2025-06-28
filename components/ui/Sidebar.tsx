@@ -53,7 +53,6 @@ const Sidebar = ({ token }: { token: JwtToken | null }) => {
         const res = await fetch(`/proxy/v1/portfolios/${token.memberId}`);
 
         if (!res.ok) {
-          toast.error("내 투자 데이터 로드 실패");
           setPortfolio([]);
           return;
         }
