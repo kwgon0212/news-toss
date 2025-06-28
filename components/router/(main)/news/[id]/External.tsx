@@ -5,12 +5,13 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  BarElement,
+  LineElement,
+  PointElement,
   Title,
   Tooltip as ChartTooltip,
   Legend,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import { News, NewsExternal } from "@/type/news";
 import Button from "@/components/ui/shared/Button";
 import Tooltip from "@/components/ui/Tooltip";
@@ -20,7 +21,8 @@ import { useQuery } from "@tanstack/react-query";
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  BarElement,
+  LineElement,
+  PointElement,
   Title,
   ChartTooltip,
   Legend
@@ -48,37 +50,37 @@ const External = ({
 }) => {
   const [selectedType, setSelectedType] =
     useState<keyof typeof dataMap>("close");
-
   const pinImageRef = useRef<HTMLImageElement | null>(null);
-
-  // external 데이터가 없거나 비어있는 경우 처리
-  if (!external || Object.keys(external).length === 0) {
-    return (
-      <div className="size-full flex flex-col gap-main-2">
-        <div className="flex items-center gap-main">
-          <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
-            현재 vs 과거 변동률
-          </h2>
-          <Tooltip
-            message="각 일자의 지표는 뉴스 발행일 전일(D-1) 대비 변동률입니다."
-            icon={<HelpCircle size={16} />}
-            position="right"
-          />
-        </div>
-        <div className="flex items-center justify-center min-h-[300px]">
-          <p className="text-main-dark-gray">
-            외부 데이터를 불러올 수 없습니다.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   useEffect(() => {
     const img = new Image();
     img.src = "/pin.png";
     pinImageRef.current = img;
   }, []);
+
+  const pinPlugin = {
+    id: "customPin",
+    afterDatasetsDraw(chart: any) {
+      const index = chart.data.labels.findIndex(
+        (label: string) => label === "D-1"
+      );
+      if (index === -1 || !pinImageRef.current) return;
+
+      const meta = chart.getDatasetMeta(0);
+      const dataPoint = meta.data[index];
+      if (!dataPoint) return;
+
+      const dMinus1Value = chart.data.datasets[0].data[index];
+      if (dMinus1Value !== 0) return;
+
+      const { x, y } = dataPoint;
+      const ctx = chart.ctx;
+      ctx.save();
+      const size = 24;
+      ctx.drawImage(pinImageRef.current, x - size / 2, y - size, size, size);
+      ctx.restore();
+    },
+  };
 
   const {
     data: pastNewsExternal,
@@ -277,10 +279,11 @@ const External = ({
   const filteredPastData: (number | null)[] = [];
 
   currentData.forEach((value, index) => {
-    if (value !== null) {
+    const pastValue = pastData?.[index];
+    if (value !== null && pastValue !== null && pastValue !== undefined) {
       filteredLabels.push(labels[index]);
       filteredCurrentData.push(value);
-      filteredPastData.push(pastData?.[index] || null);
+      filteredPastData.push(pastValue);
     }
   });
 
@@ -290,47 +293,22 @@ const External = ({
       {
         label: "현재 뉴스",
         data: filteredCurrentData,
+        borderColor: dataMap[selectedType].color,
         backgroundColor: dataMap[selectedType].color,
+        tension: 0.1,
       },
       ...(pastDataMap
         ? [
             {
               label: pastDataMap[selectedType].label,
               data: filteredPastData,
+              borderColor: pastDataMap[selectedType].color,
               backgroundColor: pastDataMap[selectedType].color,
+              tension: 0.1,
             },
           ]
         : []),
     ],
-  };
-
-  const pinPlugin = {
-    id: "customPin",
-    afterDatasetsDraw(chart: any) {
-      const { ctx, scales } = chart;
-      const xAxis = scales["x"];
-      const yAxis = scales["y"];
-
-      const index = chart.data.labels.findIndex(
-        (label: string) => label === "D-1"
-      );
-
-      if (index === -1 || !pinImageRef.current) return;
-
-      // 현재 선택된 dataset의 D-1 값이 0인 경우만 핀 꽂기
-      const currentDataset = chart.data.datasets[0]; // 첫 번째 데이터셋 (현재 뉴스)
-      const dMinus1Value = currentDataset.data[index];
-
-      if (dMinus1Value !== 0) return;
-
-      const x = xAxis.getPixelForValue(index);
-      const y = yAxis.getPixelForValue(dMinus1Value); // 0 위치 위에 핀
-
-      ctx.save();
-      const size = 30;
-      ctx.drawImage(pinImageRef.current, x - size / 2, y - size, size, size);
-      ctx.restore();
-    },
   };
 
   const chartOptions = {
@@ -357,16 +335,9 @@ const External = ({
   if (isLoading) {
     return (
       <div className="size-full flex flex-col gap-main-2">
-        <div className="flex items-center gap-main">
-          <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
-            현재 vs 과거 변동률
-          </h2>
-          <Tooltip
-            message="각 일자의 지표는 뉴스 발행일 전일(D-1) 대비 변동률입니다."
-            icon={<HelpCircle size={16} />}
-            position="right"
-          />
-        </div>
+        <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+          현재 vs 과거 변동률
+        </h2>
         <div className="flex items-center justify-center min-h-[300px]">
           <Loader2 className="size-8 animate-spin text-main-blue" />
         </div>
@@ -421,7 +392,7 @@ const External = ({
           ))}
         </div>
         <div className="w-full min-h-[300px]">
-          <Bar data={chartData} options={chartOptions} plugins={[pinPlugin]} />
+          <Line data={chartData} options={chartOptions} plugins={[pinPlugin]} />
         </div>
       </div>
     </div>

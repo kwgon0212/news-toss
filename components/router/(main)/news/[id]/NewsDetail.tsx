@@ -117,7 +117,7 @@ const NewsDetail = ({
   };
 
   return (
-    <div className="w-full flex flex-col gap-main overflow-x-hidden overflow-y-scroll">
+    <div className="w-full min-w-[600px] flex flex-col gap-main overflow-x-hidden overflow-y-scroll">
       <h2 className="flex items-center gap-main text-3xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
         현재 뉴스
         <IconButton icon={Star} active={isScrap} onClick={handleScrap} />
