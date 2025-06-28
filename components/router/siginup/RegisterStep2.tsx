@@ -137,25 +137,27 @@ const RegisterStep2 = ({
       return;
     }
 
+    const userData = {
+      account: userInfo.id,
+      password: userInfo.password,
+      name: userInfo.name,
+      phoneNumber: `${userInfo.phone.countryCode}-${userInfo.phone.phoneNumber1}-${userInfo.phone.phoneNumber2}`,
+      email: userInfo.email,
+      fgOffset: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      address: {
+        zipcode: userInfo.address.zipcode,
+        address: userInfo.address.address,
+        addressDetail: userInfo.address.detail || "",
+      },
+    };
+
     // --- 모든 유효성 통과 후 회원가입 요청 ---
     const res = await fetch(`/proxy/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        account: userInfo.id,
-        password: userInfo.password,
-        name: userInfo.name,
-        phoneNumber: `${userInfo.phone.countryCode}-${userInfo.phone.phoneNumber1}-${userInfo.phone.phoneNumber2}`,
-        email: userInfo.email,
-        fgOffset: "",
-        address: {
-          zipcode: userInfo.address.zipcode,
-          address: userInfo.address.address,
-          addressDetail: userInfo.address.detail || "",
-        },
-      }),
+      body: JSON.stringify(userData),
     });
 
     // 회원가입 성공 시 → 바로 로그인
@@ -278,11 +280,12 @@ const RegisterStep2 = ({
               </span>
             )}
 
-          {userInfo.password === userInfo.passwordConfirm && (
-            <span className="text-sm-custom text-main-blue ml-main">
-              비밀번호가 일치합니다
-            </span>
-          )}
+          {userInfo.password &&
+            userInfo.password === userInfo.passwordConfirm && (
+              <span className="text-sm-custom text-main-blue ml-main">
+                비밀번호가 일치합니다
+              </span>
+            )}
         </div>
         <div className="flex gap-main items-baseline py-main-2">
           <input
@@ -301,9 +304,6 @@ const RegisterStep2 = ({
       </div>
 
       <div className="flex gap-main self-end">
-        <Button variant="ghost" onClick={() => setStep(1)} className="w-fit">
-          이전
-        </Button>
         <Button variant="primary" onClick={handleSignup} className="w-fit">
           회원가입
         </Button>
