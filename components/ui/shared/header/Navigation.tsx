@@ -183,17 +183,6 @@ const Navigation = () => {
           <span className="text-xs-custom pointer-events-none">with 챗봇</span>
         </Link>
         <Link
-          href="/portfolio/my"
-          className={clsx(
-            "text-base-custom",
-            pathname.startsWith("/portfolio")
-              ? "text-black font-semibold"
-              : "text-sub"
-          )}
-        >
-          포트폴리오
-        </Link>
-        <Link
           href="/stock"
           className={clsx(
             "text-base-custom",
@@ -203,6 +192,17 @@ const Navigation = () => {
           )}
         >
           증권
+        </Link>
+        <Link
+          href="/portfolio/my"
+          className={clsx(
+            "text-base-custom",
+            pathname.startsWith("/portfolio")
+              ? "text-black font-semibold"
+              : "text-sub"
+          )}
+        >
+          포트폴리오
         </Link>
 
         <button
