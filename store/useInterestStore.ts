@@ -60,7 +60,11 @@ interface InterestState {
     groupId: string,
     groupName: string
   ) => Promise<void>;
-  setMainGroup: (token: JwtToken, groupId: string) => Promise<void>;
+  setMainGroup: (
+    token: JwtToken,
+    groupId: string,
+    showToast?: boolean
+  ) => Promise<void>;
   addStock: (
     token: JwtToken,
     groupId: string,
@@ -158,11 +162,15 @@ export const useInterestStore = create<InterestState>((set, get) => ({
       };
 
       const { interestGroups } = get();
-      set({ interestGroups: [...interestGroups, newGroup] });
+      set({
+        interestGroups: [...interestGroups, newGroup],
+        selectedGroupId: json.data.groupId, // 새로 추가된 그룹을 선택
+        interestStocks: [], // 새 그룹이므로 빈 종목 배열
+      });
 
-      // 첫 번째 그룹이면 메인으로 설정
+      // 첫 번째 그룹이면 메인으로 설정 (토스트 없이)
       if (interestGroups.length === 0) {
-        await get().setMainGroup(token, json.data.groupId);
+        await get().setMainGroup(token, json.data.groupId, false);
       }
     } catch (error) {
       console.error("그룹 추가 실패:", error);
@@ -245,7 +253,11 @@ export const useInterestStore = create<InterestState>((set, get) => ({
     }
   },
 
-  setMainGroup: async (token: JwtToken, groupId: string) => {
+  setMainGroup: async (
+    token: JwtToken,
+    groupId: string,
+    showToast: boolean = true
+  ) => {
     try {
       const res = await fetch(
         `/proxy/favorite/${token.memberId}/${groupId}/main`,
@@ -257,7 +269,9 @@ export const useInterestStore = create<InterestState>((set, get) => ({
         return;
       }
 
-      toast.success("메인 그룹이 설정되었습니다.");
+      if (showToast) {
+        toast.success("메인 그룹이 설정되었습니다.");
+      }
 
       // 기존 순서를 유지하면서 main 속성만 업데이트
       const { interestGroups } = get();
@@ -287,13 +301,16 @@ export const useInterestStore = create<InterestState>((set, get) => ({
 
       toast.success(`${stock.stockName} 종목이 추가되었습니다.`);
 
-      const { interestStocks } = get();
-      set({
-        interestStocks: [
-          ...interestStocks,
-          { stockInfo: stock, stockSequence: interestStocks.length + 1 },
-        ],
-      });
+      // 추가하려는 그룹이 현재 선택된 그룹과 같을 때만 전역 상태 업데이트
+      const { selectedGroupId, interestStocks } = get();
+      if (selectedGroupId === groupId) {
+        set({
+          interestStocks: [
+            ...interestStocks,
+            { stockInfo: stock, stockSequence: interestStocks.length + 1 },
+          ],
+        });
+      }
     } catch (error) {
       console.error("종목 추가 실패:", error);
       toast.error("종목 추가 실패");
@@ -314,12 +331,15 @@ export const useInterestStore = create<InterestState>((set, get) => ({
 
       toast.success("종목이 삭제되었습니다.");
 
-      const { interestStocks } = get();
-      set({
-        interestStocks: interestStocks.filter(
-          (stock) => stock.stockInfo.stockCode !== stockCode
-        ),
-      });
+      // 삭제하려는 그룹이 현재 선택된 그룹과 같을 때만 전역 상태 업데이트
+      const { selectedGroupId, interestStocks } = get();
+      if (selectedGroupId === groupId) {
+        set({
+          interestStocks: interestStocks.filter(
+            (stock) => stock.stockInfo.stockCode !== stockCode
+          ),
+        });
+      }
     } catch (error) {
       console.error("종목 삭제 실패:", error);
       toast.error("종목 삭제 실패");

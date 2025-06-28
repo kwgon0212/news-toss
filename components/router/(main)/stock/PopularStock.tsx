@@ -1,14 +1,13 @@
 "use client";
 
-import { ChevronRight, RefreshCcw, Triangle } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { ChevronRight } from "lucide-react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import UpPrice from "@/components/ui/shared/UpPrice";
 import DownPrice from "@/components/ui/shared/DownPrice";
 import Bookmark from "@/components/ui/shared/Bookmark";
 import Scrab from "@/components/ui/shared/Scrab";
 import Popular from "@/type/stocks/Popular";
-import { toast } from "react-toastify";
 import { JwtToken } from "@/type/jwt";
 import Image from "next/image";
 
@@ -19,52 +18,11 @@ const PopularStock = ({
   token: JwtToken | null;
   popularStocks: Popular[] | null;
 }) => {
-  // const [popularStocks, setPopularStocks] = useState<Popular[] | null>(null);
-
-  // const fetchPopularStocks = async () => {
-  //   // 인기 종목
-  //   try {
-  //     const res = await fetch(`/proxy/v1/stocks/popular`);
-  //     if (!res.ok) setPopularStocks(null);
-  //     const json = await res.json();
-  //     setPopularStocks(json.data);
-  //   } catch (e) {
-  //     console.error("❌ 인기종목 에러:", e);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchPopularStocks();
-  // }, []);
-
   const router = useRouter();
 
   const handleClickStock = (code: string) => {
     router.push(`/stock/${code}`);
   };
-
-  // const handleRefresh = () => {
-  //   fetchPopularStocks();
-  //   if (!popularStocks) toast.error("데이터를 불러오지 못했습니다.");
-  // };
-
-  const handleScrab = (code: string) => {
-    // 스크랩 기능 구현 예정
-  };
-
-  // if (!popularStocks)
-  //   return (
-  //     <div className="flex flex-col items-center gap-main bg-white p-main text-main-red text-center">
-  //       <span>인기종목 데이터를 불러오지 못했습니다.</span>
-  //       <button
-  //         className="w-fit text-main-red bg-main-red/10 hover:bg-main-red/20 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1"
-  //         onClick={handleRefresh}
-  //       >
-  //         <span>다시 시도</span>
-  //         <RefreshCcw size={16} />
-  //       </button>
-  //     </div>
-  //   );
 
   if (!popularStocks) return null;
 
@@ -83,13 +41,16 @@ const PopularStock = ({
               }}
             >
               <Scrab
-                type="stock"
                 stockCode={stock.mksc_shrn_iscd}
-                token={token}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleScrab(stock.mksc_shrn_iscd);
+                stockName={stock.hts_kor_isnm}
+                stockInfo={{
+                  stockImage: stock.stockImage,
+                  changeAmount: stock.prdy_vrss,
+                  changeRate: stock.prdy_ctrt,
+                  sign: stock.prdy_vrss_sign,
+                  currentPrice: stock.stck_prpr,
                 }}
+                token={token}
               />
 
               <Bookmark className="absolute top-0 left-0" rank={index + 1} />
@@ -112,12 +73,15 @@ const PopularStock = ({
                   )}
                 </div>
                 <div className="flex flex-col flex-1 truncate">
-                  <span className="font-bold text-gray-800 truncate w-full">
-                    {stock.hts_kor_isnm}
-                  </span>
-                  <div className="text-sm flex gap-main items-center">
-                    <span className="text-gray-500">
+                  <div className="font-bold text-gray-800 truncate w-full flex items-baseline gap-1">
+                    <span>{stock.hts_kor_isnm}</span>
+                    <span className="text-gray-500 text-xs font-normal">
                       {stock.mksc_shrn_iscd}
+                    </span>
+                  </div>
+                  <div className="text-sm flex gap-main items-center">
+                    <span className="text-gray-600 font-semibold">
+                      {Number(stock.stck_prpr).toLocaleString()}원
                     </span>
                     <div className="flex justify-between h-fit">
                       {(stock.prdy_vrss_sign === "1" ||

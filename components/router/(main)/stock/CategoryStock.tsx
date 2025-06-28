@@ -240,13 +240,16 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
                   onClick={() => handleClickSearchResult(stock.stockCode)}
                 >
                   <Scrab
-                    type="stock"
                     stockCode={stock.stockCode}
-                    token={token}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleClickSearchResult(stock.stockCode);
+                    stockName={stock.stockName}
+                    stockInfo={{
+                      stockImage: stock.stockImage,
+                      currentPrice: stock.currentPrice,
+                      changeAmount: stock.changeAmount,
+                      changeRate: stock.changeRate,
+                      sign: stock.sign,
                     }}
+                    token={token}
                   />
 
                   <div className="flex gap-main w-full">

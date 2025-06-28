@@ -3,7 +3,15 @@
 import { JwtToken } from "@/type/jwt";
 import React, { useEffect, useRef, useState } from "react";
 import Dropdown from "../shared/Dropdown";
-import { Pencil, Plus, Settings2, Star, StarIcon, Trash2 } from "lucide-react";
+import {
+  ChevronRight,
+  Pencil,
+  Plus,
+  Settings2,
+  Star,
+  StarIcon,
+  Trash2,
+} from "lucide-react";
 import Modal from "../Modal";
 import SearchStock from "../SearchStock";
 
@@ -20,6 +28,7 @@ import {
   SearchResult,
 } from "@/store/useInterestStore";
 import { IconButton } from "@/components/animate-ui/buttons/icon";
+import Link from "next/link";
 
 const SettingModal = Modal;
 
@@ -31,6 +40,7 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
     string | null
   >(null);
   const [modalStocks, setModalStocks] = useState<InterestStock[]>([]);
+  const [updatingGroupId, setUpdatingGroupId] = useState<string | null>(null); // 중복 수정 방지
 
   const inputRefs = useRef<{ [id: string]: HTMLInputElement | null }>({});
 
@@ -70,30 +80,48 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
     }
   }, [isOpenSettingModal, selectedGroupId]);
 
-  // 모달에서 선택된 그룹이 변경되면 종목 로드 (모달용)
+  // 모달에서 선택된 그룹이 변경되면 해당 그룹의 종목 데이터 가져오기
   useEffect(() => {
     if (!token || !modalSelectedGroupId || !isOpenSettingModal) return;
 
-    const fetchModalStocks = async () => {
-      try {
-        const res = await fetch(
-          `/proxy/favorite/${token.memberId}/${modalSelectedGroupId}`
-        );
-        const data: InterestStock[] = await res.json();
+    if (modalSelectedGroupId === selectedGroupId) {
+      // 현재 사이드바 그룹과 같으면 전역 상태 사용
+      setModalStocks(interestStocks);
+    } else {
+      // 다른 그룹이면 별도로 API 호출하여 모달 전용 데이터 가져오기
+      const fetchModalGroupStocks = async () => {
+        try {
+          const res = await fetch(
+            `/proxy/favorite/${token.memberId}/${modalSelectedGroupId}`
+          );
+          const data: InterestStock[] = await res.json();
 
-        if (res.ok) {
-          setModalStocks(data);
-        } else {
+          if (res.ok) {
+            setModalStocks(data);
+          } else {
+            setModalStocks([]);
+          }
+        } catch (error) {
+          console.error("모달 그룹 종목 조회 실패:", error);
           setModalStocks([]);
         }
-      } catch (error) {
-        console.error("모달 종목 조회 실패:", error);
-        setModalStocks([]);
-      }
-    };
+      };
 
-    fetchModalStocks();
-  }, [token, modalSelectedGroupId, isOpenSettingModal]);
+      fetchModalGroupStocks();
+    }
+  }, [token, modalSelectedGroupId, isOpenSettingModal, selectedGroupId]);
+
+  // 사이드바에서 선택된 그룹과 모달에서 선택된 그룹이 같을 때 데이터 동기화
+  useEffect(() => {
+    if (modalSelectedGroupId === selectedGroupId && isOpenSettingModal) {
+      setModalStocks(interestStocks);
+    }
+  }, [
+    modalSelectedGroupId,
+    selectedGroupId,
+    interestStocks,
+    isOpenSettingModal,
+  ]);
 
   const handleEditGroupName = (groupId: string, currentName: string) => {
     setEditingGroupId(groupId);
@@ -106,12 +134,15 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
   };
 
   const handleEditGroupNameBlur = async (groupId: string) => {
-    if (!token) return;
+    if (!token || updatingGroupId === groupId) return; // 이미 수정 중이면 중단
+
+    setUpdatingGroupId(groupId); // 수정 시작
 
     try {
       await updateGroupName(token, groupId, editedGroupName);
     } finally {
       setEditingGroupId(null);
+      setUpdatingGroupId(null); // 수정 완료
     }
   };
 
@@ -134,27 +165,16 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
     if (!token || !modalSelectedGroupId) return;
 
     try {
-      const res = await fetch(
-        `/proxy/favorite/${token.memberId}/${modalSelectedGroupId}?stockCode=${stock.stockCode}`,
-        { method: "POST" }
-      );
+      // 전역 스토어의 addStock 함수 사용
+      await addStock(token, modalSelectedGroupId, stock);
 
-      if (!res.ok) {
-        toast.error("종목 추가 실패");
-        return;
-      }
-
-      toast.success(`${stock.stockName} 종목이 추가되었습니다.`);
-
-      // 모달 로컬 상태 업데이트
-      setModalStocks((prev) => [
-        ...prev,
-        { stockInfo: stock, stockSequence: prev.length + 1 },
-      ]);
-
-      // 만약 모달에서 선택된 그룹이 사이드바의 현재 그룹과 같다면 사이드바 데이터 갱신
-      if (modalSelectedGroupId === selectedGroupId) {
-        fetchStocks(token, modalSelectedGroupId);
+      // 모달 그룹이 사이드바 그룹과 다를 때만 모달 로컬 상태 직접 업데이트
+      // (같을 때는 useEffect가 자동으로 동기화함)
+      if (modalSelectedGroupId !== selectedGroupId) {
+        setModalStocks((prev) => [
+          ...prev,
+          { stockInfo: stock, stockSequence: prev.length + 1 },
+        ]);
       }
     } catch (error) {
       console.error("종목 추가 실패:", error);
@@ -166,26 +186,15 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
     if (!token || !modalSelectedGroupId) return;
 
     try {
-      const res = await fetch(
-        `/proxy/favorite/${token.memberId}/${modalSelectedGroupId}/stock?stockCode=${stockCode}`,
-        { method: "DELETE" }
-      );
+      // 전역 스토어의 deleteStock 함수 사용
+      await deleteStock(token, modalSelectedGroupId, stockCode);
 
-      if (!res.ok) {
-        toast.error("종목 삭제 실패");
-        return;
-      }
-
-      toast.success("종목이 삭제되었습니다.");
-
-      // 모달 로컬 상태 업데이트
-      setModalStocks((prev) =>
-        prev.filter((stock) => stock.stockInfo.stockCode !== stockCode)
-      );
-
-      // 만약 모달에서 선택된 그룹이 사이드바의 현재 그룹과 같다면 사이드바 데이터 갱신
-      if (modalSelectedGroupId === selectedGroupId) {
-        fetchStocks(token, modalSelectedGroupId);
+      // 모달 그룹이 사이드바 그룹과 다를 때만 모달 로컬 상태 직접 업데이트
+      // (같을 때는 useEffect가 자동으로 동기화함)
+      if (modalSelectedGroupId !== selectedGroupId) {
+        setModalStocks((prev) =>
+          prev.filter((stock) => stock.stockInfo.stockCode !== stockCode)
+        );
       }
     } catch (error) {
       console.error("종목 삭제 실패:", error);
@@ -242,14 +251,19 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
               />
             </div>
 
-            <div className="flex items-center gap-main">
+            <div className="flex-1 overflow-y-scroll">
               {interestStocks.length > 0 ? (
-                <div className="w-full">
+                <div className="flex flex-col">
                   {interestStocks.map((stock) => (
-                    <div
-                      key={stock.stockInfo.stockCode}
-                      className="flex gap-main items-center w-full rounded-main transition-colors duration-200 ease-in-out p-main cursor-pointer"
+                    <Link
+                      key={`sidebar-${selectedGroupId}-${stock.stockInfo.stockCode}`}
+                      href={`/stock/${stock.stockInfo.stockCode}`}
+                      className="flex gap-main items-center w-full rounded-main transition-colors duration-200 ease-in-out p-main cursor-pointer hover:bg-main-blue/10 group relative"
                     >
+                      <ChevronRight
+                        size={16}
+                        className="absolute text-main-blue right-main top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out"
+                      />
                       <div className="relative flex items-center justify-center size-[40px] shrink-0">
                         {stock.stockInfo.stockImage ? (
                           <Image
@@ -319,11 +333,11 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               ) : (
-                <div className="w-full h-[120px] flex items-center justify-center text-main-dark-gray">
+                <div className="w-full h-[120px] flex items-center justify-center text-main-dark-gray flex-1">
                   관심 종목이 없습니다.
                 </div>
               )}
@@ -349,11 +363,13 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
             <h4 className="text-sm-custom text-main-dark-gray flex items-center justify-between">
               <span>그룹과 종목을 관리할 수 있습니다.</span>
 
-              <SearchStock
-                onSelect={(stock) => {
-                  handleAddStock(stock);
-                }}
-              />
+              {interestGroups.length > 0 && modalSelectedGroupId && (
+                <SearchStock
+                  onSelect={(stock) => {
+                    handleAddStock(stock);
+                  }}
+                />
+              )}
             </h4>
 
             <div className="grid grid-cols-[350px_1px_350px] gap-main h-[500px]">
@@ -431,14 +447,20 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
                             <Pencil size={14} />
                           </button>
 
-                          <button
-                            className="text-main-dark-gray opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out hover:text-main-blue hover:bg-main-blue/10 rounded-full p-1"
-                            onClick={() =>
-                              handleDeleteGroup(group.groupName, group.groupId)
-                            }
-                          >
-                            <Trash2 size={14} />
-                          </button>
+                          {/* 메인 그룹이 아니고, 전체 그룹이 2개 이상일 때만 삭제 버튼 표시 */}
+                          {!group.main && interestGroups.length > 1 && (
+                            <button
+                              className="text-main-dark-gray opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out hover:text-main-blue hover:bg-main-blue/10 rounded-full p-1"
+                              onClick={() =>
+                                handleDeleteGroup(
+                                  group.groupName,
+                                  group.groupId
+                                )
+                              }
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -462,8 +484,8 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
                       <div>
                         {modalStocks.map((stock) => (
                           <div
-                            key={stock.stockInfo.stockCode}
-                            className="flex gap-main items-center w-full rounded-main transition-colors duration-200 ease-in-out p-main cursor-pointer hover:bg-main-blue/10 group"
+                            key={`modal-${modalSelectedGroupId}-${stock.stockInfo.stockCode}`}
+                            className="flex gap-main items-center w-full rounded-main transition-colors duration-200 ease-in-out p-main hover:bg-main-blue/10 group"
                           >
                             <div className="relative flex items-center justify-center size-[40px] shrink-0">
                               {stock.stockInfo.stockImage ? (
