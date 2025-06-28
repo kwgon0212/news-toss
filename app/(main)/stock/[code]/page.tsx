@@ -169,7 +169,6 @@ const StockDetailPage = () => {
   // 누적된 뉴스 데이터를 위한 상태
   const [allRelatedNews, setAllRelatedNews] = useState<News[]>([]);
 
-  // TanStack Query로 관련 뉴스 가져오기
   const { data: newRelatedNews = [], isLoading: newsLoading } = useQuery({
     queryKey: ["relatedNews", code, skip, limit],
     queryFn: async () => {
@@ -183,8 +182,8 @@ const StockDetailPage = () => {
       return json.data;
     },
     enabled: !!code,
-    staleTime: 5 * 60 * 1000, // 5분
-    gcTime: 10 * 60 * 1000, // 10분
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
   // 새로운 뉴스 데이터가 로드되면 누적

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -110,11 +111,38 @@ interface ForexData {
   }[];
 }
 
+const fetchForexData = async (
+  type: TypeKey,
+  symbol: string
+): Promise<ForexData> => {
+  const res = await fetch(`/proxy/v1/stocks/FX?type=${type}&symbol=${symbol}`);
+  if (!res.ok) throw new Error("데이터 로딩 실패");
+  const json = await res.json();
+  return json.data;
+};
+
 export default function OverViewChart() {
   const [type, setType] = useState<TypeKey>("FX");
-  const [symbol, setSymbol] = useState<string | null>();
-  const [forexData, setForexData] = useState<ForexData | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [symbol, setSymbol] = useState<string>(symbolsByType["FX"][0].symbol);
+
+  const {
+    data: forexData,
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ["forexData", type, symbol],
+    queryFn: () => fetchForexData(type, symbol),
+    staleTime: 5 * 60 * 1000, // 5분
+    gcTime: 10 * 60 * 1000, // 10분
+    placeholderData: keepPreviousData,
+    retry: 2,
+  });
+
+  // 타입 변경 시 첫 번째 심볼로 설정
+  const handleTypeChange = (newType: TypeKey) => {
+    setType(newType);
+    setSymbol(symbolsByType[newType][0].symbol);
+  };
 
   const verticalLinePlugin = {
     id: "verticalLine",
@@ -140,48 +168,13 @@ export default function OverViewChart() {
     },
   };
 
-  useEffect(() => {
-    const newSymbol = symbolsByType[type][0].symbol;
-    setSymbol(newSymbol);
-
-    const fetchData = async () => {
-      try {
-        const res = await fetch(
-          `/proxy/v1/stocks/FX?type=${type}&symbol=${newSymbol}`
-        );
-        if (!res.ok) throw new Error("데이터 로딩 실패");
-        const json = await res.json();
-        setForexData(json.data);
-        setError(null);
-      } catch (err: any) {
-        setError(err.message);
-        setForexData(null);
-      }
-    };
-
-    fetchData();
-  }, [type]);
-
-  useEffect(() => {
-    if (!symbol) return;
-
-    const fetchData = async () => {
-      try {
-        const res = await fetch(
-          `/proxy/v1/stocks/FX?type=${type}&symbol=${symbol}`
-        );
-        if (!res.ok) throw new Error("데이터 로딩 실패");
-        const json = await res.json();
-        setForexData(json.data);
-        setError(null);
-      } catch (err: any) {
-        setError(err.message);
-        setForexData(null);
-      }
-    };
-
-    fetchData();
-  }, [symbol]);
+  if (error) {
+    return (
+      <div className="p-main-2 bg-white shadow-md rounded-main space-y-4">
+        <div className="text-red-500">❌ {error.message}</div>
+      </div>
+    );
+  }
 
   if (!forexData) return null;
 
@@ -239,7 +232,7 @@ export default function OverViewChart() {
         {(Object.keys(symbolsByType) as TypeKey[]).map((t) => (
           <button
             key={t}
-            onClick={() => setType(t)}
+            onClick={() => handleTypeChange(t)}
             className={`px-2 py-1 rounded-full text-sm-custom hover:bg-main-blue/10 transition-colors duration-300 ${
               type === t ? "text-main-blue font-semibold" : "text-main-blue/50"
             }`}
@@ -269,54 +262,46 @@ export default function OverViewChart() {
         ))}
       </div>
 
-      {forexData ? (
-        <div>
-          <div className="grid grid-cols-[auto_auto_auto_auto] gap-x-main gap-y-2 text-sm-custom">
-            <div className="text-gray-500">현재가</div>
-            <span>{Number(forexData.currentPrice).toLocaleString()}</span>
+      <div>
+        <div className="grid grid-cols-[auto_auto_auto_auto] gap-x-main gap-y-2 text-sm-custom">
+          <div className="text-gray-500">현재가</div>
+          <span>{Number(forexData.currentPrice).toLocaleString()}</span>
 
-            <div className="text-gray-500">전일가</div>
-            <span>{Number(forexData.prevPrice).toLocaleString()}</span>
+          <div className="text-gray-500">전일가</div>
+          <span>{Number(forexData.prevPrice).toLocaleString()}</span>
 
-            <div className="text-gray-500">시가</div>
-            <span>{Number(forexData.openPrice).toLocaleString()}</span>
+          <div className="text-gray-500">시가</div>
+          <span>{Number(forexData.openPrice).toLocaleString()}</span>
 
-            <div className="text-gray-500">고가</div>
-            <div className="font-semibold text-red-600">
-              {Number(forexData.highPrice).toLocaleString()}
-            </div>
-
-            <div className="text-gray-500">저가</div>
-            <div className="font-semibold text-blue-600">
-              {Number(forexData.lowPrice).toLocaleString()}
-            </div>
-
-            <div className="text-gray-500">변동</div>
-            {forexData.changeSign === "1" ||
-              (forexData.changeSign === "2" && (
-                <UpPrice
-                  change={(
-                    Number(forexData.currentPrice) - Number(forexData.prevPrice)
-                  ).toFixed(2)}
-                  changeRate={Number(forexData.changeRate)}
-                />
-              ))}
-            {forexData.changeSign === "4" ||
-              (forexData.changeSign === "5" && (
-                <DownPrice
-                  change={(
-                    Number(forexData.currentPrice) - Number(forexData.prevPrice)
-                  ).toFixed(2)}
-                  changeRate={Number(forexData.changeRate)}
-                />
-              ))}
+          <div className="text-gray-500">고가</div>
+          <div className="font-semibold text-red-600">
+            {Number(forexData.highPrice).toLocaleString()}
           </div>
-        </div>
-      ) : (
-        <div className="text-gray-500">⏳ 데이터 불러오는 중...</div>
-      )}
 
-      {error && <div className="text-red-500">❌ {error}</div>}
+          <div className="text-gray-500">저가</div>
+          <div className="font-semibold text-blue-600">
+            {Number(forexData.lowPrice).toLocaleString()}
+          </div>
+
+          <div className="text-gray-500">변동</div>
+          {(forexData.changeSign === "1" || forexData.changeSign === "2") && (
+            <UpPrice
+              change={(
+                Number(forexData.currentPrice) - Number(forexData.prevPrice)
+              ).toFixed(2)}
+              changeRate={Number(forexData.changeRate)}
+            />
+          )}
+          {(forexData.changeSign === "4" || forexData.changeSign === "5") && (
+            <DownPrice
+              change={(
+                Number(forexData.currentPrice) - Number(forexData.prevPrice)
+              ).toFixed(2)}
+              changeRate={Number(forexData.changeRate)}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }

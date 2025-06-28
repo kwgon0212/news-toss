@@ -10,6 +10,23 @@ import UpPrice from "@/components/ui/shared/UpPrice";
 import DownPrice from "@/components/ui/shared/DownPrice";
 import Image from "next/image";
 import Button from "@/components/ui/shared/Button";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+} from "@/components/animate-ui/headless/accordion";
+
+interface StockData {
+  stockName: string;
+  stockCode: string;
+  sign: string;
+  currentPrice: string;
+  changeRate: string;
+  changeAmount: string;
+  stockImage: string;
+}
 
 const CATEGORY_GROUPS = {
   제조업: [
@@ -43,81 +60,74 @@ const CATEGORY_GROUPS = {
     "통신",
   ],
   "바이오·제약": ["제약"],
+  "ETF 상품": [
+    "ETF",
+    "ETF(실물복제&수익증권)",
+    "ETF(합성복제&수익증권)",
+    "ETF(Active&수익증권)",
+  ],
   기타: ["기타"],
 };
 
 const CategoryStock = ({ token }: { token: JwtToken | null }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [categoryStocks, setCategoryStocks] = useState<{
-    totalPages: number;
-    stocks: {
-      stockName: string;
-      stockCode: string;
-      sign: string;
-      currentPrice: string;
-      changeRate: string;
-      changeAmount: string;
-      stockImage: string;
-    }[];
-  }>({ totalPages: 0, stocks: [] });
   const [page, setPage] = useState(1);
-  const totalPage = categoryStocks?.totalPages || 1;
   const router = useRouter();
-  const [openGroup, setOpenGroup] = useState<string | null>(null);
-  const [categoryData, setCategoryData] = useState<string[]>([]);
+
+  const { data: categoryData = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const res = await fetch(`/proxy/v1/stocks/categories?page=1`);
+      if (!res.ok)
+        throw new Error("카테고리 데이터를 불러오는데 실패했습니다.");
+      const json = await res.json();
+      return (
+        json.data?.map((item: { categoryName: string }) => item.categoryName) ||
+        []
+      );
+    },
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    retry: 5,
+  });
+
+  const { data: categoryStocks = { totalPages: 0, stocks: [] } } = useQuery({
+    queryKey: ["categoryStocks", selectedCategory, page],
+    queryFn: async () => {
+      if (!selectedCategory) return { totalPages: 0, stocks: [] };
+      const response = await fetch(
+        `/proxy/v1/stocks/categories/${selectedCategory}?page=${page}`
+      );
+      if (!response.ok)
+        throw new Error("주식 데이터를 불러오는데 실패했습니다.");
+      const data = await response.json();
+      return data.data;
+    },
+    enabled: !!selectedCategory,
+    placeholderData: keepPreviousData,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    retry: 5,
+  });
+
+  const totalPage = categoryStocks?.totalPages || 1;
 
   useEffect(() => {
-    const fetchCategoryData = async () => {
-      try {
-        const res = await fetch(`/proxy/v1/stocks/categories?page=1`);
-        if (!res.ok) throw new Error(res.statusText);
-        const json = await res.json();
-        setCategoryData(
-          json.data?.map((item: { categoryName: string }) => item.categoryName)
-        );
-      } catch (e) {
-        console.error("❌ 카테고리 에러:", e);
-      }
-    };
-    fetchCategoryData();
-  }, []);
-
-  useEffect(() => {
-    if (categoryData.length > 0) {
+    if (categoryData.length > 0 && !selectedCategory) {
       setSelectedCategory(categoryData[0]);
     }
-  }, [categoryData]);
+  }, [categoryData, selectedCategory]);
 
-  useEffect(() => {
-    if (selectedCategory) {
-      const fetchStocks = async () => {
-        try {
-          const response = await fetch(
-            `/proxy/v1/stocks/categories/${selectedCategory}?page=${page}`
-          );
-          const data = await response.json();
-          setCategoryStocks(data.data);
-        } catch (error) {
-          console.error("Error fetching stocks:", error);
-        }
-      };
-      fetchStocks();
-    }
-  }, [selectedCategory, page]);
-
-  // 페이지 변경 핸들러
   const handlePageChange = (newPage: number) => {
     if (newPage < 1 || newPage > totalPage) return;
     setPage(newPage);
   };
 
-  // 카테고리 변경 시 page 초기화
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
     setPage(1);
   };
 
-  // 페이지네이션 버튼 생성 함수
   function getPagination(current: number, total: number) {
     const delta = 1;
     const range = [];
@@ -147,7 +157,6 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
     return rangeWithDots;
   }
 
-  // categoryData를 그룹별로 분류
   function getGroupedCategories(categoryData: string[]) {
     const grouped: Record<string, string[]> = {};
     const used = new Set<string>();
@@ -157,7 +166,6 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
       cats.forEach((cat) => used.add(cat));
     });
 
-    // 그룹에 속하지 않은 카테고리 처리 (옵션)
     const etc = categoryData.filter((cat) => !used.has(cat));
     if (etc.length > 0) {
       grouped["기타"] = etc;
@@ -165,10 +173,6 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
 
     return grouped;
   }
-
-  const handleGroupClick = (group: string) => {
-    setOpenGroup((prev) => (prev === group ? null : group));
-  };
 
   function getCategoryGroup(category: string | null) {
     if (!category) return "";
@@ -188,52 +192,17 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
       <h2 className="text-xl font-bold">카테고리</h2>
       <div className="grid grid-cols-3 gap-main">
         <div className="col-span-1">
-          <div className="flex flex-col gap-2">
+          <Accordion>
             {Object.entries(getGroupedCategories(categoryData)).map(
               ([group, cats]) => (
-                <div
-                  key={group}
-                  className={clsx(
-                    "px-main transition-colors duration-300 rounded-main border",
-                    openGroup === group
-                      ? "border-main-blue/20"
-                      : "border-transparent"
-                  )}
-                >
-                  <button
-                    className="w-full flex justify-between items-center font-semibold py-main group relative"
-                    onClick={() => handleGroupClick(group)}
-                    type="button"
-                  >
-                    <span
-                      className={clsx(
-                        openGroup === group
-                          ? "text-main-blue"
-                          : "text-main-dark-gray"
-                      )}
-                    >
+                <AccordionItem key={group}>
+                  <AccordionButton className="w-full flex justify-between items-center font-semibold py-main px-main rounded-main">
+                    <span className="text-main-dark-gray hover:text-main-blue transition-colors duration-300">
                       {group}
                     </span>
-                    <span className="absolute top-1/2 -translate-y-1/2 right-0">
-                      <ChevronDown
-                        className={clsx(
-                          openGroup === group
-                            ? "rotate-180 text-main-blue"
-                            : "text-main-dark-gray"
-                        )}
-                        size={20}
-                      />
-                    </span>
-                  </button>
-                  <div
-                    className={clsx(
-                      "transition-all duration-300",
-                      openGroup === group
-                        ? "max-h-100 opacity-100"
-                        : "max-h-0 opacity-0"
-                    )}
-                  >
-                    <div className="flex flex-wrap gap-main pb-2">
+                  </AccordionButton>
+                  <AccordionPanel className="px-main pb-main">
+                    <div className="flex flex-wrap gap-main">
                       {cats.map((category) => (
                         <Button
                           key={category}
@@ -247,11 +216,11 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
                         </Button>
                       ))}
                     </div>
-                  </div>
-                </div>
+                  </AccordionPanel>
+                </AccordionItem>
               )
             )}
-          </div>
+          </Accordion>
         </div>
         <div className="col-span-2 pl-main rounded-main size-full relative flex flex-col gap-main">
           <div className="text-main-dark-gray flex items-center gap-1 px-main py-2 border-b border-main-light-gray">
@@ -264,7 +233,7 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
 
           <div className="grid grid-cols-2 grid-rows-3 gap-y-main">
             {categoryStocks &&
-              categoryStocks.stocks.map((stock) => (
+              categoryStocks.stocks.map((stock: StockData) => (
                 <div
                   className="w-full flex flex-col justify-around border border-transparent hover:border-main-blue/20 hover:scale-102 rounded-main transition-all duration-200 ease-in-out px-main-2 py-main gap-[5px] relative group"
                   key={selectedCategory + stock.stockCode}

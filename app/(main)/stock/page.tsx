@@ -22,19 +22,26 @@ const StockPage = async () => {
   startDateObj.setDate(startDateObj.getDate() - 100);
   const startDate = startDateObj.toISOString().slice(0, 10).replace(/-/g, "");
 
-  try {
-    KOSPIData = await fetchIndices("KOSPI", endDate, startDate);
-  } catch (error: any) {
-    KOSPIError = error.message;
+  const [kospiResult, kosdaqResult, popularResult] = await Promise.allSettled([
+    fetchIndices("KOSPI", endDate, startDate),
+    fetchIndices("KOSDAQ", endDate, startDate),
+    fetchPopularStocks(),
+  ]);
+
+  if (kospiResult.status === "fulfilled") {
+    KOSPIData = kospiResult.value;
+  } else {
+    KOSPIError = kospiResult.reason?.message ?? "KOSPI 불러오기 실패";
   }
 
-  try {
-    KOSDAQData = await fetchIndices("KOSDAQ", endDate, startDate);
-  } catch (error: any) {
-    KOSDAQError = error.message;
+  if (kosdaqResult.status === "fulfilled") {
+    KOSDAQData = kosdaqResult.value;
+  } else {
+    KOSDAQError = kosdaqResult.reason?.message ?? "KOSDAQ 불러오기 실패";
   }
 
-  const popularStocks = await fetchPopularStocks();
+  const popularStocks =
+    popularResult.status === "fulfilled" ? popularResult.value : null;
 
   return (
     <div className="grid grid-cols-3 gap-main">
@@ -55,8 +62,6 @@ const StockPage = async () => {
       <div className="col-span-2 row-span-2">
         <CategoryStock token={token} />
       </div>
-
-      {/* <Test /> */}
     </div>
   );
 };
