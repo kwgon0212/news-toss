@@ -21,6 +21,7 @@ import { usePortfolioStore } from "@/store/usePortfolio";
 import { News } from "@/type/news";
 import { Clock } from "lucide-react";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 
 interface StockData {
   acml_tr_pbmn: string;
@@ -139,7 +140,8 @@ const StockDetailPage = () => {
     searchCount();
   }, []);
 
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(6);
+  const [skip, setSkip] = useState(0);
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
@@ -163,8 +165,40 @@ const StockDetailPage = () => {
   const [selectedInterval, setSelectedInterval] = useState<IntervalKey>("D");
   const [marketOpen, setMarketOpen] = useState(false);
   const { recentViewStocks, setRecentViewStocks } = useRecentViewStore();
-  const [relatedNews, setRelatedNews] = useState<News[]>([]);
-  const [skip, setSkip] = useState(0);
+
+  // 누적된 뉴스 데이터를 위한 상태
+  const [allRelatedNews, setAllRelatedNews] = useState<News[]>([]);
+
+  // TanStack Query로 관련 뉴스 가져오기
+  const { data: newRelatedNews = [], isLoading: newsLoading } = useQuery({
+    queryKey: ["relatedNews", code, skip, limit],
+    queryFn: async () => {
+      const res = await fetch(
+        `/proxy/news/v2/stocknews?skip=${skip}&limit=${limit}&stockCode=${code}`
+      );
+      if (!res.ok) {
+        throw new Error("관련 뉴스를 불러오는데 실패했습니다.");
+      }
+      const json: { data: News[] } = await res.json();
+      return json.data;
+    },
+    enabled: !!code,
+    staleTime: 5 * 60 * 1000, // 5분
+    gcTime: 10 * 60 * 1000, // 10분
+  });
+
+  // 새로운 뉴스 데이터가 로드되면 누적
+  useEffect(() => {
+    if (newRelatedNews.length > 0) {
+      if (skip === 0) {
+        // 첫 번째 로드일 때는 기존 데이터 교체
+        setAllRelatedNews(newRelatedNews);
+      } else {
+        // 더보기일 때는 기존 데이터에 추가
+        setAllRelatedNews((prev) => [...prev, ...newRelatedNews]);
+      }
+    }
+  }, [newRelatedNews, skip]);
 
   // 차트 초기화
   useEffect(() => {
@@ -508,25 +542,8 @@ const StockDetailPage = () => {
     prevStockData.Y.length,
   ]);
 
-  useEffect(() => {
-    const fetchRelatedNews = async () => {
-      const res = await fetch(
-        `/proxy/news/v2/stocknews?skip=${skip}&limit=${limit}&stockCode=${code}`
-      );
-      const json: { data: News[] } = await res.json();
-      setRelatedNews(json.data);
-    };
-    fetchRelatedNews();
-  }, [code]);
-
-  const handleMoreNews = async () => {
-    const nextSkip = skip + limit;
-    const res = await fetch(
-      `/proxy/news/v2/stocknews?skip=${nextSkip}&limit=${limit}&stockCode=${code}`
-    );
-    const json: { data: News[] } = await res.json();
-    setRelatedNews((prev) => [...prev, ...json.data]);
-    setSkip(nextSkip);
+  const handleMoreNews = () => {
+    setSkip(skip + limit);
   };
 
   return (
@@ -645,10 +662,10 @@ const StockDetailPage = () => {
             {stock?.stockName} 관련 뉴스
           </h2>
 
-          <div className="grid grid-cols-5 grid-rows-2 gap-main">
-            {relatedNews.length > 0 ? (
+          <div className="grid grid-cols-3 grid-rows-2 gap-main">
+            {allRelatedNews.length > 0 ? (
               <>
-                {relatedNews.map((news) => (
+                {allRelatedNews.map((news) => (
                   <Link
                     href={`/news/${news.newsId}`}
                     key={news.newsId}
@@ -665,7 +682,7 @@ const StockDetailPage = () => {
                       />
                       <div className="absolute inset-0 bg-black/40 z-10 rounded-main inset-shadow-2xs" />
                       <div className="absolute inset-0 flex items-end justify-center p-main">
-                        <p className="text-white text-sm-custom font-semibold line-clamp-2 z-10">
+                        <p className="text-white text-base-custom font-semibold line-clamp-2 z-10 text-start w-full">
                           {news.title}
                         </p>
                       </div>
@@ -679,7 +696,7 @@ const StockDetailPage = () => {
                     </div>
                   </Link>
                 ))}
-                <div className="flex justify-center border-t border-gray-200 pt-main col-span-5">
+                <div className="flex justify-center border-t border-gray-200 pt-main col-span-3">
                   <button
                     className="text-main-dark-gray text-sm-custom hover:bg-main-light-gray w-full rounded-main py-main transition-all duration-300 ease-in-out"
                     onClick={handleMoreNews}
