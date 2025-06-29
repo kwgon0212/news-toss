@@ -190,7 +190,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
           </p>
 
           <div className="absolute top-full pt-2 left-0 w-[600px] z-50 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none group-hover:pointer-events-auto">
-            <div className="flex flex-col gap-main-2 bg-white rounded-main p-4 border border-main-dark-gray/10 shadow-lg">
+            <div className="flex flex-col gap-main bg-white rounded-main p-4 border border-main-dark-gray/10 shadow-lg">
               <div className="text-lg-custom">
                 <h2>
                   <b>{token?.memberName ?? "홍길동"}</b>님의 수집 데이터가
@@ -201,7 +201,13 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                 </h4>
               </div>
 
+              <div className="w-full h-px bg-main-dark-gray/20" />
+
               <div className="grid grid-cols-3 gap-main">
+                <span className="col-span-3 text-base-custom font-bold">
+                  비슷한 유저의 정보
+                </span>
+
                 <div>
                   <p className="text-sm-custom font-semibold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
                     자산
