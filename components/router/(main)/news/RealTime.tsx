@@ -159,7 +159,7 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
                 <div
                   key={`realtime-news-${item.newsId}-${idx}`}
                   className={clsx(
-                    "grid grid-cols-[120px_1fr_140px_80px] gap-main",
+                    "grid grid-cols-[150px_1fr_140px_80px] gap-main",
                     idx % 2 === 1 ? "bg-main-light-gray/50 rounded-sm" : ""
                   )}
                 >
