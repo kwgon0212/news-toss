@@ -40,7 +40,7 @@ const StockHeader = ({ code, realTimeStock }: StockHeaderProps) => {
         stockName: realTimeStock.stockName,
       },
     ]);
-  }, [realTimeStock, code, recentViewStocks, setRecentViewStocks]);
+  }, [realTimeStock, code]);
 
   // 주식장 오픈 여부 체크
   useEffect(() => {
