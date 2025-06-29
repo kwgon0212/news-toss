@@ -3,7 +3,7 @@
 import Dropdown from "@/components/ui/shared/Dropdown";
 import Tooltip from "@/components/ui/Tooltip";
 import { News, NewsExternal } from "@/type/news";
-import { StockData } from "@/type/stocks/stockData";
+import { TestStockData } from "@/type/stocks/stockData";
 import { StockSearchResult } from "@/type/stocks/StockSearchResult";
 import clsx from "clsx";
 import { ChevronRight, Clock, HelpCircle, Info } from "lucide-react";
@@ -18,7 +18,11 @@ import External from "./External";
 interface TestProps {
   mainStockList: StockSearchResult[];
   relatedStockList: StockSearchResult[];
-  stockChartList: { stockName: string; stockCode: string; data: StockData[] }[];
+  stockChartList: {
+    stockName: string;
+    stockCode: string;
+    data: TestStockData[];
+  }[];
   relatedNews: News[];
   external: NewsExternal;
 }

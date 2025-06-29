@@ -1,5 +1,5 @@
 import { StockSearchResult } from "@/type/stocks/StockSearchResult";
-import { StockData } from "@/type/stocks/stockData";
+import { StockData, TestStockData } from "@/type/stocks/stockData";
 
 /**
  * 주식 검색
@@ -7,7 +7,7 @@ import { StockData } from "@/type/stocks/stockData";
 export async function searchStocks(
   keyword: string
 ): Promise<{ data: StockSearchResult[] }> {
-  const res = await fetch(`/proxy/v1/stocks/search?keyword=${keyword}`);
+  const res = await fetch(`/proxy2/v2/stocks/search?keyword=${keyword}`);
 
   if (!res.ok) {
     throw new Error(`주식 검색 실패: ${res.status}`);
@@ -23,7 +23,7 @@ export async function fetchStockInfo(
   stockId: string
 ): Promise<{ data: StockSearchResult[] }> {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/search?keyword=${stockId}`
+    `${process.env.NEXT_PUBLIC_BASE_URL2}/v2/stocks/search?keyword=${stockId}`
   );
 
   if (!res.ok) {
@@ -38,10 +38,12 @@ export async function fetchStockInfo(
  */
 export async function fetchStockChartData(
   stockCode: string,
-  period: "D" | "W" | "M" | "Y" = "D"
-): Promise<{ data: StockData[] }> {
+  period: "D" | "W" | "M" | "Y" = "D",
+  startDate: string,
+  endDate: string
+): Promise<{ data: TestStockData[] }> {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/v1/stocks/${stockCode}?period=${period}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL2}/v2/stocks/${stockCode}?period=${period}&startDate=${startDate}&endDate=${endDate}`,
     {
       next: { revalidate: 60 * 60 * 24 * 2 },
     }

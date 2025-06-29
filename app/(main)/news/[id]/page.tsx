@@ -4,7 +4,7 @@ import NewsDetail from "@/components/router/(main)/news/[id]/NewsDetail";
 import * as Sentry from "@sentry/nextjs";
 import { MetaData, News, NewsExternal } from "@/type/news";
 import { StockSearchResult } from "@/type/stocks/StockSearchResult";
-import { StockData } from "@/type/stocks/stockData";
+import { TestStockData } from "@/type/stocks/stockData";
 import MetaDataNews from "@/components/router/(main)/news/[id]/MetaDataNews";
 import {
   fetchNewsDetail,
@@ -161,7 +161,7 @@ const NewsDetailPage = async ({
   const stockChartList: {
     stockName: string;
     stockCode: string;
-    data: StockData[];
+    data: TestStockData[];
   }[] = [];
 
   const cutoffDate = new Date("2024-01-01");
@@ -170,14 +170,16 @@ const NewsDetailPage = async ({
   if (mainStockList.length > 0) {
     const stockChartPromises = mainStockList.map(async (stock) => {
       try {
-        const stockListJson = await fetchStockChartData(stock.stockCode, "M");
+        const stockListJson = await fetchStockChartData(
+          stock.stockCode,
+          "M",
+          "2024-01-01",
+          new Date().toISOString().split("T")[0]
+        );
 
         const filteredData = stockListJson.data.filter((item) => {
-          const dateStr = item.stck_bsop_date; // ex) '20230428'
-          const year = parseInt(dateStr.slice(0, 4));
-          const month = parseInt(dateStr.slice(4, 6)) - 1;
-          const day = parseInt(dateStr.slice(6, 8));
-          const itemDate = new Date(year, month, day);
+          const [year, month, day] = item.date;
+          const itemDate = new Date(year, month - 1, day); // month는 1부터 시작하므로 -1
 
           return itemDate >= cutoffDate;
         });

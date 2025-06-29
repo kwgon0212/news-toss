@@ -16,7 +16,7 @@ import { News, NewsExternal } from "@/type/news";
 import Button from "@/components/ui/shared/Button";
 import Tooltip from "@/components/ui/Tooltip";
 import { HelpCircle, Loader2 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 ChartJS.register(
   CategoryScale,
@@ -99,6 +99,7 @@ const External = ({
       const json = await res.json();
       return json.data as NewsExternal;
     },
+    placeholderData: keepPreviousData,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
   });

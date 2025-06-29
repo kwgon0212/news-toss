@@ -1,6 +1,6 @@
 "use client";
 
-import { StockData } from "@/type/stocks/stockData";
+import { TestStockData } from "@/type/stocks/stockData";
 import React, { useRef, useEffect } from "react";
 import {
   createChart,
@@ -18,7 +18,7 @@ const Chart = ({
   relatedNews,
   selectedNews,
 }: {
-  chartData: StockData[];
+  chartData: TestStockData[];
   relatedNews: News[];
   selectedNews: News;
 }) => {
@@ -101,18 +101,15 @@ const Chart = ({
     // 데이터 변환 및 설정 (종가만 사용)
     const formattedData = chartData
       .map((item) => {
-        // 날짜 변환 (YYYYMMDD -> timestamp)
-        const dateStr = item.stck_bsop_date;
-        const year = parseInt(dateStr.slice(0, 4));
-        const month = parseInt(dateStr.slice(4, 6)) - 1; // 월은 0부터 시작
-        const day = parseInt(dateStr.slice(6, 8));
+        // 날짜 변환 ([year, month, day] -> timestamp)
+        const [year, month, day] = item.date;
         const timestamp = Math.floor(
-          new Date(year, month, day).getTime() / 1000
+          new Date(year, month - 1, day).getTime() / 1000 // month는 1부터 시작하므로 -1
         ) as Time;
 
         return {
           time: timestamp,
-          value: parseFloat(item.stck_clpr), // 종가만 사용
+          value: parseFloat(item.close), // 종가 사용
         };
       })
       .sort((a, b) => (a.time as number) - (b.time as number)); // 타임스탬프순 정렬
