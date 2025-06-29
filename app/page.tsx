@@ -40,7 +40,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="w-screen scroll-smooth relative overflow-y-scroll min-w-[1000px]">
+    <div className="w-screen scroll-smooth relative overflow-y-scroll min-w-[1000px] overflow-x-hidden">
       <Header />
       <section className="gradient-bg">
         <div className="max-w-7xl h-screen mx-auto px-4 sm:px-6 lg:px-8 py-30 flex justify-center items-center">
