@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { usePortfolioStore } from "@/store/usePortfolio";
 import {
@@ -13,6 +13,31 @@ import {
 } from "lightweight-charts";
 import { IntervalKey } from "./IntervalSelector";
 import { RealTimeStockData } from "@/hooks/useRealTimeStock";
+
+// 상수 정의
+const CHART_CONSTANTS = {
+  HEIGHT: 320,
+  DEBOUNCE_MS: 300,
+  TIME_MARGIN: 15,
+  STALE_TIME: 5 * 60 * 1000,
+  GC_TIME: 10 * 60 * 1000,
+  COLORS: {
+    UP: "rgb(240, 66, 81)",
+    DOWN: "rgb(52, 133, 250)",
+    VOLUME_UP: "rgba(240,66,81,0.6)",
+    VOLUME_DOWN: "rgba(52,133,250,0.6)",
+    VOLUME_BASE: "rgba(52,133,250,0.3)",
+    GRID: "#e0e0e0",
+    TEXT: "#333",
+    AVERAGE_LINE: "orange",
+  },
+  LOAD_PERIODS: {
+    D: { initial: 1, additional: 0.5 }, // 1년, 6개월 (~250개 포인트)
+    W: { initial: 10, additional: 3 }, // 10년, 3년 (~520개 포인트)
+    M: { initial: 25, additional: 5 }, // 25년, 5년 (~300개 포인트)
+    Y: { initial: 100, additional: 10 }, // 100년, 10년 (~100개 포인트)
+  },
+} as const;
 
 interface StockData {
   stockCode: string;
@@ -46,7 +71,15 @@ interface StockChartProps {
   realTimeData?: RealTimeStockData;
 }
 
-function convertStockDataToCandles(stockData: StockData[]): CandleData[] {
+// 유틸리티 함수들을 컴포넌트 외부로 이동
+const formatDate = (date: Date): string => {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(date.getDate()).padStart(2, "0")}`;
+};
+
+const convertStockDataToCandles = (stockData: StockData[]): CandleData[] => {
   return stockData.map((item) => {
     const [year, month, day] = item.date;
     const dateString = `${year}-${String(month).padStart(2, "0")}-${String(
@@ -62,7 +95,38 @@ function convertStockDataToCandles(stockData: StockData[]): CandleData[] {
       volume: parseFloat(item.volume),
     };
   });
-}
+};
+
+const createDateRange = (period: IntervalKey, isAdditional = false) => {
+  const endDate = new Date();
+  const startDate = new Date();
+  const config = CHART_CONSTANTS.LOAD_PERIODS[period];
+  const years = isAdditional ? config.additional : config.initial;
+
+  if (period === "D" && isAdditional) {
+    startDate.setMonth(startDate.getMonth() - Math.floor(years * 12));
+  } else {
+    startDate.setFullYear(startDate.getFullYear() - years);
+  }
+
+  return {
+    startDate: formatDate(startDate),
+    endDate: formatDate(endDate),
+  };
+};
+
+// 중복 제거 최적화된 함수
+const removeDuplicatesAndSort = (data: CandleData[]): CandleData[] => {
+  const timeMap = new Map<string, CandleData>();
+
+  data.forEach((item) => {
+    timeMap.set(item.time, item);
+  });
+
+  return Array.from(timeMap.values()).sort(
+    (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
+  );
+};
 
 const StockChart = ({
   code,
@@ -73,167 +137,215 @@ const StockChart = ({
   const chartRef = useRef<IChartApi | null>(null);
   const candlestickRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
   const volumeRef = useRef<ISeriesApi<"Histogram"> | null>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [allLoadedData, setAllLoadedData] = useState<{
+    [key: string]: CandleData[];
+  }>({});
+
+  const loadedStartDatesRef = useRef<{
+    [key in IntervalKey]?: Set<string>;
+  }>({});
+  const isLoadingRef = useRef(false);
 
   const { portfolio } = usePortfolioStore();
-  const isMyStock = portfolio.some((stock: any) => stock.stockCode === code);
 
-  // 주식 데이터 가져오기 (React Query)
-  const getDateRange = (period: IntervalKey) => {
-    const endDate = new Date();
-    const startDate = new Date();
+  // 메모이제이션된 계산들
+  const myStock = useMemo(
+    () => portfolio.find((stock: any) => stock.stockCode === code),
+    [portfolio, code]
+  );
 
-    switch (period) {
-      case "D":
-        startDate.setFullYear(endDate.getFullYear() - 1); // 1년
-        break;
-      case "W":
-        startDate.setFullYear(endDate.getFullYear() - 2); // 2년
-        break;
-      case "M":
-        startDate.setFullYear(endDate.getFullYear() - 5); // 5년
-        break;
-      case "Y":
-        startDate.setFullYear(endDate.getFullYear() - 10); // 10년
-        break;
-    }
+  const isMyStock = useMemo(() => Boolean(myStock), [myStock]);
 
-    const formatDate = (date: Date) => {
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-        2,
-        "0"
-      )}-${String(date.getDate()).padStart(2, "0")}`;
-    };
+  // useQuery 로직 통합
+  const createStockQuery = useCallback(
+    (period: IntervalKey) => ({
+      queryKey: ["stockData", code, period],
+      queryFn: async () => {
+        const { startDate, endDate } = createDateRange(period);
+        const res = await fetch(
+          `/proxy2/v2/stocks/${code}?period=${period}&startDate=${startDate}&endDate=${endDate}`
+        );
+        if (!res.ok) throw new Error("주식 데이터를 불러오는데 실패했습니다.");
+        const json = await res.json();
+        return json.data as StockData[];
+      },
+      enabled: !!code,
+      staleTime: CHART_CONSTANTS.STALE_TIME,
+      gcTime: CHART_CONSTANTS.GC_TIME,
+    }),
+    [code]
+  );
 
-    return {
-      startDate: formatDate(startDate),
-      endDate: formatDate(endDate),
-    };
-  };
+  const { data: stockDataD = [] } = useQuery(createStockQuery("D"));
+  const { data: stockDataW = [] } = useQuery(createStockQuery("W"));
+  const { data: stockDataM = [] } = useQuery(createStockQuery("M"));
+  const { data: stockDataY = [] } = useQuery(createStockQuery("Y"));
 
-  const { data: stockDataD = [] } = useQuery({
-    queryKey: ["stockData", code, "D"],
-    queryFn: async () => {
-      const { startDate, endDate } = getDateRange("D");
-      const res = await fetch(
-        `/proxy2/v2/stocks/${code}?period=D&startDate=${startDate}&endDate=${endDate}`
-      );
-      if (!res.ok) throw new Error("주식 데이터를 불러오는데 실패했습니다.");
-      const json = await res.json();
-      return json.data as StockData[];
+  // 이전 데이터 로드 함수 (최적화된 버전)
+  const loadMoreData = useCallback(
+    async (period: IntervalKey, earliestTime: string) => {
+      if (isLoadingRef.current) return;
+
+      if (!loadedStartDatesRef.current[period]) {
+        loadedStartDatesRef.current[period] = new Set([earliestTime]);
+      } else if (loadedStartDatesRef.current[period]?.has(earliestTime)) {
+        return;
+      } else {
+        loadedStartDatesRef.current[period]?.add(earliestTime);
+      }
+
+      isLoadingRef.current = true;
+      setIsLoadingMore(true);
+
+      try {
+        const earliestDate = new Date(earliestTime);
+        const extendedStartDate = new Date(earliestDate);
+        const config = CHART_CONSTANTS.LOAD_PERIODS[period];
+
+        if (period === "D") {
+          extendedStartDate.setMonth(
+            extendedStartDate.getMonth() - Math.floor(config.additional * 12)
+          );
+        } else {
+          extendedStartDate.setFullYear(
+            extendedStartDate.getFullYear() - config.additional
+          );
+        }
+
+        const startDateStr = formatDate(extendedStartDate);
+
+        const res = await fetch(
+          `/proxy2/v2/stocks/${code}?period=${period}&startDate=${startDateStr}&endDate=${earliestTime}`
+        );
+
+        if (!res.ok)
+          throw new Error("추가 주식 데이터를 불러오는데 실패했습니다.");
+
+        const json = await res.json();
+        const newStockData = json.data as StockData[];
+
+        if (newStockData?.length > 0) {
+          const newCandles = convertStockDataToCandles(newStockData);
+
+          setAllLoadedData((prev) => {
+            const currentData = prev[period] || [];
+            const mergedData = [...newCandles, ...currentData];
+            const uniqueData = removeDuplicatesAndSort(mergedData);
+
+            return {
+              ...prev,
+              [period]: uniqueData,
+            };
+          });
+        }
+      } catch (error) {
+        console.error("추가 데이터 로드 실패:", error);
+      } finally {
+        isLoadingRef.current = false;
+        setIsLoadingMore(false);
+      }
     },
-    enabled: !!code,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-  });
+    [code]
+  );
 
-  const { data: stockDataW = [] } = useQuery({
-    queryKey: ["stockData", code, "W"],
-    queryFn: async () => {
-      const { startDate, endDate } = getDateRange("W");
-      const res = await fetch(
-        `/proxy2/v2/stocks/${code}?period=W&startDate=${startDate}&endDate=${endDate}`
-      );
-      if (!res.ok) throw new Error("주식 데이터를 불러오는데 실패했습니다.");
-      const json = await res.json();
-      return json.data as StockData[];
-    },
-    enabled: !!code,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-  });
-
-  const { data: stockDataM = [] } = useQuery({
-    queryKey: ["stockData", code, "M"],
-    queryFn: async () => {
-      const { startDate, endDate } = getDateRange("M");
-      const res = await fetch(
-        `/proxy2/v2/stocks/${code}?period=M&startDate=${startDate}&endDate=${endDate}`
-      );
-      if (!res.ok) throw new Error("주식 데이터를 불러오는데 실패했습니다.");
-      const json = await res.json();
-      return json.data as StockData[];
-    },
-    enabled: !!code,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-  });
-
-  const { data: stockDataY = [] } = useQuery({
-    queryKey: ["stockData", code, "Y"],
-    queryFn: async () => {
-      const { startDate, endDate } = getDateRange("Y");
-      const res = await fetch(
-        `/proxy2/v2/stocks/${code}?period=Y&startDate=${startDate}&endDate=${endDate}`
-      );
-      if (!res.ok) throw new Error("주식 데이터를 불러오는데 실패했습니다.");
-      const json = await res.json();
-      return json.data as StockData[];
-    },
-    enabled: !!code,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-  });
-
-  // 차트 초기화
-  useEffect(() => {
-    if (!chartContainerRef.current) return;
-
-    const chart = createChart(chartContainerRef.current, {
-      width: chartContainerRef.current.clientWidth,
-      height: 320,
+  // 차트 설정 객체
+  const chartConfig = useMemo(
+    () => ({
+      width: 0, // 동적으로 설정됨
+      height: CHART_CONSTANTS.HEIGHT,
       layout: {
         background: { color: "transparent" },
-        textColor: "#333",
+        textColor: CHART_CONSTANTS.COLORS.TEXT,
       },
       grid: {
-        vertLines: { color: "#e0e0e0" },
-        horzLines: { color: "#e0e0e0" },
+        vertLines: { color: CHART_CONSTANTS.COLORS.GRID },
+        horzLines: { color: CHART_CONSTANTS.COLORS.GRID },
       },
       rightPriceScale: {
-        borderColor: "#e0e0e0",
+        borderColor: CHART_CONSTANTS.COLORS.GRID,
       },
       timeScale: {
-        borderColor: "#e0e0e0",
+        borderColor: CHART_CONSTANTS.COLORS.GRID,
         timeVisible: true,
         secondsVisible: false,
       },
       crosshair: {
         mode: 1,
       },
+    }),
+    []
+  );
+
+  // 차트 업데이트 useEffect
+  useEffect(() => {
+    const currentData = allLoadedData[selectedInterval];
+    if (!currentData?.length) return;
+
+    candlestickRef.current?.setData(currentData);
+
+    // volumeData를 직접 계산하여 dependency 제거
+    const volumeData = currentData.map((candle) => ({
+      time: candle.time,
+      value: candle.volume,
+      color:
+        candle.close >= candle.open
+          ? CHART_CONSTANTS.COLORS.VOLUME_UP
+          : CHART_CONSTANTS.COLORS.VOLUME_DOWN,
+    }));
+    volumeRef.current?.setData(volumeData);
+  }, [allLoadedData, selectedInterval]);
+
+  // 차트 초기화
+  useEffect(() => {
+    if (!chartContainerRef.current) return;
+
+    const chart = createChart(chartContainerRef.current, {
+      ...chartConfig,
+      width: chartContainerRef.current.clientWidth,
     });
 
     chartRef.current = chart;
 
-    // 커서 변경
+    // 커서 변경 및 툴팁 표시
     chart.subscribeCrosshairMove((param) => {
-      if (!chartContainerRef.current) return;
+      if (!chartContainerRef.current || !tooltipRef.current) return;
       const container = chartContainerRef.current;
+      const tooltip = tooltipRef.current;
 
       if (param.point === undefined || !param.time) {
         container.style.cursor = "default";
+        tooltip.style.display = "none";
         return;
       }
 
       container.style.cursor = "crosshair";
 
       const data = param.seriesData.get(candlestickRef.current!);
-      if (!data) return;
+      if (!data) {
+        tooltip.style.display = "none";
+        return;
+      }
 
-      const tooltip = `
-        <div><strong>날짜:</strong> ${param.time}</div>
+      // 툴팁 내용 업데이트
+      const tooltipContent = `
+        <div style="margin-bottom: 4px;"><strong>날짜:</strong> ${
+          param.time
+        }</div>
         ${
           "open" in data
-            ? `<div><strong>시가:</strong> ${data.open.toLocaleString()}원</div>`
+            ? `<div style="margin-bottom: 2px;"><strong>시가:</strong> ${data.open.toLocaleString()}원</div>`
             : ""
         }
         ${
           "high" in data
-            ? `<div><strong>고가:</strong> ${data.high.toLocaleString()}원</div>`
+            ? `<div style="margin-bottom: 2px;"><strong>고가:</strong> ${data.high.toLocaleString()}원</div>`
             : ""
         }
         ${
           "low" in data
-            ? `<div><strong>저가:</strong> ${data.low.toLocaleString()}원</div>`
+            ? `<div style="margin-bottom: 2px;"><strong>저가:</strong> ${data.low.toLocaleString()}원</div>`
             : ""
         }
         ${
@@ -241,14 +353,33 @@ const StockChart = ({
             ? `<div><strong>종가:</strong> ${data.close.toLocaleString()}원</div>`
             : ""
         }
-              `;
+      `;
+
+      tooltip.innerHTML = tooltipContent;
+      tooltip.style.display = "block";
+
+      // 툴팁 위치 설정
+      const containerRect = container.getBoundingClientRect();
+      const left = param.point.x + 15;
+      const top = param.point.y - 10;
+
+      // 화면 경계 체크
+      const tooltipRect = tooltip.getBoundingClientRect();
+      const finalLeft =
+        left + tooltipRect.width > containerRect.width
+          ? param.point.x - tooltipRect.width - 15
+          : left;
+      const finalTop = top < 0 ? param.point.y + 15 : top;
+
+      tooltip.style.left = `${finalLeft}px`;
+      tooltip.style.top = `${finalTop}px`;
     });
 
     const candlestickSeries = chart.addSeries(CandlestickSeries, {
-      wickDownColor: "rgb(52, 133, 250)",
-      downColor: "rgb(52, 133, 250)",
-      wickUpColor: "rgb(240, 66, 81)",
-      upColor: "rgb(240, 66, 81)",
+      wickDownColor: CHART_CONSTANTS.COLORS.DOWN,
+      downColor: CHART_CONSTANTS.COLORS.DOWN,
+      wickUpColor: CHART_CONSTANTS.COLORS.UP,
+      upColor: CHART_CONSTANTS.COLORS.UP,
       borderVisible: false,
       priceScaleId: "right",
     });
@@ -261,19 +392,17 @@ const StockChart = ({
       priceScaleId: "right",
     });
 
-    if (isMyStock) {
+    if (isMyStock && myStock) {
       lineSeries.setData([
         {
           time: new Date().toISOString().split("T")[0],
-          value: portfolio.find((stock: any) => stock.stockCode === code)!
-            .entryPrice,
+          value: myStock.entryPrice,
         },
       ]);
 
       lineSeries.createPriceLine({
-        price: portfolio.find((stock: any) => stock.stockCode === code)!
-          .entryPrice,
-        color: "orange",
+        price: myStock.entryPrice,
+        color: CHART_CONSTANTS.COLORS.AVERAGE_LINE,
         lineWidth: 2,
         lineStyle: 2, // Dashed line
         axisLabelVisible: true,
@@ -283,7 +412,7 @@ const StockChart = ({
 
     const volumeSeries = chart.addSeries(HistogramSeries, {
       priceFormat: { type: "volume" },
-      color: "rgba(52,133,250,0.3)",
+      color: CHART_CONSTANTS.COLORS.VOLUME_BASE,
       priceScaleId: "volume",
     });
     chart.priceScale("volume").applyOptions({
@@ -294,46 +423,80 @@ const StockChart = ({
     volumeRef.current = volumeSeries;
 
     return () => {
+      if (tooltipRef.current) {
+        tooltipRef.current.style.display = "none";
+      }
       chart.remove();
     };
-  }, [isMyStock]);
+  }, [isMyStock, myStock, chartConfig]);
+
+  // 스크롤 이벤트 구독 (최적화된 버전)
+  useEffect(() => {
+    if (!chartRef.current) return;
+
+    const chart = chartRef.current;
+    let debounceTimeout: NodeJS.Timeout | null = null;
+
+    // 디바운싱된 스크롤 핸들러
+    const handleVisibleRangeChange = (newVisibleTimeRange: any) => {
+      if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+      }
+
+      debounceTimeout = setTimeout(() => {
+        if (!newVisibleTimeRange) return;
+
+        setAllLoadedData((currentAllData) => {
+          const currentData = currentAllData[selectedInterval];
+          if (!currentData?.length) return currentAllData;
+
+          const earliestDataTime = currentData[0].time;
+          const visibleFrom = newVisibleTimeRange.from as string;
+
+          // 사용자가 차트의 왼쪽 끝 근처로 스크롤했을 때 추가 데이터 로드
+          const fromIndex = currentData.findIndex(
+            (item) => item.time >= visibleFrom
+          );
+
+          if (
+            fromIndex <= CHART_CONSTANTS.TIME_MARGIN &&
+            !isLoadingRef.current
+          ) {
+            loadMoreData(selectedInterval, earliestDataTime);
+          }
+
+          return currentAllData; // 상태 변경 없음
+        });
+      }, CHART_CONSTANTS.DEBOUNCE_MS);
+    };
+
+    chart.timeScale().subscribeVisibleTimeRangeChange(handleVisibleRangeChange);
+
+    return () => {
+      if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+      }
+    };
+  }, [selectedInterval]);
 
   // 캔들 데이터 업데이트
   useEffect(() => {
-    let stockArr: StockData[] = [];
-    switch (selectedInterval) {
-      case "D":
-        stockArr = stockDataD;
-        break;
-      case "W":
-        stockArr = stockDataW;
-        break;
-      case "M":
-        stockArr = stockDataM;
-        break;
-      case "Y":
-        stockArr = stockDataY;
-        break;
-    }
+    const stockDataMap = {
+      D: stockDataD,
+      W: stockDataW,
+      M: stockDataM,
+      Y: stockDataY,
+    };
 
-    if (!Array.isArray(stockArr) || stockArr.length === 0) return;
+    const stockArr = stockDataMap[selectedInterval];
+    if (!Array.isArray(stockArr) || !stockArr.length) return;
 
     const newCandles = convertStockDataToCandles(stockArr);
 
-    if (candlestickRef.current) {
-      candlestickRef.current.setData(newCandles);
-    }
-    if (volumeRef.current) {
-      const volumeData = newCandles.map((candle) => ({
-        time: candle.time,
-        value: candle.volume,
-        color:
-          candle.close >= candle.open
-            ? "rgba(240,66,81,0.6)"
-            : "rgba(52,133,250,0.6)",
-      }));
-      volumeRef.current.setData(volumeData);
-    }
+    setAllLoadedData((prev) => ({
+      ...prev,
+      [selectedInterval]: newCandles,
+    }));
   }, [stockDataD, stockDataW, stockDataM, stockDataY, selectedInterval]);
 
   // interval 변경 시 실시간 스크롤
@@ -341,6 +504,10 @@ const StockChart = ({
     if (chartRef.current) {
       chartRef.current.timeScale().scrollToRealTime();
     }
+
+    // 현재 로딩 상태만 초기화 (로드 기록은 유지)
+    isLoadingRef.current = false;
+    setIsLoadingMore(false);
   }, [selectedInterval]);
 
   // 부모 크기 변경 감지 및 차트 리사이즈
@@ -353,10 +520,8 @@ const StockChart = ({
       chart.resize(container.clientWidth, container.clientHeight);
     };
 
-    // 최초 1회
     resize();
 
-    // ResizeObserver로 부모 크기 변경 감지
     const observer = new window.ResizeObserver(resize);
     observer.observe(container);
 
@@ -366,11 +531,34 @@ const StockChart = ({
   }, []);
 
   return (
-    <div className="h-[320px]">
+    <div className="h-[320px] relative">
       <div
         ref={chartContainerRef}
         style={{ width: "100%", height: "100%", position: "relative" }}
       />
+      {/* 툴팁 */}
+      <div
+        ref={tooltipRef}
+        style={{
+          position: "absolute",
+          display: "none",
+          padding: "8px 12px",
+          backgroundColor: "rgba(0, 0, 0, 0.8)",
+          color: "white",
+          borderRadius: "6px",
+          fontSize: "12px",
+          lineHeight: "1.4",
+          pointerEvents: "none",
+          zIndex: 1000,
+          minWidth: "120px",
+          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+        }}
+      />
+      {isLoadingMore && (
+        <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-sm">
+          이전 데이터 로딩 중...
+        </div>
+      )}
     </div>
   );
 };
