@@ -7,7 +7,7 @@ import "@/components/router/(main)/calendar/calendar.css";
 import clsx from "clsx";
 import Dropdown from "@/components/ui/shared/Dropdown";
 import Chatbot from "@/components/router/(main)/calendar/Chatbot";
-import { CalendarIcon, Loader2 } from "lucide-react";
+import { CalendarIcon, Loader2, ChevronUp, ChevronDown } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 interface CalendarData {
@@ -26,6 +26,7 @@ const REFETCH_INTERVAL_MS = 300000; // 5분
 const CalendarClient = ({ initialData }: CalendarClientProps) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedCategory, setSelectedCategory] = useState<string>("전체");
+  const [isCalendarVisible, setIsCalendarVisible] = useState<boolean>(true);
 
   const year = selectedDate.getFullYear();
   const month = selectedDate.getMonth() + 1;
@@ -192,7 +193,14 @@ const CalendarClient = ({ initialData }: CalendarClientProps) => {
           </div>
         </div>
 
-        <div className="bg-main-light-gray/50 p-main pt-0 rounded-main">
+        <div
+          className={clsx(
+            "bg-main-light-gray/50 p-main pt-0 rounded-main transition-all duration-500 ease-in-out overflow-hidden",
+            isCalendarVisible
+              ? "opacity-100 max-h-[500px] mb-main"
+              : "opacity-0 max-h-0 mb-0"
+          )}
+        >
           <Calendar
             prev2Label={null}
             next2Label={null}
@@ -249,80 +257,120 @@ const CalendarClient = ({ initialData }: CalendarClientProps) => {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-main overflow-y-auto pb-main sticky top-0 z-20">
-          {filteredCalendarData.length > 0 ? (
-            filteredCalendarData.map((calendarData) => (
+        {/* 캘린더 토글 버튼 */}
+        <div className="flex justify-center w-full">
+          <button
+            onClick={() => setIsCalendarVisible(!isCalendarVisible)}
+            className="w-full flex items-center justify-center gap-2 px-main py-2 text-main-blue hover:bg-main-blue/5 rounded-main transition-all duration-200 font-medium"
+          >
+            {isCalendarVisible ? (
+              <>
+                <ChevronUp size={16} />
+                캘린더 숨기기
+              </>
+            ) : (
+              <>
+                <ChevronDown size={16} />
+                캘린더 보기
+              </>
+            )}
+          </button>
+        </div>
+
+        <div className="overflow-y-auto pb-main flex-1 z-20">
+          <div className="grid grid-cols-2 gap-main">
+            {filteredCalendarData.length > 0 ? (
+              filteredCalendarData.map((calendarData) => (
+                <div
+                  key={`IR-${calendarData.irId}-${calendarData.date}`}
+                  className={clsx(
+                    "w-full flex flex-col justify-between gap-main rounded-main border border-main-light-gray/50 px-main-2 py-main",
+                    selectedCategory === "이벤트" &&
+                      isCalendarVisible &&
+                      "col-span-2 bg-main-blue/5",
+                    selectedCategory === "이벤트" &&
+                      !isCalendarVisible &&
+                      "col-span-3 bg-main-blue/5",
+                    selectedCategory === "전체" &&
+                      calendarData.category === "이벤트" &&
+                      isCalendarVisible &&
+                      "col-span-2 bg-main-blue/5",
+                    selectedCategory === "전체" &&
+                      calendarData.category === "이벤트" &&
+                      !isCalendarVisible &&
+                      "col-span-2 bg-main-blue/5"
+                  )}
+                >
+                  <div className="flex flex-col gap-1">
+                    {calendarData.category === "이벤트" ? (
+                      <p className="text-xl-custom font-semibold">
+                        {calendarData.companyEventName}
+                      </p>
+                    ) : (
+                      <>
+                        <p className="text-xl-custom font-semibold line-clamp-1">
+                          {calendarData.companyEventName.replace(
+                            / \(\d+\)$/,
+                            ""
+                          )}
+                        </p>
+                        {calendarData.companyEventName.match(/\((\d+)\)$/) && (
+                          <p className="text-sm text-gray-500">
+                            {
+                              calendarData.companyEventName.match(
+                                /\((\d+)\)$/
+                              )?.[1]
+                            }
+                          </p>
+                        )}
+                      </>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-[auto_1fr] gap-main text-sm-custom text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <div
+                        className={clsx(
+                          "size-2 rounded-full flex items-center justify-center",
+                          categoryLegend[calendarData.category].bgColor,
+                          calendarData.category === "이벤트" && "animate-pulse"
+                        )}
+                      />
+                      <span
+                        className={clsx(
+                          "font-semibold",
+                          categoryLegend[calendarData.category].textColor
+                        )}
+                      >
+                        {calendarData.category}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <CalendarIcon
+                        className="text-main-dark-gray/70"
+                        size={14}
+                      />
+                      <span>{calendarData.date}</span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
               <div
-                key={`IR-${calendarData.irId}-${calendarData.date}`}
                 className={clsx(
-                  "w-full flex flex-col justify-between gap-main rounded-main border border-main-light-gray/50 px-main-2 py-main",
-                  selectedCategory === "이벤트" && "col-span-2 bg-main-blue/5",
-                  selectedCategory === "전체" &&
-                    calendarData.category === "이벤트" &&
-                    "col-span-2 bg-main-blue/5"
+                  "w-full bg-white text-center text-main-dark-gray/60 pt-main-3",
+                  isCalendarVisible ? "col-span-2" : "col-span-3"
                 )}
               >
-                <div className="flex flex-col gap-1">
-                  {calendarData.category === "이벤트" ? (
-                    <p className="text-xl-custom font-semibold">
-                      {calendarData.companyEventName}
-                    </p>
-                  ) : (
-                    <>
-                      <p className="text-xl-custom font-semibold line-clamp-1">
-                        {calendarData.companyEventName.replace(/ \(\d+\)$/, "")}
-                      </p>
-                      {calendarData.companyEventName.match(/\((\d+)\)$/) && (
-                        <p className="text-sm text-gray-500">
-                          {
-                            calendarData.companyEventName.match(
-                              /\((\d+)\)$/
-                            )?.[1]
-                          }
-                        </p>
-                      )}
-                    </>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-[auto_1fr] gap-main text-sm-custom text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <div
-                      className={clsx(
-                        "size-2 rounded-full flex items-center justify-center",
-                        categoryLegend[calendarData.category].bgColor,
-                        calendarData.category === "이벤트" && "animate-pulse"
-                      )}
-                    />
-                    <span
-                      className={clsx(
-                        "font-semibold",
-                        categoryLegend[calendarData.category].textColor
-                      )}
-                    >
-                      {calendarData.category}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-1">
-                    <CalendarIcon
-                      className="text-main-dark-gray/70"
-                      size={14}
-                    />
-                    <span>{calendarData.date}</span>
-                  </div>
-                </div>
+                <p>
+                  {selectedCategory === "전체"
+                    ? "일정이 없습니다."
+                    : `${selectedCategory} 일정이 없습니다.`}
+                </p>
               </div>
-            ))
-          ) : (
-            <div className="w-full col-span-2 bg-white text-center text-main-dark-gray/60 pt-main-3">
-              <p>
-                {selectedCategory === "전체"
-                  ? "일정이 없습니다."
-                  : `${selectedCategory} 일정이 없습니다.`}
-              </p>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
