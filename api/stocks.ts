@@ -77,7 +77,7 @@ export async function fetchCurrentStockPrice(
 export async function fetchStockCategories(page: number = 1): Promise<{
   data: { categoryName: string }[];
 }> {
-  const res = await fetch(`/proxy/v1/stocks/categories?page=${page}`);
+  const res = await fetch(`/proxy2/v2/stocks/category?page=${page}`);
 
   if (!res.ok) {
     throw new Error(`주식 카테고리 로드 실패: ${res.status}`);
@@ -107,7 +107,7 @@ export async function fetchStocksByCategory(
   };
 }> {
   const res = await fetch(
-    `/proxy/v1/stocks/categories/${categoryName}?page=${page}`
+    `/proxy2/v2/stocks/category/${categoryName}?page=${page}`
   );
 
   if (!res.ok) {
@@ -121,7 +121,7 @@ export async function fetchStocksByCategory(
  * 주식 검색 카운트 증가
  */
 export async function incrementSearchCount(stockCode: string): Promise<void> {
-  const res = await fetch(`/proxy/v1/stocks/search`, {
+  const res = await fetch(`/proxy2/v2/stocks/search`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
