@@ -351,7 +351,7 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
                 {categoryStocks &&
                   categoryStocks.stocks.map((stock: StockData) => (
                     <div
-                      className="w-full flex flex-col justify-around border border-transparent hover:border-main-blue/20 hover:scale-102 rounded-main transition-all duration-200 ease-in-out px-main-2 py-main gap-[5px] relative group"
+                      className="w-full flex flex-col justify-around border border-transparent hover:border-main-blue/20 hover:scale-102 cursor-pointer rounded-main transition-all duration-200 ease-in-out px-main-2 py-main gap-[5px] relative group"
                       key={selectedCategory + stock.stockCode}
                       onClick={() => handleClickSearchResult(stock.stockCode)}
                     >

@@ -11,6 +11,7 @@ import { Popular, TestPopular } from "@/type/stocks/Popular";
 import { JwtToken } from "@/type/jwt";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
+import clsx from "clsx";
 
 const PopularStock = ({ token }: { token: JwtToken | null }) => {
   const {
@@ -102,8 +103,17 @@ const PopularStock = ({ token }: { token: JwtToken | null }) => {
                     </span>
                   </div>
                   <div className="text-sm flex gap-main items-center">
-                    <span className="text-gray-600 font-semibold">
-                      {Number(stock.price).toLocaleString()}원
+                    <span
+                      className={clsx(
+                        "text-gray-500 text-sm font-semibold",
+                        (stock.sign === "1" || stock.sign === "2") &&
+                          "text-main-red",
+                        (stock.sign === "4" || stock.sign === "5") &&
+                          "text-main-blue",
+                        stock.sign === "3" && "text-gray-500"
+                      )}
+                    >
+                      {Number(stock.price).toLocaleString()}
                     </span>
                     <div className="flex justify-between h-fit">
                       {(stock.sign === "1" || stock.sign === "2") && (
