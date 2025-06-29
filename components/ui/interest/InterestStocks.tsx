@@ -41,6 +41,9 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
   >(null);
   const [modalStocks, setModalStocks] = useState<InterestStock[]>([]);
   const [updatingGroupId, setUpdatingGroupId] = useState<string | null>(null); // 중복 수정 방지
+  const [settingMainGroupId, setSettingMainGroupId] = useState<string | null>(
+    null
+  ); // 메인 그룹 설정 중 방지
 
   const inputRefs = useRef<{ [id: string]: HTMLInputElement | null }>({});
 
@@ -157,8 +160,14 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
   };
 
   const handleSetMainGroup = async (groupId: string) => {
-    if (!token) return;
-    await setMainGroup(token, groupId);
+    if (!token || settingMainGroupId) return;
+
+    setSettingMainGroupId(groupId);
+    try {
+      await setMainGroup(token, groupId);
+    } finally {
+      setSettingMainGroupId(null);
+    }
   };
 
   const handleAddStock = async (stock: SearchResult) => {
@@ -398,7 +407,11 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
                           <IconButton
                             icon={Star}
                             active={group.main}
-                            onClick={() => handleSetMainGroup(group.groupId)}
+                            disabled={settingMainGroupId !== null}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSetMainGroup(group.groupId);
+                            }}
                           />
 
                           <input
@@ -435,7 +448,8 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
 
                         <div className="flex items-center gap-1">
                           <button
-                            className="text-main-dark-gray opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out hover:text-main-blue hover:bg-main-blue/10 rounded-full p-1"
+                            className="text-main-dark-gray opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out hover:text-main-blue hover:bg-main-blue/10 rounded-full p-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled={settingMainGroupId !== null}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleEditGroupName(
@@ -450,13 +464,15 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
                           {/* 메인 그룹이 아니고, 전체 그룹이 2개 이상일 때만 삭제 버튼 표시 */}
                           {!group.main && interestGroups.length > 1 && (
                             <button
-                              className="text-main-dark-gray opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out hover:text-main-blue hover:bg-main-blue/10 rounded-full p-1"
-                              onClick={() =>
+                              className="text-main-dark-gray opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out hover:text-main-blue hover:bg-main-blue/10 rounded-full p-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                              disabled={settingMainGroupId !== null}
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 handleDeleteGroup(
                                   group.groupName,
                                   group.groupId
-                                )
-                              }
+                                );
+                              }}
                             >
                               <Trash2 size={14} />
                             </button>
@@ -568,9 +584,10 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
 
                             <button
                               className="text-main-dark-gray opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out hover:text-main-blue hover:bg-main-blue/10 rounded-full p-1"
-                              onClick={() =>
-                                handleDeleteStock(stock.stockInfo.stockCode)
-                              }
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteStock(stock.stockInfo.stockCode);
+                              }}
                             >
                               <Trash2 size={16} />
                             </button>

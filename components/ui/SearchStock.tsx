@@ -9,19 +9,10 @@ import React, { useEffect, useState } from "react";
 import UpPrice from "./shared/UpPrice";
 import DownPrice from "./shared/DownPrice";
 import Image from "next/image";
+import { SearchResult } from "@/store/useInterestStore";
 
 interface SearchStockProps {
   onSelect?: (stock: SearchResult) => void;
-}
-
-interface SearchResult {
-  changeAmount: string;
-  changeRate: string;
-  currentPrice: string;
-  sign: string;
-  stockCode: string;
-  stockName: string;
-  stockImage: string;
 }
 
 const SearchStock = ({ onSelect }: SearchStockProps) => {
@@ -44,7 +35,7 @@ const SearchStock = ({ onSelect }: SearchStockProps) => {
 
   const searchStocks = async (query: string) => {
     if (!query) return;
-    const res = await fetch(`/proxy/v1/stocks/search?keyword=${query}`);
+    const res = await fetch(`/proxy2/v2/stocks/search?keyword=${query}`);
     const json = await res.json();
     setSearchResult(json.data);
   };
