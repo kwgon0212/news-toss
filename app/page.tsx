@@ -14,10 +14,31 @@ import Link from "next/link";
 import Image from "next/image";
 import Footer from "@/components/ui/shared/Footer";
 import clsx from "clsx";
+import { FireworksBackground } from "@/components/animate-ui/backgrounds/fireworks";
 
 const MotionLink = motion(Link);
 
 export default function LandingPage() {
+  const [isAtBottom, setIsAtBottom] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+
+      // 페이지 하단에서 200px 이내에 있으면 숨김
+      const isNearBottom = scrollTop + windowHeight >= documentHeight - 200;
+      setIsAtBottom(isNearBottom);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // 초기 상태 확인
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div className="w-screen scroll-smooth relative overflow-y-scroll">
       <Header />
@@ -67,11 +88,32 @@ export default function LandingPage() {
               </MotionLink>
             </div>
             <div className="md:w-1/2 flex justify-center">
-              <img
-                src="https://illustrations.popsy.co/amber/digital-nomad.svg"
-                alt="Stock Analysis"
-                className="w-full max-w-md"
-              />
+              <motion.div
+                initial={{ y: 300, opacity: 0 }}
+                animate={{
+                  y: [0, -10, 0],
+                  opacity: 1,
+                }}
+                transition={{
+                  y: {
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  },
+                  opacity: {
+                    duration: 0.8,
+                    ease: "easeOut",
+                  },
+                }}
+              >
+                <Image
+                  src="/landing/hand-news.png"
+                  alt="main-news"
+                  width={400}
+                  height={400}
+                  className="object-contain"
+                />
+              </motion.div>
             </div>
           </div>
         </div>
@@ -307,13 +349,20 @@ export default function LandingPage() {
         <ChatSection />
 
         <motion.section
-          className="bg-gradient-to-r from-main-blue to-purple-600 text-white py-20"
+          className="bg-gradient-to-r from-main-blue to-purple-600 text-white py-20 relative"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: false, margin: "-100px" }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <FireworksBackground
+            className="absolute inset-0 flex items-center justify-center rounded-xl pointer-events-none"
+            fireworkSpeed={{ min: 8, max: 16 }}
+            fireworkSize={{ min: 4, max: 10 }}
+            particleSpeed={{ min: 4, max: 14 }}
+            particleSize={{ min: 2, max: 10 }}
+          />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-20">
             <motion.h2
               className="text-3xl font-bold mb-6"
               initial={{ opacity: 0, y: 30 }}
@@ -359,8 +408,19 @@ export default function LandingPage() {
 
       <motion.div
         className="fixed left-1/2 -translate-x-1/2 bottom-main-5"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ repeat: Infinity, duration: 1.5 }}
+        animate={{
+          y: [0, 10, 0],
+          opacity: isAtBottom ? 0 : 1,
+        }}
+        transition={{
+          y: {
+            repeat: Infinity,
+            duration: 1.5,
+          },
+          opacity: {
+            duration: 0.3,
+          },
+        }}
       >
         <ChevronDown size={40} strokeWidth={1} />
       </motion.div>
