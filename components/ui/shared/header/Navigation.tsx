@@ -127,7 +127,7 @@ const Navigation = () => {
   };
 
   const searchStocks = async (query: string) => {
-    const res = await fetch(`/proxy/v1/stocks/search?keyword=${query}`);
+    const res = await fetch(`/proxy2/v2/stocks/search?keyword=${query}`);
     if (!res.ok) setStockSearchResult([]);
 
     const json = await res.json();
@@ -417,12 +417,12 @@ const Navigation = () => {
                       </div>
                     </div>
                   </div>
-                  <button className="absolute top-1/2 -translate-y-1/2 right-main hidden group-hover:block">
+                  <div className="absolute top-1/2 -translate-y-1/2 right-main hidden group-hover:block cursor-pointer">
                     <ChevronRight
                       className="text-main-blue hover:bg-main-blue/30 rounded-full p-1 box-content transition-colors duration-200 ease-in-out"
                       size={20}
                     />
-                  </button>
+                  </div>
                 </button>
               ))}
 
