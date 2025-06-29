@@ -10,6 +10,8 @@ import clsx from "clsx";
 import Link from "next/link";
 import Tooltip from "@/components/ui/Tooltip";
 import { useQuery } from "@tanstack/react-query";
+import Button from "@/components/ui/shared/Button";
+import { useRouter } from "next/navigation";
 
 const SkeletonNewsCard = () => (
   <div className="flex flex-col gap-main animate-pulse">
@@ -66,8 +68,6 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
 
       const customNewsData = response.data as CustomNewsType;
 
-      console.log(customNewsData);
-
       const newsList = customNewsData.news_data.map((news: News) => ({
         mainNews: news,
         relatedNews: [],
@@ -110,8 +110,8 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
       };
     },
     enabled: !!token,
-    staleTime: 5 * 60 * 1000, // 5분
-    gcTime: 10 * 60 * 1000, // 10분
+    staleTime: 0, // 항상 최신 데이터를 가져오도록 설정 (user_click_count 실시간 업데이트를 위해)
+    gcTime: 1 * 60 * 1000, // 1분
   });
 
   const customNews = customNewsResponse?.news || [];
@@ -119,12 +119,17 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
   const useOtherUser = customNewsResponse?.useOtherUser || false;
   const otherUserData = customNewsResponse?.otherUserData;
 
-  const [isOpenOtherUserInfo, setIsOpenOtherUserInfo] = useState(false);
+  const router = useRouter();
 
   if (!token) return null;
 
   return (
-    <div className="flex flex-col gap-main-2">
+    <div
+      className={clsx(
+        "flex flex-col",
+        useOtherUser ? "gap-main" : "gap-main-2"
+      )}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-main">
           <h2 className="text-3xl-custom font-bold">
@@ -177,195 +182,92 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
         </div>
       </div>
 
-      {/* useOtherUser가 true일 때 표시되는 안내 메시지 */}
-      {/* {useOtherUser && (
-        <div className="bg-gradient-to-r rounded-main p-4 border border-orange-200 mb-main-2">
-          <div className="flex items-start gap-3">
-            <div className="text-orange-500 text-lg">🔍</div>
-            <div className="flex-1">
-              <h3 className="text-lg-custom font-semibold text-orange-800 mb-2">
-                {token?.memberName ?? "홍길동"}님의 로그 데이터가 부족하여
-                비슷한 유저를 참고하여 추천했어요
-              </h3>
-
-              {otherUserData ? (
-                <div className="bg-white rounded-lg p-4 border border-orange-100">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-orange-600">👤</span>
-                      <span className="text-orange-800 font-medium">
-                        참고한 유사 투자자 정보
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4 mb-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-orange-600">💰</span>
-                      <div>
-                        <p className="text-xs-custom text-orange-600">자산</p>
-                        <p className="font-semibold text-orange-800">
-                          {(otherUserData.asset / 10000).toFixed(0)}만원
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={
-                          otherUserData.user_pnl > 0
-                            ? "text-red-500"
-                            : "text-blue-500"
-                        }
-                      >
-                        {otherUserData.user_pnl > 0 ? "📈" : "📉"}
-                      </span>
-                      <div>
-                        <p className="text-xs-custom text-orange-600">수익률</p>
-                        <p
-                          className={`font-semibold ${
-                            otherUserData.user_pnl > 0
-                              ? "text-red-600"
-                              : "text-blue-600"
-                          }`}
-                        >
-                          {otherUserData.user_pnl > 0 ? "+" : ""}
-                          {(otherUserData.user_pnl * 100).toFixed(1)}%
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <span className="text-orange-600">📊</span>
-                      <div>
-                        <p className="text-xs-custom text-orange-600">
-                          투자점수
-                        </p>
-                        <p className="font-semibold text-orange-800">
-                          {otherUserData.invest_score}점
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  
-                  {otherUserData.member_stocks &&
-                    otherUserData.member_stocks.length > 0 && (
-                      <div>
-                        <p className="text-sm-custom font-medium text-orange-700 mb-2">
-                          🎯 이 투자자가 관심있는 종목들:
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {otherUserData.member_stocks
-                            .slice(0, 6)
-                            .map((stock) => (
-                              <Link
-                                key={stock.stock_id}
-                                href={`/stock/${stock.stock_id}`}
-                                className="bg-orange-100 hover:bg-orange-200 border border-orange-200 rounded-full px-3 py-1 text-sm-custom text-orange-700 transition-colors duration-200"
-                              >
-                                {stock.stock_name}
-                              </Link>
-                            ))}
-                          {otherUserData.member_stocks.length > 6 && (
-                            <span className="text-xs-custom text-orange-600 px-2 py-1">
-                              +{otherUserData.member_stocks.length - 6}개 더
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                </div>
-              ) : (
-                <p className="text-orange-700 text-sm-custom">
-                  비슷한 사용자 패턴을 기반으로 뉴스를 추천해드렸습니다.
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      )} */}
       {useOtherUser && (
-        <div className="relative group">
-          <p className="text-main-dark-gray/80 hover:text-main-blue transition-colors duration-500 ease-in-out items-center gap-1 w-fit flex">
+        <div className="relative group w-fit">
+          <p className="text-main-dark-gray/80 hover:text-main-blue transition-colors duration-500 ease-in-out items-center gap-1 w-fit flex cursor-pointer">
             <Info size={16} />
             <span className="text-sm-custom">저는 방금 가입했는데요?</span>
           </p>
 
-          <div className="absolute flex flex-col gap-main-2 top-[150%] left-0 w-fit bg-white rounded-main p-4 border border-main-dark-gray/10 z-50 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out">
-            <div className="text-lg-custom">
-              <h2>
-                <b>{token?.memberName ?? "홍길동"}</b>님의 수집 데이터가
-                부족하여 비슷한 유저를 참고하여 추천했어요!
-              </h2>
-              <h4 className="text-sm-custom text-main-dark-gray/80">
-                더 많은 데이터를 수집하면 더 정확한 추천이 가능해져요!
-              </h4>
-            </div>
-
-            <div className="grid grid-cols-3 gap-main">
-              <div>
-                <p className="text-sm-custom font-semibold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
-                  자산
-                </p>
-                <p className="font-semibold text-black">
-                  {(otherUserData!.asset / 10000).toFixed(0)}만원
-                </p>
+          <div className="absolute top-full pt-2 left-0 w-[600px] z-50 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none group-hover:pointer-events-auto">
+            <div className="flex flex-col gap-main-2 bg-white rounded-main p-4 border border-main-dark-gray/10 shadow-lg">
+              <div className="text-lg-custom">
+                <h2>
+                  <b>{token?.memberName ?? "홍길동"}</b>님의 수집 데이터가
+                  부족하여 비슷한 유저를 참고하여 추천했어요!
+                </h2>
+                <h4 className="text-sm-custom text-main-dark-gray/80">
+                  더 많은 데이터를 수집하면 더 정확한 추천이 가능해져요!
+                </h4>
               </div>
 
-              <div>
-                <p className="text-sm-custom font-semibold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
-                  수익률
-                </p>
-                <p
-                  className={`font-semibold ${
-                    otherUserData!.user_pnl > 0
-                      ? "text-main-red"
-                      : "text-main-blue"
-                  }`}
-                >
-                  {otherUserData!.user_pnl > 0 ? "+" : ""}
-                  {(otherUserData!.user_pnl * 100).toFixed(1)}%
-                </p>
-              </div>
+              <div className="grid grid-cols-3 gap-main">
+                <div>
+                  <p className="text-sm-custom font-semibold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+                    자산
+                  </p>
+                  <p className="font-semibold text-black">
+                    {(otherUserData!.asset / 10000).toFixed(0)}만원
+                  </p>
+                </div>
 
-              <div>
-                <p className="text-sm-custom font-semibold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
-                  투자성향
-                </p>
+                <div>
+                  <p className="text-sm-custom font-semibold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+                    수익률
+                  </p>
+                  <p
+                    className={`font-semibold ${
+                      otherUserData!.user_pnl > 0
+                        ? "text-main-red"
+                        : "text-main-blue"
+                    }`}
+                  >
+                    {otherUserData!.user_pnl > 0 ? "+" : ""}
+                    {(otherUserData!.user_pnl * 100).toFixed(1)}%
+                  </p>
+                </div>
 
-                {otherUserData!.invest_score < 7 && (
-                  <span className="text-black">안전형</span>
-                )}
-                {otherUserData!.invest_score >= 7 &&
-                  otherUserData!.invest_score < 12 && (
-                    <span className="text-black">안정추구형</span>
-                  )}
-                {otherUserData!.invest_score >= 12 &&
-                  otherUserData!.invest_score < 17 && (
-                    <span className="text-black">위험중립형</span>
-                  )}
-                {otherUserData!.invest_score >= 17 &&
-                  otherUserData!.invest_score < 21 && (
-                    <span className="text-black">적극투자형</span>
-                  )}
-                {otherUserData!.invest_score >= 21 && "공격투자형"}
-              </div>
+                <div>
+                  <p className="text-sm-custom font-semibold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+                    투자성향
+                  </p>
 
-              <div className="col-span-3 flex flex-col gap-main-1/2">
-                <p className="text-sm-custom font-semibold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
-                  이 투자자가 관심있는 종목 리스트
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {otherUserData!.member_stocks.map((stock) => (
-                    <Link
-                      key={stock.stock_id}
-                      href={`/stock/${stock.stock_id}`}
-                      className="bg-orange-100 hover:bg-orange-200 border border-orange-200 rounded-full px-3 py-1 text-sm-custom text-orange-700 transition-colors duration-200"
-                    >
-                      {stock.stock_name}
-                    </Link>
-                  ))}
+                  {otherUserData!.invest_score < 7 && (
+                    <span className="text-black">안전형</span>
+                  )}
+                  {otherUserData!.invest_score >= 7 &&
+                    otherUserData!.invest_score < 12 && (
+                      <span className="text-black">안정추구형</span>
+                    )}
+                  {otherUserData!.invest_score >= 12 &&
+                    otherUserData!.invest_score < 17 && (
+                      <span className="text-black">위험중립형</span>
+                    )}
+                  {otherUserData!.invest_score >= 17 &&
+                    otherUserData!.invest_score < 21 && (
+                      <span className="text-black">적극투자형</span>
+                    )}
+                  {otherUserData!.invest_score >= 21 && "공격투자형"}
+                </div>
+
+                <div className="col-span-3 flex flex-col gap-main-1/2">
+                  <p className="text-sm-custom font-semibold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
+                    이 투자자가 관심있는 종목 리스트
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {otherUserData!.member_stocks.map((stock) => (
+                      <Button
+                        key={stock.stock_id}
+                        variant="primary"
+                        className="!rounded-full"
+                        onClick={() => {
+                          router.push(`/stock/${stock.stock_id}`);
+                        }}
+                      >
+                        {stock.stock_name}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
