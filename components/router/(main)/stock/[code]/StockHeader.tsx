@@ -3,8 +3,20 @@
 import DownPrice from "@/components/ui/shared/DownPrice";
 import UpPrice from "@/components/ui/shared/UpPrice";
 import { useRecentViewStore } from "@/store/useRecentViewStore";
+import clsx from "clsx";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+
+function isMarketOpen(now: Date = new Date()) {
+  const dayOfWeek = now.getDay(); // 0=일요일, 6=토요일
+  if (dayOfWeek === 0 || dayOfWeek === 6) return false; // 주말
+
+  const hour = now.getHours();
+  const minute = now.getMinutes();
+  const currentTime = hour * 100 + minute;
+
+  return currentTime >= 900 && currentTime <= 1530; // 09:00 ~ 15:30
+}
 
 const StockHeader = ({ code }: { code: string }) => {
   const [stock, setStock] = useState<{
@@ -16,6 +28,7 @@ const StockHeader = ({ code }: { code: string }) => {
     stockName: string;
     stockImage: string;
   } | null>(null);
+  const [marketOpen, setMarketOpen] = useState(false);
   const { recentViewStocks, setRecentViewStocks } = useRecentViewStore();
 
   useEffect(() => {
@@ -31,6 +44,14 @@ const StockHeader = ({ code }: { code: string }) => {
       },
     ]);
   }, [stock]);
+
+  // 주식장 오픈 여부 체크
+  useEffect(() => {
+    const checkMarket = () => setMarketOpen(isMarketOpen());
+    checkMarket(); // 최초 1회
+    const timer = setInterval(checkMarket, 60 * 1000); // 1분마다 체크
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const fetchStockData = async () => {
@@ -52,7 +73,7 @@ const StockHeader = ({ code }: { code: string }) => {
       }
     };
     fetchStockData();
-  }, []);
+  }, [code]);
 
   if (!stock) return null;
 
@@ -78,6 +99,16 @@ const StockHeader = ({ code }: { code: string }) => {
         <p className="flex items-center gap-main text-gray-800 truncate w-full">
           <span className="font-bold">{stock.stockName}</span>
           <span className="text-gray-400">{stock.stockCode}</span>
+          <span
+            className={clsx(
+              "px-2 py-1 rounded-main font-bold text-sm-custom",
+              marketOpen
+                ? "text-main-blue bg-main-blue/10"
+                : "text-main-red bg-main-red/10"
+            )}
+          >
+            {marketOpen ? "OPEN" : "CLOSED"}
+          </span>
         </p>
         <div className="flex items-center gap-main">
           <span className="text-main-dark-gray text-xl-custom font-bold">
