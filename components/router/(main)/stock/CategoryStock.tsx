@@ -69,12 +69,96 @@ const CATEGORY_GROUPS = {
   기타: ["기타"],
 };
 
+// 카테고리 스켈레톤 컴포넌트
+const CategorySkeleton = () => {
+  return (
+    <div className="p-main flex flex-col gap-main">
+      <div className="h-7 w-20 bg-gray-200 rounded animate-pulse"></div>
+      <div className="grid grid-cols-3 gap-main">
+        <div className="col-span-1">
+          <div className="space-y-4">
+            {Array.from({ length: 8 }).map((_, index) => (
+              <div key={`category-skeleton-${index}`} className="space-y-2">
+                <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
+                <div className="pl-4 space-y-2">
+                  <div className="h-6 w-16 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-6 w-20 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="col-span-2 pl-main">
+          <div className="h-8 w-32 bg-gray-200 rounded animate-pulse mb-4"></div>
+          <div className="grid grid-cols-2 grid-rows-3 gap-y-main">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div
+                key={`stock-skeleton-${index}`}
+                className="border border-gray-100 rounded-main px-main-2 py-main relative"
+              >
+                <div className="flex gap-main w-full">
+                  <div className="size-[40px] bg-gray-200 rounded-full animate-pulse shrink-0"></div>
+                  <div className="flex flex-col flex-1 truncate gap-1">
+                    <div className="flex items-baseline gap-1">
+                      <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="h-3 w-12 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                    <div className="flex gap-main items-center">
+                      <div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="h-3 w-12 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// 종목 스켈레톤 컴포넌트
+const StocksSkeleton = () => {
+  return (
+    <>
+      <div className="h-8 w-32 bg-gray-200 rounded animate-pulse mb-4"></div>
+      <div className="grid grid-cols-2 grid-rows-3 gap-y-main">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div
+            key={`stocks-skeleton-${index}`}
+            className="border border-gray-100 rounded-main px-main-2 py-main relative"
+          >
+            <div className="flex gap-main w-full">
+              <div className="size-[40px] bg-gray-200 rounded-full animate-pulse shrink-0"></div>
+              <div className="flex flex-col flex-1 truncate gap-1">
+                <div className="flex items-baseline gap-1">
+                  <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-3 w-12 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+                <div className="flex gap-main items-center">
+                  <div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-3 w-12 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};
+
 const CategoryStock = ({ token }: { token: JwtToken | null }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const router = useRouter();
 
-  const { data: categoryData = [] } = useQuery({
+  const {
+    data: categoryData = [],
+    isLoading: isCategoryLoading,
+    error: categoryError,
+  } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
       const res = await fetch(`/proxy/v1/stocks/categories?page=1`);
@@ -91,12 +175,18 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
     retry: 5,
   });
 
-  const { data: categoryStocks = { totalPages: 0, stocks: [] } } = useQuery({
+  const {
+    data: categoryStocks = { totalPages: 0, stocks: [] },
+    isLoading: isStocksLoading,
+    error: stocksError,
+  } = useQuery({
     queryKey: ["categoryStocks", selectedCategory, page],
     queryFn: async () => {
       if (!selectedCategory) return { totalPages: 0, stocks: [] };
       const response = await fetch(
-        `/proxy/v1/stocks/categories/${selectedCategory}?page=${page}`
+        `/proxy/v1/stocks/categories/${encodeURIComponent(
+          selectedCategory
+        )}?page=${page}`
       );
       if (!response.ok)
         throw new Error("주식 데이터를 불러오는데 실패했습니다.");
@@ -187,6 +277,23 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
     router.push(`/stock/${code}`);
   };
 
+  // 카테고리 데이터가 로딩 중일 때 전체 스켈레톤 표시
+  if (isCategoryLoading) {
+    return <CategorySkeleton />;
+  }
+
+  // 카테고리 데이터 로딩 에러
+  if (categoryError) {
+    return (
+      <div className="p-main flex flex-col gap-main">
+        <h2 className="text-xl font-bold">카테고리</h2>
+        <div className="flex items-center justify-center h-32 text-gray-500">
+          카테고리 데이터를 불러올 수 없습니다.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-main flex flex-col gap-main">
       <h2 className="text-xl font-bold">카테고리</h2>
@@ -231,132 +338,149 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 grid-rows-3 gap-y-main">
-            {categoryStocks &&
-              categoryStocks.stocks.map((stock: StockData) => (
-                <div
-                  className="w-full flex flex-col justify-around border border-transparent hover:border-main-blue/20 hover:scale-102 rounded-main transition-all duration-200 ease-in-out px-main-2 py-main gap-[5px] relative group"
-                  key={selectedCategory + stock.stockCode}
-                  onClick={() => handleClickSearchResult(stock.stockCode)}
-                >
-                  <Scrab
-                    stockCode={stock.stockCode}
-                    stockName={stock.stockName}
-                    stockInfo={{
-                      stockImage: stock.stockImage,
-                      currentPrice: stock.currentPrice,
-                      changeAmount: stock.changeAmount,
-                      changeRate: stock.changeRate,
-                      sign: stock.sign,
-                    }}
-                    token={token}
-                  />
+          {/* 종목 데이터가 로딩 중일 때 종목 스켈레톤 표시 */}
+          {isStocksLoading ? (
+            <StocksSkeleton />
+          ) : stocksError ? (
+            <div className="flex items-center justify-center h-32 text-gray-500">
+              종목 데이터를 불러올 수 없습니다.
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 grid-rows-3 gap-y-main">
+                {categoryStocks &&
+                  categoryStocks.stocks.map((stock: StockData) => (
+                    <div
+                      className="w-full flex flex-col justify-around border border-transparent hover:border-main-blue/20 hover:scale-102 rounded-main transition-all duration-200 ease-in-out px-main-2 py-main gap-[5px] relative group"
+                      key={selectedCategory + stock.stockCode}
+                      onClick={() => handleClickSearchResult(stock.stockCode)}
+                    >
+                      <Scrab
+                        stockCode={stock.stockCode}
+                        stockName={stock.stockName}
+                        stockInfo={{
+                          stockImage: stock.stockImage,
+                          currentPrice: stock.currentPrice,
+                          changeAmount: stock.changeAmount,
+                          changeRate: stock.changeRate,
+                          sign: stock.sign,
+                        }}
+                        token={token}
+                      />
 
-                  <div className="flex gap-main w-full">
-                    <div className="relative flex items-center justify-center size-[40px] shrink-0">
-                      {stock.stockImage ? (
-                        <Image
-                          src={stock.stockImage}
-                          alt={stock.stockName}
-                          fill
-                          className="rounded-full"
-                          sizes="40px"
-                        />
-                      ) : (
-                        <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
-                          <span className="text-main-blue font-semibold">
-                            {stock.stockName[0]}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex flex-col flex-1 truncate">
-                      <div className="text-gray-800 truncate w-full flex items-baseline gap-1">
-                        <span className="font-bold">{stock.stockName}</span>
-                        <span className="text-gray-500 text-xs-custom">
-                          {stock.stockCode}
-                        </span>
-                      </div>
-                      <div className="text-sm-custom flex gap-main items-center">
-                        <span
-                          className={clsx(
-                            "text-gray-500 text-sm font-semibold",
-                            (stock.sign === "1" || stock.sign === "2") &&
-                              "text-main-red",
-                            (stock.sign === "4" || stock.sign === "5") &&
-                              "text-main-blue",
-                            stock.sign === "3" && "text-gray-500"
-                          )}
-                        >
-                          {Number(stock.currentPrice).toLocaleString()}
-                        </span>
-
-                        <div className="flex justify-between h-fit">
-                          {(stock.sign === "1" || stock.sign === "2") && (
-                            <UpPrice
-                              change={Number(stock.changeAmount)}
-                              changeRate={Number(stock.changeRate)}
+                      <div className="flex gap-main w-full">
+                        <div className="relative flex items-center justify-center size-[40px] shrink-0">
+                          {stock.stockImage ? (
+                            <Image
+                              src={stock.stockImage}
+                              alt={stock.stockName}
+                              fill
+                              className="rounded-full"
+                              sizes="40px"
                             />
+                          ) : (
+                            <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
+                              <span className="text-main-blue font-semibold">
+                                {stock.stockName[0]}
+                              </span>
+                            </div>
                           )}
-                          {stock.sign === "3" && (
-                            <span className="text-gray-400 font-medium">
-                              {Number(stock.changeAmount)} (
-                              {Number(stock.changeRate)}%)
+                        </div>
+                        <div className="flex flex-col flex-1 truncate">
+                          <div className="text-gray-800 truncate w-full flex items-baseline gap-1">
+                            <span className="font-bold">{stock.stockName}</span>
+                            <span className="text-gray-500 text-xs-custom">
+                              {stock.stockCode}
                             </span>
-                          )}
-                          {(stock.sign === "4" || stock.sign === "5") && (
-                            <DownPrice
-                              change={Number(stock.changeAmount)}
-                              changeRate={Number(stock.changeRate)}
-                            />
-                          )}
+                          </div>
+                          <div className="text-sm-custom flex gap-main items-center">
+                            <span
+                              className={clsx(
+                                "text-gray-500 text-sm font-semibold",
+                                (stock.sign === "1" || stock.sign === "2") &&
+                                  "text-main-red",
+                                (stock.sign === "4" || stock.sign === "5") &&
+                                  "text-main-blue",
+                                stock.sign === "3" && "text-gray-500"
+                              )}
+                            >
+                              {Number(stock.currentPrice).toLocaleString()}
+                            </span>
+
+                            <div className="flex justify-between h-fit">
+                              {(stock.sign === "1" || stock.sign === "2") && (
+                                <UpPrice
+                                  change={Number(stock.changeAmount)}
+                                  changeRate={Number(stock.changeRate)}
+                                />
+                              )}
+                              {stock.sign === "3" && (
+                                <span className="text-gray-400 font-medium">
+                                  {Number(stock.changeAmount)} (
+                                  {Number(stock.changeRate)}%)
+                                </span>
+                              )}
+                              {(stock.sign === "4" || stock.sign === "5") && (
+                                <DownPrice
+                                  change={Number(stock.changeAmount)}
+                                  changeRate={Number(stock.changeRate)}
+                                />
+                              )}
+                            </div>
+                          </div>
                         </div>
+                        <ChevronRight
+                          className="hidden group-hover:block text-main-blue absolute top-1/2 -translate-y-1/2 right-main"
+                          size={20}
+                        />
                       </div>
                     </div>
-                    <ChevronRight
-                      className="hidden group-hover:block text-main-blue absolute top-1/2 -translate-y-1/2 right-main"
-                      size={20}
-                    />
-                  </div>
-                </div>
-              ))}
-          </div>
+                  ))}
+              </div>
 
-          <div className="flex justify-center items-center gap-2 mt-4">
-            <button
-              className="size-[30px] rounded-full flex items-center justify-center bg-gray-200 text-gray-700 disabled:opacity-50"
-              onClick={() => handlePageChange(page - 1)}
-              disabled={page === 1}
-            >
-              <ChevronLeft size={20} />
-            </button>
-            {getPagination(page, totalPage).map((item, idx) =>
-              item === "..." ? (
-                <span key={`ellipsis-${idx}`} className="px-2 text-gray-400">
-                  ...
-                </span>
-              ) : (
+              <div className="flex justify-center items-center gap-2 mt-4">
                 <button
-                  key={`page-${item}`}
-                  className={`size-[30px] rounded-full flex items-center justify-center ${
-                    page === item
-                      ? "bg-main-blue text-white"
-                      : "bg-gray-100 text-gray-700"
-                  }`}
-                  onClick={() => handlePageChange(Number(item))}
+                  className="size-[30px] rounded-full flex items-center justify-center bg-gray-200 text-gray-700 disabled:opacity-50"
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={page === 1 || isStocksLoading}
                 >
-                  {item}
+                  <ChevronLeft size={20} />
                 </button>
-              )
-            )}
-            <button
-              className="size-[30px] rounded-full flex items-center justify-center bg-gray-200 text-gray-700 disabled:opacity-50"
-              onClick={() => handlePageChange(page + 1)}
-              disabled={page === totalPage}
-            >
-              <ChevronRight size={20} />
-            </button>
-          </div>
+                {getPagination(page, totalPage).map((item, idx) =>
+                  item === "..." ? (
+                    <span
+                      key={`ellipsis-${idx}`}
+                      className="px-2 text-gray-400"
+                    >
+                      ...
+                    </span>
+                  ) : (
+                    <button
+                      key={`page-${item}`}
+                      className={`size-[30px] rounded-full flex items-center justify-center ${
+                        page === item
+                          ? "bg-main-blue text-white"
+                          : "bg-gray-100 text-gray-700"
+                      } ${
+                        isStocksLoading ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
+                      onClick={() => handlePageChange(Number(item))}
+                      disabled={isStocksLoading}
+                    >
+                      {item}
+                    </button>
+                  )
+                )}
+                <button
+                  className="size-[30px] rounded-full flex items-center justify-center bg-gray-200 text-gray-700 disabled:opacity-50"
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={page === totalPage || isStocksLoading}
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

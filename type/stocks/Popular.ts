@@ -1,4 +1,4 @@
-interface Popular {
+export interface Popular {
   hts_kor_isnm: string; // 종목명
   mksc_shrn_iscd: string; // 종목코드
   data_rank: string; // 순위
@@ -9,4 +9,13 @@ interface Popular {
   stck_prpr: string; // 현재가
 }
 
-export default Popular;
+export interface TestPopular {
+  stockName: string;
+  stockCode: string;
+  rank: string;
+  price: string;
+  sign: string;
+  changeAmount: string;
+  changeRate: string;
+  stockImage: string | null;
+}

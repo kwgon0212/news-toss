@@ -6,12 +6,14 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
+        // 메인서버
         source: "/proxy/:path*",
         destination: "https://news-toss.click/api/:path*",
       },
       {
-        source: "/test/:path*",
-        destination: "http://3.37.207.16:8000/:path*",
+        // 증권서버
+        source: "/proxy2/:path*",
+        destination: "http://43.201.62.55:8080/api/:path*",
       },
     ];
   },

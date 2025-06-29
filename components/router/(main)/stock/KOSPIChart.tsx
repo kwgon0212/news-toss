@@ -19,6 +19,7 @@ import clsx from "clsx";
 import { KOSPI } from "@/type/stocks/KOSPI";
 import { RefreshCcw } from "lucide-react";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
 
 ChartJS.register(
   LineElement,
@@ -59,13 +60,19 @@ const options: ChartOptions<"line"> = {
   },
 };
 
-const KOSPIChart = ({
-  KOSPIData,
-  error,
-}: {
-  KOSPIData: KOSPI | null;
-  error: string | null;
-}) => {
+const KOSPIChart = () => {
+  const {
+    data: KOSPIData,
+    isLoading,
+    error,
+  } = useQuery<KOSPI>({
+    queryKey: ["kospi"],
+    queryFn: () =>
+      fetch("/proxy2/v2/stocks/indices/KOSPI").then((res) =>
+        res.json().then((data) => data.data)
+      ),
+  });
+
   if (error)
     return (
       <div className="p-4 bg-gray-300 animate-pulse rounded-md text-center">
@@ -73,15 +80,15 @@ const KOSPIChart = ({
       </div>
     );
 
-  if (!KOSPIData) {
+  if (isLoading) {
     return (
-      <div className="p-4 bg-gray-100 animate-pulse rounded-md text-center">
+      <div className="p-4 bg-gray-100 animate-pulse rounded-md text-center min-h-[232px] flex items-center justify-center">
         📈 차트 데이터를 불러오는 중입니다...
       </div>
     );
   }
 
-  if (!KOSPIData) return <div>로딩중...</div>;
+  if (!KOSPIData) return null;
 
   const labels = KOSPIData.indices.map((item) => item.stck_bsop_date);
   const data = {

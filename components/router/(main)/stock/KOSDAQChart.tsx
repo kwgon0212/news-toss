@@ -19,6 +19,7 @@ import clsx from "clsx";
 import { RefreshCcw } from "lucide-react";
 import { toast } from "react-toastify";
 import { KOSDAQ } from "@/type/stocks/KOSDAQ";
+import { useQuery } from "@tanstack/react-query";
 
 ChartJS.register(
   LineElement,
@@ -59,13 +60,19 @@ const options: ChartOptions<"line"> = {
   },
 };
 
-const KOSDAQChart = ({
-  KOSDAQData,
-  error,
-}: {
-  KOSDAQData: KOSDAQ | null;
-  error: string | null;
-}) => {
+const KOSDAQChart = () => {
+  const {
+    data: KOSDAQData,
+    isLoading,
+    error,
+  } = useQuery<KOSDAQ>({
+    queryKey: ["kosdaq"],
+    queryFn: () =>
+      fetch("/proxy2/v2/stocks/indices/KOSDAQ").then((res) =>
+        res.json().then((data) => data.data)
+      ),
+  });
+
   if (error)
     return (
       <div className="p-4 bg-gray-300 animate-pulse rounded-md text-center">
@@ -73,13 +80,15 @@ const KOSDAQChart = ({
       </div>
     );
 
-  if (!KOSDAQData) {
+  if (isLoading) {
     return (
-      <div className="p-4 bg-gray-100 animate-pulse rounded-md text-center">
+      <div className="p-4 bg-gray-100 animate-pulse rounded-md text-center min-h-[232px] flex items-center justify-center">
         📈 차트 데이터를 불러오는 중입니다...
       </div>
     );
   }
+
+  if (!KOSDAQData) return null;
 
   const labels = KOSDAQData.indices.map((item) => item.stck_bsop_date);
   const data = {
