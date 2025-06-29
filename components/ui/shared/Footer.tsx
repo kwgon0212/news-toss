@@ -11,22 +11,21 @@ const Footer = ({ className }: { className?: string }) => {
         className
       )}
     >
-      <div className="flex flex-col items-center gap-main-1/2">
-        <div className="flex items-center gap-2">
+      <div className="font-bold text-lg-custom flex items-center gap-2">
+        <Link href="/news" className="size-[40px] relative">
           <Image
             src="/news-toss-logo.png"
-            alt="NewsToss"
-            width={30}
-            height={30}
+            alt="news-toss-logo"
+            fill
             className="rounded-main"
           />
-          <span className="font-bold text-lg-custom text-gray-800">
-            NewsToss
+        </Link>
+        <div className="flex flex-col">
+          <span className="font-bold text-lg-custom text-black">NewsToss</span>
+          <span className="text-sm-custom text-main-dark-gray">
+            뉴스 너머의 인사이트를 건네다
           </span>
         </div>
-        <span className="text-sm-custom text-gray-400">
-          뉴스 너머의 인사이트를 건네다
-        </span>
       </div>
 
       <nav className="flex gap-6 text-base-custom font-medium">
