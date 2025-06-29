@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import { useRealTimeStock } from "@/hooks/useRealTimeStock";
 import IntervalSelector, {
   IntervalKey,
 } from "@/components/router/(main)/stock/[code]/IntervalSelector";
@@ -13,6 +14,9 @@ const StockDetailPage = () => {
   const params = useParams<{ code: string }>();
   const code = params!.code;
   const [selectedInterval, setSelectedInterval] = useState<IntervalKey>("D");
+
+  // 실시간 주식 데이터
+  const { data: realTimeStock } = useRealTimeStock(code);
 
   // 종목 검색 count 증가
   useEffect(() => {
@@ -34,7 +38,7 @@ const StockDetailPage = () => {
     <div className="grid grid-cols-3 gap-main-2">
       {/* 주식 헤더 */}
       <div className="col-span-3 flex gap-main">
-        <StockHeader code={code} />
+        <StockHeader code={code} realTimeStock={realTimeStock} />
       </div>
 
       {/* 기간 선택 버튼 */}
@@ -47,7 +51,11 @@ const StockDetailPage = () => {
 
       {/* 차트 */}
       <div className="col-span-3 flex flex-col size-full gap-main">
-        <StockChart code={code} selectedInterval={selectedInterval} />
+        <StockChart
+          code={code}
+          selectedInterval={selectedInterval}
+          realTimeData={realTimeStock}
+        />
 
         {/* 뉴스 섹션 */}
         <StockNewsSection stockCode={code} />

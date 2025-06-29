@@ -3,6 +3,7 @@
 import DownPrice from "@/components/ui/shared/DownPrice";
 import UpPrice from "@/components/ui/shared/UpPrice";
 import { useRecentViewStore } from "@/store/useRecentViewStore";
+import { RealTimeStockData } from "@/hooks/useRealTimeStock";
 import clsx from "clsx";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
@@ -18,32 +19,28 @@ function isMarketOpen(now: Date = new Date()) {
   return currentTime >= 900 && currentTime <= 1530; // 09:00 ~ 15:30
 }
 
-const StockHeader = ({ code }: { code: string }) => {
-  const [stock, setStock] = useState<{
-    changeAmount: string;
-    changeRate: string;
-    currentPrice: string;
-    sign: string;
-    stockCode: string;
-    stockName: string;
-    stockImage: string;
-  } | null>(null);
+interface StockHeaderProps {
+  code: string;
+  realTimeStock?: RealTimeStockData;
+}
+
+const StockHeader = ({ code, realTimeStock }: StockHeaderProps) => {
   const [marketOpen, setMarketOpen] = useState(false);
   const { recentViewStocks, setRecentViewStocks } = useRecentViewStore();
 
   useEffect(() => {
-    if (!stock) return;
+    if (!realTimeStock) return;
 
     if (recentViewStocks.some((stock) => stock.stockCode === code)) return;
     setRecentViewStocks([
       ...recentViewStocks,
       {
-        stockImage: stock.stockImage,
-        stockCode: stock.stockCode,
-        stockName: stock.stockName,
+        stockImage: realTimeStock.stockImage,
+        stockCode: realTimeStock.stockCode,
+        stockName: realTimeStock.stockName,
       },
     ]);
-  }, [stock]);
+  }, [realTimeStock, code, recentViewStocks, setRecentViewStocks]);
 
   // 주식장 오픈 여부 체크
   useEffect(() => {
@@ -53,52 +50,30 @@ const StockHeader = ({ code }: { code: string }) => {
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    const fetchStockData = async () => {
-      const res = await fetch(`/proxy/v1/stocks/search?keyword=${code}`);
-      const data: {
-        data: {
-          changeAmount: string;
-          changeRate: string;
-          currentPrice: string;
-          sign: string;
-          stockCode: string;
-          stockName: string;
-          stockImage: string;
-        }[];
-      } = await res.json();
-
-      if (res.ok) {
-        setStock(data.data[0]);
-      }
-    };
-    fetchStockData();
-  }, [code]);
-
-  if (!stock) return null;
+  if (!realTimeStock) return <div>로딩 중...</div>;
 
   return (
     <div className="flex items-center gap-2 w-full">
       <div className="relative flex items-center justify-center size-[40px] shrink-0">
-        {stock.stockImage ? (
+        {realTimeStock.stockImage ? (
           <Image
-            src={stock.stockImage}
-            alt={stock.stockName}
+            src={realTimeStock.stockImage}
+            alt={realTimeStock.stockName}
             fill
             className="rounded-full"
           />
         ) : (
           <div className="bg-main-blue/10 rounded-full size-[40px] shrink-0 flex items-center justify-center">
             <span className="text-main-blue font-semibold">
-              {stock.stockName[0]}
+              {realTimeStock.stockName[0]}
             </span>
           </div>
         )}
       </div>
       <div className="flex flex-col flex-1 truncate text-sm-custom">
         <p className="flex items-center gap-main text-gray-800 truncate w-full">
-          <span className="font-bold">{stock.stockName}</span>
-          <span className="text-gray-400">{stock.stockCode}</span>
+          <span className="font-bold">{realTimeStock.stockName}</span>
+          <span className="text-gray-400">{realTimeStock.stockCode}</span>
           <span
             className={clsx(
               "px-2 py-1 rounded-main font-bold text-sm-custom",
@@ -112,24 +87,25 @@ const StockHeader = ({ code }: { code: string }) => {
         </p>
         <div className="flex items-center gap-main">
           <span className="text-main-dark-gray text-xl-custom font-bold">
-            {Number(stock.currentPrice).toLocaleString()}원
+            {Number(realTimeStock.price).toLocaleString()}원
           </span>
           <div className="flex justify-between h-fit">
-            {(stock.sign === "1" || stock.sign === "2") && (
+            {(realTimeStock.sign === "1" || realTimeStock.sign === "2") && (
               <UpPrice
-                change={Number(stock.changeAmount)}
-                changeRate={Number(stock.changeRate)}
+                change={Number(realTimeStock.changeAmount)}
+                changeRate={Number(realTimeStock.changeRate)}
               />
             )}
-            {stock.sign === "3" && (
+            {realTimeStock.sign === "3" && (
               <span className="text-gray-400 font-medium">
-                {Number(stock.changeAmount)} ({Number(stock.changeRate)}%)
+                {Number(realTimeStock.changeAmount)} (
+                {Number(realTimeStock.changeRate)}%)
               </span>
             )}
-            {(stock.sign === "4" || stock.sign === "5") && (
+            {(realTimeStock.sign === "4" || realTimeStock.sign === "5") && (
               <DownPrice
-                change={Number(stock.changeAmount)}
-                changeRate={Number(stock.changeRate)}
+                change={Number(realTimeStock.changeAmount)}
+                changeRate={Number(realTimeStock.changeRate)}
               />
             )}
           </div>

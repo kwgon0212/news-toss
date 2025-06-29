@@ -12,6 +12,7 @@ import {
   LineSeries,
 } from "lightweight-charts";
 import { IntervalKey } from "./IntervalSelector";
+import { RealTimeStockData } from "@/hooks/useRealTimeStock";
 
 interface StockData {
   stockCode: string;
@@ -42,6 +43,7 @@ interface CandleData {
 interface StockChartProps {
   code: string;
   selectedInterval: IntervalKey;
+  realTimeData?: RealTimeStockData;
 }
 
 function convertStockDataToCandles(stockData: StockData[]): CandleData[] {
@@ -62,7 +64,11 @@ function convertStockDataToCandles(stockData: StockData[]): CandleData[] {
   });
 }
 
-const StockChart = ({ code, selectedInterval }: StockChartProps) => {
+const StockChart = ({
+  code,
+  selectedInterval,
+  realTimeData,
+}: StockChartProps) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const candlestickRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
