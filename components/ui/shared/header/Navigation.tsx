@@ -285,8 +285,11 @@ const Navigation = () => {
             {newsSearchResult.length > 0 && (
               <div className="grid grid-cols-2 gap-main">
                 {newsSearchResult.map((news) => (
-                  <Link
-                    href={`/news/${news.newsId}`}
+                  <button
+                    onClick={() => {
+                      router.push(`/news/${news.newsId}`);
+                      setIsOpenSearchModal(false);
+                    }}
                     className="flex gap-main hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group"
                     key={`main-news-${news.newsId}`}
                   >
@@ -299,7 +302,9 @@ const Navigation = () => {
                       />
                     </div>
                     <div className="w-full flex flex-col justify-around">
-                      <p className="line-clamp-2 font-semibold">{news.title}</p>
+                      <p className="line-clamp-2 font-semibold text-start">
+                        {news.title}
+                      </p>
                       <div className="flex items-center text-main-dark-gray text-xs-custom">
                         <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
                         <span className="text-main-dark-gray">
@@ -309,7 +314,7 @@ const Navigation = () => {
                         </span>
                       </div>
                     </div>
-                  </Link>
+                  </button>
                 ))}
 
                 <span className="col-span-2 text-sm-custom text-main-dark-gray text-center">
@@ -355,7 +360,7 @@ const Navigation = () => {
 
             {stockSearch &&
               stockSearchResult.map((result, idx) => (
-                <div
+                <button
                   className="w-full flex flex-col justify-around hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out p-main gap-[5px] group relative"
                   key={`search-stock-${result}-${idx}`}
                   onClick={() => handleClickSearchResult(result.stockCode)}
@@ -418,7 +423,7 @@ const Navigation = () => {
                       size={20}
                     />
                   </button>
-                </div>
+                </button>
               ))}
 
             {!stockSearch && (
