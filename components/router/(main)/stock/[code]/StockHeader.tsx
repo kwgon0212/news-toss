@@ -33,12 +33,12 @@ const StockHeader = ({ code, realTimeStock }: StockHeaderProps) => {
 
     if (recentViewStocks.some((stock) => stock.stockCode === code)) return;
     setRecentViewStocks([
-      ...recentViewStocks,
       {
         stockImage: realTimeStock.stockImage,
         stockCode: realTimeStock.stockCode,
         stockName: realTimeStock.stockName,
       },
+      ...recentViewStocks,
     ]);
   }, [realTimeStock, code]);
 

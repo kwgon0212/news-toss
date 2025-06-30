@@ -24,7 +24,7 @@ export const useRecentViewStore = create<RecentViewState>((set) => ({
       (stock) => stock && stock.stockCode && stock.stockName
     );
 
-    if (validStocks.length > 5) {
+    if (validStocks.length > 10) {
       validStocks.pop();
     }
     set({ recentViewStocks: validStocks });
