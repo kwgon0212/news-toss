@@ -512,23 +512,40 @@ const messages = [
   { type: "system", text: "NewsToss에 오신 걸 환영해요!" },
   {
     type: "user",
-    text: "정보의 홍수 속에서 주식 투자에 도움이 되는 정보를 찾는 건 쉽지 않아요.",
+    text: (
+      <p>
+        정보의 홍수 속에서 주식 투자에 도움이 되는 정보를 찾는 건 쉽지 않아요.
+      </p>
+    ),
   },
   {
     type: "system",
-    text: `우리는 주식투자자들이 겪는 불편함을 해소하기 위해 \"진짜 정보\"를 선별하는 서비스를 개발하기 위해 모였어요.`,
+    text: (
+      <p>
+        우리는 주식투자자들이 겪는 불편함을 해소하기 위해 <b>진짜 정보</b>를
+        선별하는 서비스를 개발하기 위해 모였어요.
+      </p>
+    ),
   },
   {
     type: "user",
-    text: "우리 팀은 역할에 따라 MLOps와 FullStack으로 나뉘어 있어요.",
+    text: <p>우리 팀은 역할에 따라 MLOps와 FullStack으로 나뉘어 있어요.</p>,
   },
   {
     type: "system",
-    text: "MLOps는 데이터 수집, EDA, 모델 설계 및 배포·운영까지 담당하고 있어요.",
+    text: (
+      <p>
+        MLOps는 데이터 수집, EDA, 모델 설계 및 배포·운영까지 담당하고 있어요.
+      </p>
+    ),
   },
   {
     type: "user",
-    text: "FullStack은 FE(UX/UI 구현), BE(서버, DB 설계 및 관리)를 맡고 있어요!",
+    text: (
+      <p>
+        FullStack은 FE(UX/UI 구현), BE(서버, DB 설계 및 관리)를 맡고 있어요!
+      </p>
+    ),
   },
 ];
 
