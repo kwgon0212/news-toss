@@ -105,6 +105,49 @@ const Chatbot = ({
     });
   };
 
+  const sendMessage = (text: string) => {
+    setIsLoading(true);
+    sseRef.current?.close();
+    manuallyClosedRef.current = false;
+
+    setInput("");
+
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", content: text },
+      { role: "bot", content: "" },
+    ]);
+    botMessageRef.current = "";
+
+    const sse = new EventSource(
+      `https://news-toss.click/api/sse/stream/v2?message=${encodeURIComponent(
+        text
+      )}`
+    );
+
+    sse.addEventListener("chat", (event) => {
+      const parsed = JSON.parse(event.data);
+
+      if (parsed === "[DONE]") {
+        sse.close();
+        setIsLoading(false);
+        return;
+      }
+
+      botMessageRef.current += parsed;
+
+      setMessages((prev) => {
+        const updated = [...prev];
+        const lastIdx = updated.length - 1;
+        updated[lastIdx] = {
+          ...updated[lastIdx],
+          content: botMessageRef.current,
+        };
+        return updated;
+      });
+    });
+  };
+
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -117,7 +160,7 @@ const Chatbot = ({
       <div className="flex items-center gap-main ml-[10px]">
         <div className="relative size-[30px]">
           <Image
-            src={`/news-toss-logo.png`}
+            src={"/news-toss-logo.png"}
             alt="bot"
             fill
             sizes="30px"
@@ -135,7 +178,7 @@ const Chatbot = ({
         <div className="w-full h-full py-main flex flex-col items-center justify-center gap-main mb-main">
           <div className="relative size-[80px]">
             <Image
-              src={`/news.png`}
+              src={"/news.png"}
               alt="news-icon"
               fill
               sizes="100px"
@@ -205,11 +248,13 @@ const Chatbot = ({
               if (e.key === "Enter") {
                 if (enterToSend) {
                   e.preventDefault();
+
                   if (input.trim() && !isLoading) {
-                    handleSend(e as any);
+                    const text = input;
+                    setInput(""); // 👉 먼저 비워주고
+                    sendMessage(text); // 👉 커스텀 함수로 따로 처리
                   }
                 }
-                // enterToSend가 false면 줄넘김
               }
             }}
             placeholder="메시지 입력"
