@@ -75,7 +75,7 @@ export default function LandingPage() {
               </h1>
 
               <p className="text-xl mb-main-3 text-gray-600">
-                인공지능이 분석한 핵심 뉴스와 과거 유사 사례를 제공하여
+                인공지능이 분석한 핵심 뉴스와 과거 유사 뉴스를 제공하여
                 <br />더 현명한 투자 결정을 내릴 수 있도록 도와드립니다.
               </p>
               <MotionLink
@@ -173,9 +173,9 @@ export default function LandingPage() {
                   <span>주요 뉴스 선별</span>
                 </div>
                 <p className="text-xl text-gray-600 text-center">
-                  주가와 연관 있는 뉴스를 AI가 선별하여 보여드립니다.
+                  주가와 연관있는 뉴스를 AI가 선별하여 보여드립니다.
                   <br />
-                  시장에영향을 미치는 핵심 정보만 골라 확인하세요.
+                  시장에 영향을 미치는 핵심 정보만 골라 확인하세요.
                 </p>
               </motion.div>
 
@@ -241,9 +241,9 @@ export default function LandingPage() {
                   <span>개인화 서비스</span>
                 </div>
                 <p className="text-xl text-gray-600 text-center">
-                  포트폴리오를 분석하여 개인의 투자 성향과 보유 종목에 맞는
+                  포트폴리오를 분석하여
                   <br />
-                  맞춤형 뉴스를 제공합니다.
+                  개인의 투자 성향과 보유 종목에 맞는 맞춤형 뉴스를 제공합니다.
                 </p>
               </motion.div>
 
@@ -263,7 +263,7 @@ export default function LandingPage() {
                 <p className="text-xl text-gray-600 text-center">
                   증시 일정을 확인하고
                   <br />
-                  유사한 과거 사례에 대해 챗봇에게 물어볼 수 있습니다.
+                  유사한 과거 뉴스에 대해 챗봇에게 물어볼 수 있습니다.
                 </p>
               </motion.div>
               <motion.div
@@ -303,7 +303,7 @@ export default function LandingPage() {
                 시스템 아키텍처
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                저희 NewsToss 서비스의 시스템 아키텍처를 소개할게요.
+                NewsToss 서비스의 시스템 아키텍처를 소개할게요.
               </p>
             </motion.div>
 
@@ -314,7 +314,7 @@ export default function LandingPage() {
                 viewport={{ once: false }}
                 transition={{ duration: 0.6, delay: 0.6 }}
               >
-                <MacBrowserUI title="Fullstack 시스템 아키텍쳐">
+                <MacBrowserUI title="FullStack 시스템 아키텍처">
                   <div className="w-full h-[500px] relative">
                     <Image
                       src="/landing/fullstack-sys.png"
@@ -379,10 +379,10 @@ export default function LandingPage() {
               viewport={{ once: false }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              회원 또는 비회원 모두 저희 NewsToss 기능을 자유롭게 이용해보실 수
+              회원, 비회원 모두 저희 NewsToss 기능을 자유롭게 이용할 수
               있습니다.
               <br />
-              회원가입 후 바로 사용해 보세요!
+              회원가입 후 바로 사용해보세요!
             </motion.p>
             <motion.div
               className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4"
@@ -516,11 +516,11 @@ const messages = [
   },
   {
     type: "system",
-    text: `저희는 여러분들이 겪는 불편함을 해소하기 위해 \"진짜 정보\"를 선별하는 서비스를 개발하려고 모였어요.`,
+    text: `우리는 주식투자자들이 겪는 불편함을 해소하기 위해 \"진짜 정보\"를 선별하는 서비스를 개발하기 위해 모였어요.`,
   },
   {
     type: "user",
-    text: "저희 팀은 역할에 따라 MLOps와 FullStack으로 나뉘어 있어요.",
+    text: "우리 팀은 역할에 따라 MLOps와 FullStack으로 나뉘어 있어요.",
   },
   {
     type: "system",
@@ -528,7 +528,7 @@ const messages = [
   },
   {
     type: "user",
-    text: "FullStack은 프론트엔드, 백엔드, 데이터 시각화까지 맡고 있어요!",
+    text: "FullStack은 FE(UX/UI 구현), BE(서버, DB 설계 및 관리)를 맡고 있어요!",
   },
 ];
 
