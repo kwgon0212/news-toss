@@ -17,6 +17,7 @@ import Button from "@/components/ui/shared/Button";
 import Tooltip from "@/components/ui/Tooltip";
 import { HelpCircle, Loader2 } from "lucide-react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { StockSearchResult } from "@/type/stocks/StockSearchResult";
 
 ChartJS.register(
   CategoryScale,
@@ -43,9 +44,11 @@ const labels = [
 
 const External = ({
   external,
+  mainStockList,
   selectedNews,
 }: {
   external: NewsExternal;
+  mainStockList: StockSearchResult[];
   selectedNews: News;
 }) => {
   const [selectedType, setSelectedType] =
@@ -103,6 +106,10 @@ const External = ({
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
   });
+
+  console.log("external", external);
+  console.log("pastNewsExternal", pastNewsExternal);
+  console.log("selectedNews", selectedNews);
 
   const dataMap = {
     close: {
@@ -190,7 +197,7 @@ const External = ({
   const pastDataMap = pastNewsExternal
     ? {
         close: {
-          label: "과거 뉴스",
+          label: `과거 뉴스 [ ${selectedNews.stock_list?.[0]?.stock_name} ]`,
           data: [
             pastNewsExternal.dMinus5Close,
             pastNewsExternal.dMinus4Close,
@@ -206,7 +213,7 @@ const External = ({
           color: "#a5b4fc",
         },
         volume: {
-          label: "과거 뉴스",
+          label: `과거 뉴스 [ ${selectedNews.stock_list?.[0]?.stock_name} ]`,
           data: [
             pastNewsExternal.dMinus5Volume,
             pastNewsExternal.dMinus4Volume,
@@ -222,7 +229,7 @@ const External = ({
           color: "#f1a8d1",
         },
         foreign: {
-          label: "과거 뉴스",
+          label: `과거 뉴스 [ ${selectedNews.stock_list?.[0]?.stock_name} ]`,
           data: [
             pastNewsExternal.dMinus5Foreign,
             pastNewsExternal.dMinus4Foreign,
@@ -238,7 +245,7 @@ const External = ({
           color: "#86efac",
         },
         institution: {
-          label: "과거 뉴스",
+          label: `과거 뉴스 [ ${selectedNews.stock_list?.[0]?.stock_name} ]`,
           data: [
             pastNewsExternal.dMinus5Institution,
             pastNewsExternal.dMinus4Institution,
@@ -254,7 +261,7 @@ const External = ({
           color: "#fcd34d",
         },
         individual: {
-          label: "과거 뉴스",
+          label: `과거 뉴스 [ ${selectedNews.stock_list?.[0]?.stock_name} ]`,
           data: [
             pastNewsExternal.dMinus5Individual,
             pastNewsExternal.dMinus4Individual,
@@ -292,7 +299,7 @@ const External = ({
     labels: filteredLabels,
     datasets: [
       {
-        label: "현재 뉴스",
+        label: `현재 뉴스 [ ${mainStockList?.[0]?.stockName} ]`,
         data: filteredCurrentData,
         borderColor: dataMap[selectedType].color,
         backgroundColor: dataMap[selectedType].color,

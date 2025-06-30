@@ -14,6 +14,9 @@ import { formatDate } from "@/utils/formatDate";
 import Chart from "./Chart";
 import NewsModal from "../NewsModal";
 import External from "./External";
+import Button from "@/components/ui/shared/Button";
+import { HighlightText } from "@/components/animate-ui/text/highlight";
+import { SlidingNumber } from "@/components/animate-ui/text/sliding-number";
 
 interface TestProps {
   mainStockList: StockSearchResult[];
@@ -54,6 +57,8 @@ const MetaDataNews = ({
     );
   }
 
+  console.log("relatedNews", relatedNews);
+
   return (
     <div className="size-full flex flex-col gap-main-4">
       <div className="flex flex-col gap-main">
@@ -93,46 +98,43 @@ const MetaDataNews = ({
       </div>
 
       <div className="flex flex-col gap-main">
-        <div className="flex items-center gap-main text-xl-custom">
-          <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
-            유사 뉴스 목록
-          </h2>
-          <Tooltip
-            message="시장 상황을 반영하여 가장 유사한 과거 뉴스를 예측했어요."
-            icon={<HelpCircle size={16} />}
-            position="right"
-          />
-        </div>
-
-        <div className="flex flex-col gap-main">
-          <div className="flex flex-wrap gap-main">
-            {relatedNews.map((news) => (
-              <button
-                key={`related-news-${news.newsId}`}
-                onClick={() => handleNewsChange(news)}
-                className={clsx(
-                  "w-fit rounded-main py-main pl-5 pr-4 flex items-center justify-center gap-2",
-                  selectedNews.newsId === news.newsId
-                    ? "bg-main-blue/20 text-main-blue"
-                    : "bg-main-gray/20 text-main-gray"
-                )}
-              >
-                {news.wdate && formatDate(news.wdate)}
-              </button>
-            ))}
+        <div className="flex items-center text-xl-custom w-full justify-between">
+          <div className="flex items-center gap-main flex-1">
+            <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+              유사 뉴스 목록
+            </h2>
+            <Tooltip
+              message="시장 상황을 반영하여 가장 유사한 과거 뉴스를 예측했어요."
+              icon={<HelpCircle size={16} />}
+              position="right"
+            />
           </div>
-          <p className="text-main-dark-gray text-xs-custom flex items-center gap-1">
-            <Info size={14} />
-            뉴스는 유사도 순으로 정렬되어 있어요.
+          <p className="text-main-dark-gray text-xs-custom flex items-center gap-1 w-fit shrink-0">
+            <Info size={16} className="text-main-dark-gray/50" />
+            <span>뉴스는 유사도 순으로 정렬되어 있어요.</span>
           </p>
         </div>
 
-        <button
-          // href={`/news/${selectedNews.newsId}`}
+        <div className="flex flex-wrap gap-main">
+          {relatedNews.map((news) => (
+            <Button
+              key={`related-news-${news.newsId}`}
+              onClick={() => handleNewsChange(news)}
+              variant={
+                selectedNews.newsId === news.newsId ? "primary" : "ghost"
+              }
+              className="!py-2"
+            >
+              {news.wdate && formatDate(news.wdate)}
+            </Button>
+          ))}
+        </div>
+
+        <div
           onClick={() => {
             setIsOpenPastNewsDetail(true);
           }}
-          className="grid grid-cols-6 gap-main-2 hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group h-[160px] relative group"
+          className="flex flex-col gap-main cursor-pointer hover:bg-main-blue/10 transition-colors duration-300 ease-in-out rounded-main p-main group relative group"
         >
           <div className="absolute flex items-center gap-1 pl-3 pr-2 py-1 rounded-full bg-main-blue top-1/2 -translate-y-1/2 right-main text-white group-hover:opacity-100 opacity-0 duration-500 ease-in-out">
             <span className="font-semibold text-sm-custom whitespace-nowrap">
@@ -140,28 +142,11 @@ const MetaDataNews = ({
             </span>
             <ChevronRight size={14} className="animate-bounce-x" />
           </div>
-          <div className="col-span-2 size-full rounded-main shrink-0 relative">
-            <Image
-              src={selectedNews.press ?? "https://placehold.co/200x150"}
-              alt={`${selectedNews.title}-image`}
-              fill
-              sizes="100%"
-              className="object-cover rounded-main group-hover:scale-102 duration-300 ease-in-out"
-            />
-            <div className="absolute top-0 left-0 size-full bg-black/5 rounded-main group-hover:bg-transparent group-hover:scale-102 duration-300 ease-in-out" />
-          </div>
-          <div className="col-span-4 w-full h-full flex flex-col gap-main justify-around">
-            <div className="flex flex-col gap-1">
-              <span className="font-semibold text-sm-custom text-main-blue bg-main-blue/10 rounded-main px-main py-0.5 w-fit">
-                유사도: {Number(selectedNews.similarity! * 100).toFixed(2)}%
-              </span>
-              <p className="line-clamp-1 font-semibold text-lg-custom text-start">
-                {selectedNews.title}
-              </p>
-              <p className="text-main-dark-gray text-xs-custom line-clamp-3 text-start">
-                {selectedNews.image}
-              </p>
-            </div>
+
+          <div className="w-full h-full flex flex-col gap-main justify-around">
+            <p className="line-clamp-1 font-semibold text-xl-custom text-start">
+              {selectedNews.title}
+            </p>
 
             <div className="flex items-center text-main-dark-gray text-xs-custom">
               <Clock className="h-3 w-3 mr-1 text-main-dark-gray" />
@@ -171,11 +156,58 @@ const MetaDataNews = ({
                 · {selectedNews.article}
               </span>
             </div>
+
+            {selectedNews.stock_list && (
+              <div className="flex flex-wrap gap-main">
+                {selectedNews.stock_list.map((stock) => (
+                  <HighlightText
+                    key={`related-stock-${stock.stock_id}`}
+                    className="text-xl-custom font-semibold text-white"
+                    text={stock.stock_name}
+                    transition={{
+                      duration: 0.4,
+                      ease: "easeOut",
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+
+            <div className="grid grid-cols-5 gap-main">
+              <div className="size-full rounded-main shrink-0 relative col-span-2">
+                <Image
+                  src={selectedNews.press ?? "https://placehold.co/200x150"}
+                  alt={`${selectedNews.title}-image`}
+                  fill
+                  sizes="100%"
+                  className="object-cover rounded-main group-hover:scale-102 duration-300 ease-in-out"
+                />
+                <p className="absolute z-20 group-hover:scale-102 duration-300 ease-in-out flex items-center gap-1 w-fit top-main right-main font-semibold text-sm-custom text-white bg-main-blue rounded-main px-main py-0.5">
+                  유사도 |{" "}
+                  <SlidingNumber
+                    number={Number(selectedNews.similarity! * 100).toFixed(2)}
+                    padStart
+                  />
+                  %
+                </p>
+                <div className="absolute top-0 left-0 size-full bg-black/10 rounded-main group-hover:bg-transparent group-hover:scale-102 duration-300 ease-in-out" />
+              </div>
+              <div className="text-main-dark-gray text-start flex flex-col gap-main shadow-sm rounded-main p-main col-span-3">
+                <span className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
+                  뉴스 요약
+                </span>
+                <p>{selectedNews.image}</p>
+              </div>
+            </div>
           </div>
-        </button>
+        </div>
       </div>
 
-      <External external={external} selectedNews={selectedNews} />
+      <External
+        external={external}
+        mainStockList={mainStockList}
+        selectedNews={selectedNews}
+      />
 
       <NewsModal
         isOpen={isOpenPastNewsDetail}
