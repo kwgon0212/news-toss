@@ -424,25 +424,6 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
           ))
         )}
       </div>
-
-      {/* 참여도 높은 사용자를 위한 특별 메시지 */}
-      {userClickCount >= 20 && (
-        <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-main p-4 border border-purple-200">
-          <div className="flex items-center gap-3">
-            <div className="text-2xl">{userClickCount >= 50 ? "👑" : "💎"}</div>
-            <div>
-              <h3 className="text-lg-custom font-semibold text-purple-800">
-                {userClickCount >= 50 ? "뉴스킹" : "뉴스마스터"}님을 위한 특별
-                혜택!
-              </h3>
-              <p className="text-sm-custom text-purple-600">
-                활발한 뉴스 활동으로 더욱 정확한 맞춤 추천이 가능해졌습니다.
-                앞으로도 양질의 투자 정보를 제공해드리겠습니다! 🎉
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
