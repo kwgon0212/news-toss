@@ -672,11 +672,13 @@ const ResultForm = ({
   token: JwtToken | null;
 }) => {
   useEffect(() => {
-    setInvestScore(selectedAnswer.reduce((acc, curr) => acc + curr, 0));
+    const rawScore = selectedAnswer.reduce((acc, curr) => acc + curr, 0);
+    const convertedScore = Math.round(rawScore / 5);
+    setInvestScore(convertedScore);
   }, [selectedAnswer, setInvestScore]);
 
   const getInvestmentResult = (score: number) => {
-    if (score <= 7) {
+    if (score === 1) {
       return {
         type: "🟦 안전형",
         description: `
@@ -690,7 +692,7 @@ const ResultForm = ({
       금융 상품 가입 전에는 충분한 정보를 검토하고, 전문가의 조언을 참고하는 것이 좋아요.<br/>
         `,
       };
-    } else if (score <= 12) {
+    } else if (score === 2) {
       return {
         type: "🟩 안정추구형",
         description: `
@@ -704,7 +706,7 @@ const ResultForm = ({
       리스크 관리를 위한 분산 투자 전략이 매우 중요합니다.<br/>
         `,
       };
-    } else if (score <= 17) {
+    } else if (score === 3) {
       return {
         type: "🟨 위험중립형",
         description: `
@@ -719,7 +721,7 @@ const ResultForm = ({
       이 성향의 투자자는 종목 선정보다 <b>자산 배분 전략</b>이 핵심입니다.
         `,
       };
-    } else if (score <= 21) {
+    } else if (score === 4) {
       return {
         type: "🟧 적극투자형",
         description: `
@@ -751,13 +753,15 @@ const ResultForm = ({
     }
   };
 
-  const { type, description } = getInvestmentResult(
-    selectedAnswer.reduce((acc, curr) => acc + curr, 0)
-  );
+  const rawScore = selectedAnswer.reduce((acc, curr) => acc + curr, 0);
+  const convertedScore = Math.round(rawScore / 5);
+  const { type, description } = getInvestmentResult(convertedScore);
 
   const handleClose = async () => {
     if (!token) return;
-    const score = selectedAnswer.reduce((acc, curr) => acc + curr, 0);
+    const rawScore = selectedAnswer.reduce((acc, curr) => acc + curr, 0);
+    // 5~25점을 1~5점으로 변환 (총점을 5로 나누어 반올림)
+    const score = Math.round(rawScore / 5);
     const res = await fetch(`/proxy/auth/invest`, {
       method: "POST",
       headers: {

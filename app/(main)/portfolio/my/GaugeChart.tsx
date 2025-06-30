@@ -33,25 +33,23 @@ const GaugeChart = ({ token }: { token: JwtToken | null }) => {
   }, [token, portfolio]);
 
   const dummyData: ChartData<"doughnut"> = {
-    labels: ["공격투자형", "적극투자형", "위험중립형", "안정추구형", "안전형"],
+    labels: ["안전형", "안정추구형", "위험중립형", "적극투자형", "공격투자형"],
     datasets: [
       {
         data: [20, 20, 20, 20, 20], // 총 100 맞추기
         backgroundColor: [
-          "rgba(255, 99, 132, 0.25)",
-          "rgba(54, 162, 235, 0.25)",
-          "rgba(255, 206, 86, 0.25)",
-          "rgba(75, 192, 192, 0.25)",
-          "rgba(153, 102, 255, 0.25)",
-          "rgba(255, 159, 64, 0.25)",
+          "rgba(59, 130, 246, 0.25)", // 안전형 - 파란색
+          "rgba(34, 197, 94, 0.25)", // 안정추구형 - 초록색
+          "rgba(234, 179, 8, 0.25)", // 위험중립형 - 노란색
+          "rgba(249, 115, 22, 0.25)", // 적극투자형 - 주황색
+          "rgba(239, 68, 68, 0.25)", // 공격투자형 - 빨간색
         ],
         borderColor: [
-          "rgba(255, 99, 132, 1)",
-          "rgba(54, 162, 235, 1)",
-          "rgba(255, 206, 86, 1)",
-          "rgba(75, 192, 192, 1)",
-          "rgba(153, 102, 255, 1)",
-          "rgba(255, 159, 64, 1)",
+          "rgba(59, 130, 246, 1)", // 안전형 - 파란색
+          "rgba(34, 197, 94, 1)", // 안정추구형 - 초록색
+          "rgba(234, 179, 8, 1)", // 위험중립형 - 노란색
+          "rgba(249, 115, 22, 1)", // 적극투자형 - 주황색
+          "rgba(239, 68, 68, 1)", // 공격투자형 - 빨간색
         ],
         borderWidth: 0.2,
         borderAlign: "center", // 내부 중심선 기준
@@ -92,11 +90,12 @@ const GaugeChart = ({ token }: { token: JwtToken | null }) => {
     if (!chart) return;
 
     let value = 0;
-    if (investScore <= 7) value = 5;
-    else if (investScore <= 12) value = 28;
-    else if (investScore <= 17) value = 50;
-    else if (investScore <= 21) value = 72;
-    else value = 95;
+    if (investScore === 1) value = 5; // 안전형
+    else if (investScore === 2) value = 28; // 안정추구형
+    else if (investScore === 3) value = 50; // 위험중립형
+    else if (investScore === 4) value = 72; // 적극투자형
+    else if (investScore === 5) value = 95; // 공격투자형
+    else value = 0; // 기본값 (설정되지 않음)
 
     const needle = {
       id: "needle",

@@ -238,22 +238,21 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                     투자성향
                   </p>
 
-                  {otherUserData.invest_score < 7 && (
+                  {otherUserData.invest_score === 1 && (
                     <span className="text-black">안전형</span>
                   )}
-                  {otherUserData.invest_score >= 7 &&
-                    otherUserData.invest_score < 12 && (
-                      <span className="text-black">안정추구형</span>
-                    )}
-                  {otherUserData.invest_score >= 12 &&
-                    otherUserData.invest_score < 17 && (
-                      <span className="text-black">위험중립형</span>
-                    )}
-                  {otherUserData.invest_score >= 17 &&
-                    otherUserData.invest_score < 21 && (
-                      <span className="text-black">적극투자형</span>
-                    )}
-                  {otherUserData.invest_score >= 21 && "공격투자형"}
+                  {otherUserData.invest_score === 2 && (
+                    <span className="text-black">안정추구형</span>
+                  )}
+                  {otherUserData.invest_score === 3 && (
+                    <span className="text-black">위험중립형</span>
+                  )}
+                  {otherUserData.invest_score === 4 && (
+                    <span className="text-black">적극투자형</span>
+                  )}
+                  {otherUserData.invest_score === 5 && (
+                    <span className="text-black">공격투자형</span>
+                  )}
                 </div>
 
                 <div className="col-span-3 flex flex-col gap-main-1/2">

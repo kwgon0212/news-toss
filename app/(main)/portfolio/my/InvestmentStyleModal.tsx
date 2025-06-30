@@ -1,6 +1,7 @@
 "use client";
 
 import Modal from "@/components/ui/Modal";
+import Button from "@/components/ui/shared/Button";
 import { JwtToken } from "@/type/jwt";
 import clsx from "clsx";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -121,7 +122,7 @@ const InvestmentStyleModal = ({
 
         {questionPage === 6 && (
           <ResultForm
-            onClose={onClose}
+            onClose={handleClose}
             selectedAnswer={selectedAnswer}
             setInvestScore={setInvestScore}
             token={token}
@@ -188,16 +189,14 @@ const AcceptForm = ({
       </label>
 
       <div className="flex justify-end">
-        <button
-          className={clsx(
-            "text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-2 py-1 flex items-center gap-1",
-            !isAccept && "text-main-gray bg-main-gray/10"
-          )}
+        <Button
+          variant="ghost"
+          className="w-fit"
           onClick={next}
           disabled={!isAccept}
         >
-          <span>동의</span>
-        </button>
+          동의
+        </Button>
       </div>
     </div>
   );
@@ -217,7 +216,7 @@ const Question1 = ({
       <div className="grid grid-rows-5 gap-main">
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[0] === 1 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -228,7 +227,7 @@ const Question1 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[0] === 2 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -239,7 +238,7 @@ const Question1 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[0] === 3 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -250,7 +249,7 @@ const Question1 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[0] === 4 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -261,7 +260,7 @@ const Question1 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[0] === 5 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -273,14 +272,15 @@ const Question1 = ({
       </div>
 
       <div className="flex justify-end">
-        <button
-          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
+        <Button
+          variant="ghost"
+          className="w-fit flex items-center gap-1"
           onClick={next}
           disabled={selectedAnswer[0] === 0}
         >
           <span>다음</span>
           <ChevronRight size={16} />
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -301,7 +301,7 @@ const Question2 = ({
       <div className="grid grid-rows-5 gap-main">
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[1] === 1 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -312,7 +312,7 @@ const Question2 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[1] === 2 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -323,7 +323,7 @@ const Question2 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[1] === 3 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -334,7 +334,7 @@ const Question2 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[1] === 4 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -345,7 +345,7 @@ const Question2 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[1] === 5 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -357,21 +357,23 @@ const Question2 = ({
       </div>
 
       <div className="flex justify-end">
-        <button
-          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pr-2 pl-1 py-1 flex items-center gap-1"
+        <Button
+          variant="ghost"
+          className="w-fit flex items-center gap-1"
           onClick={prev}
         >
           <ChevronLeft size={16} />
           <span>이전</span>
-        </button>
-        <button
-          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-fit flex items-center gap-1"
           onClick={next}
           disabled={selectedAnswer[1] === 0}
         >
           <span>다음</span>
           <ChevronRight size={16} />
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -392,7 +394,7 @@ const Question3 = ({
       <div className="grid grid-rows-5 gap-main">
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[2] === 1 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -403,7 +405,7 @@ const Question3 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[2] === 2 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -414,7 +416,7 @@ const Question3 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[2] === 3 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -425,7 +427,7 @@ const Question3 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[2] === 4 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -436,7 +438,7 @@ const Question3 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[2] === 5 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -448,21 +450,23 @@ const Question3 = ({
       </div>
 
       <div className="flex justify-end">
-        <button
-          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pr-2 pl-1 py-1 flex items-center gap-1"
+        <Button
+          variant="ghost"
+          className="w-fit flex items-center gap-1"
           onClick={prev}
         >
           <ChevronLeft size={16} />
           <span>이전</span>
-        </button>
-        <button
-          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-fit flex items-center gap-1"
           onClick={next}
           disabled={selectedAnswer[2] === 0}
         >
           <span>다음</span>
           <ChevronRight size={16} />
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -483,7 +487,7 @@ const Question4 = ({
       <div className="grid grid-rows-5 gap-main">
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[3] === 1 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -494,7 +498,7 @@ const Question4 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[3] === 2 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -505,7 +509,7 @@ const Question4 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[3] === 3 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -516,7 +520,7 @@ const Question4 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[3] === 4 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -527,7 +531,7 @@ const Question4 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[3] === 5 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -539,21 +543,23 @@ const Question4 = ({
       </div>
 
       <div className="flex justify-end">
-        <button
-          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pr-2 pl-1 py-1 flex items-center gap-1"
+        <Button
+          variant="ghost"
+          className="w-fit flex items-center gap-1"
           onClick={prev}
         >
           <ChevronLeft size={16} />
           <span>이전</span>
-        </button>
-        <button
-          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-fit flex items-center gap-1"
           onClick={next}
           disabled={selectedAnswer[3] === 0}
         >
           <span>다음</span>
           <ChevronRight size={16} />
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -574,7 +580,7 @@ const Question5 = ({
       <div className="grid grid-rows-5 gap-main">
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[4] === 1 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -585,7 +591,7 @@ const Question5 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[4] === 2 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -596,7 +602,7 @@ const Question5 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[4] === 3 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -607,7 +613,7 @@ const Question5 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[4] === 4 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -618,7 +624,7 @@ const Question5 = ({
         </button>
         <button
           className={clsx(
-            "w-fit hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
+            "hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main px-main py-1 flex items-center gap-1",
             selectedAnswer[4] === 5 && "text-main-blue bg-main-blue/10"
           )}
           onClick={() => {
@@ -630,21 +636,23 @@ const Question5 = ({
       </div>
 
       <div className="flex justify-end">
-        <button
-          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pr-2 pl-1 py-1 flex items-center gap-1"
+        <Button
+          variant="ghost"
+          className="w-fit flex items-center gap-1"
           onClick={prev}
         >
           <ChevronLeft size={16} />
           <span>이전</span>
-        </button>
-        <button
-          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pl-2 pr-1 py-1 flex items-center gap-1"
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-fit flex items-center gap-1"
           onClick={next}
           disabled={selectedAnswer[4] === 0}
         >
           <span>다음</span>
           <ChevronRight size={16} />
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -662,11 +670,14 @@ const ResultForm = ({
   token: JwtToken | null;
 }) => {
   useEffect(() => {
-    setInvestScore(selectedAnswer.reduce((acc, curr) => acc + curr, 0));
+    const rawScore = selectedAnswer.reduce((acc, curr) => acc + curr, 0);
+    // 5-25점을 1-5점으로 변환
+    const convertedScore = Math.round(rawScore / 5);
+    setInvestScore(convertedScore);
   }, [selectedAnswer, setInvestScore]);
 
   const getInvestmentResult = (score: number) => {
-    if (score <= 7) {
+    if (score === 1) {
       return {
         type: "🟦 안전형",
         description: `
@@ -680,7 +691,7 @@ const ResultForm = ({
       금융 상품 가입 전에는 충분한 정보를 검토하고, 전문가의 조언을 참고하는 것이 좋아요.<br/>
         `,
       };
-    } else if (score <= 12) {
+    } else if (score === 2) {
       return {
         type: "🟩 안정추구형",
         description: `
@@ -694,7 +705,7 @@ const ResultForm = ({
       리스크 관리를 위한 분산 투자 전략이 매우 중요합니다.<br/>
         `,
       };
-    } else if (score <= 17) {
+    } else if (score === 3) {
       return {
         type: "🟨 위험중립형",
         description: `
@@ -709,7 +720,7 @@ const ResultForm = ({
       이 성향의 투자자는 종목 선정보다 <b>자산 배분 전략</b>이 핵심입니다.
         `,
       };
-    } else if (score <= 21) {
+    } else if (score === 4) {
       return {
         type: "🟧 적극투자형",
         description: `
@@ -741,13 +752,13 @@ const ResultForm = ({
     }
   };
 
-  const { type, description } = getInvestmentResult(
-    selectedAnswer.reduce((acc, curr) => acc + curr, 0)
-  );
+  const rawScore = selectedAnswer.reduce((acc, curr) => acc + curr, 0);
+  const convertedScore = Math.round(rawScore / 5);
+
+  const { type, description } = getInvestmentResult(convertedScore);
 
   const handleClose = async () => {
     if (!token) return;
-    const score = selectedAnswer.reduce((acc, curr) => acc + curr, 0);
     const res = await fetch(`/proxy/auth/invest`, {
       method: "POST",
       headers: {
@@ -755,15 +766,14 @@ const ResultForm = ({
       },
       body: JSON.stringify({
         memberId: token.memberId,
-        investScore: score,
+        investScore: convertedScore,
       }),
       credentials: "include",
     });
 
     const json = await res.json();
-    console.log(json);
 
-    setInvestScore(score);
+    setInvestScore(convertedScore);
 
     if (!res.ok) {
       toast.error("투자자 성향 분석 결과를 저장하는데 실패했습니다.");
@@ -784,12 +794,13 @@ const ResultForm = ({
       />
 
       <div className="flex justify-end">
-        <button
-          className="text-sm-custom text-main-dark-gray hover:text-main-blue hover:bg-main-blue/10 transition-all duration-300 rounded-main pr-2 pl-1 py-1 flex items-center gap-1"
+        <Button
+          variant="primary"
+          className="w-fit flex items-center gap-1"
           onClick={handleClose}
         >
           <span>확인</span>
-        </button>
+        </Button>
       </div>
     </div>
   );
