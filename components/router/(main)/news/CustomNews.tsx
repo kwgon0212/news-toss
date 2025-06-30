@@ -182,7 +182,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
         </div>
       </div>
 
-      {useOtherUser && (
+      {useOtherUser && otherUserData && (
         <div className="relative group w-fit">
           <p className="text-main-dark-gray/80 hover:text-main-blue transition-colors duration-500 ease-in-out items-center gap-1 w-fit flex cursor-pointer">
             <Info size={16} />
@@ -213,7 +213,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                     자산
                   </p>
                   <p className="font-semibold text-black">
-                    {(otherUserData!.asset / 10000).toFixed(0)}만원
+                    {(otherUserData.asset / 10000).toFixed(0)}만원
                   </p>
                 </div>
 
@@ -223,13 +223,13 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                   </p>
                   <p
                     className={`font-semibold ${
-                      otherUserData!.user_pnl > 0
+                      otherUserData.user_pnl > 0
                         ? "text-main-red"
                         : "text-main-blue"
                     }`}
                   >
-                    {otherUserData!.user_pnl > 0 ? "+" : ""}
-                    {(otherUserData!.user_pnl * 100).toFixed(1)}%
+                    {otherUserData.user_pnl > 0 ? "+" : ""}
+                    {(otherUserData.user_pnl * 100).toFixed(1)}%
                   </p>
                 </div>
 
@@ -238,22 +238,22 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                     투자성향
                   </p>
 
-                  {otherUserData!.invest_score < 7 && (
+                  {otherUserData.invest_score < 7 && (
                     <span className="text-black">안전형</span>
                   )}
-                  {otherUserData!.invest_score >= 7 &&
-                    otherUserData!.invest_score < 12 && (
+                  {otherUserData.invest_score >= 7 &&
+                    otherUserData.invest_score < 12 && (
                       <span className="text-black">안정추구형</span>
                     )}
-                  {otherUserData!.invest_score >= 12 &&
-                    otherUserData!.invest_score < 17 && (
+                  {otherUserData.invest_score >= 12 &&
+                    otherUserData.invest_score < 17 && (
                       <span className="text-black">위험중립형</span>
                     )}
-                  {otherUserData!.invest_score >= 17 &&
-                    otherUserData!.invest_score < 21 && (
+                  {otherUserData.invest_score >= 17 &&
+                    otherUserData.invest_score < 21 && (
                       <span className="text-black">적극투자형</span>
                     )}
-                  {otherUserData!.invest_score >= 21 && "공격투자형"}
+                  {otherUserData.invest_score >= 21 && "공격투자형"}
                 </div>
 
                 <div className="col-span-3 flex flex-col gap-main-1/2">
@@ -261,7 +261,7 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                     이 투자자가 관심있는 종목 리스트
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {otherUserData!.member_stocks.map((stock) => (
+                    {otherUserData.member_stocks.map((stock) => (
                       <Button
                         key={stock.stock_id}
                         variant="primary"
