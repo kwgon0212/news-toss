@@ -178,14 +178,20 @@ export default function OverViewChart() {
 
   if (!forexData) return null;
 
-  const labels = forexData.pastInfo.map((item) => item.stck_bsop_date);
+  const labels = forexData.pastInfo
+    .slice()
+    .reverse()
+    .map((item) => item.stck_bsop_date);
 
   const data = {
     labels,
     datasets: [
       {
         fill: true,
-        data: forexData.pastInfo.map((item) => item.ovrs_nmix_prpr),
+        data: forexData.pastInfo
+          .slice()
+          .reverse()
+          .map((item) => item.ovrs_nmix_prpr),
         borderColor:
           forexData.changeSign === "1" || forexData.changeSign === "2"
             ? "#f04251"

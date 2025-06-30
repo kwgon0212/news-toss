@@ -90,13 +90,19 @@ const KOSDAQChart = () => {
 
   if (!KOSDAQData) return null;
 
-  const labels = KOSDAQData.indices.map((item) => item.stck_bsop_date);
+  const labels = KOSDAQData.indices
+    .slice()
+    .reverse()
+    .map((item) => item.stck_bsop_date);
   const data = {
     labels,
     datasets: [
       {
         fill: true,
-        data: KOSDAQData.indices.map((item) => Number(item.bstp_nmix_prpr)),
+        data: KOSDAQData.indices
+          .slice()
+          .reverse()
+          .map((item) => Number(item.bstp_nmix_prpr)),
         borderColor:
           KOSDAQData.sign === "1" || KOSDAQData.sign === "2"
             ? "#f04251"

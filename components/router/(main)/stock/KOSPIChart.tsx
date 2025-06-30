@@ -90,13 +90,19 @@ const KOSPIChart = () => {
 
   if (!KOSPIData) return null;
 
-  const labels = KOSPIData.indices.map((item) => item.stck_bsop_date);
+  const labels = KOSPIData.indices
+    .slice()
+    .reverse()
+    .map((item) => item.stck_bsop_date);
   const data = {
     labels,
     datasets: [
       {
         fill: true,
-        data: KOSPIData.indices.map((item) => Number(item.bstp_nmix_prpr)),
+        data: KOSPIData.indices
+          .slice()
+          .reverse()
+          .map((item) => Number(item.bstp_nmix_prpr)),
         // data: labels.map(() => faker.number.float({ min: 1500, max: 2000 })),
         borderColor:
           KOSPIData.sign === "1" || KOSPIData.sign === "2"
