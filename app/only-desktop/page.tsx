@@ -47,7 +47,7 @@ const OnlyDesktopPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className="text-3xl-custom font-bold text-center z-20 text-white"
+            className="text-xl-custom font-bold text-center z-20 text-white break-keep"
           >
             데스크탑에서 접속해 주세요
           </motion.h1>
@@ -64,7 +64,7 @@ const OnlyDesktopPage = () => {
               PC(데스크탑) 환경에서만 <br />
               이용하실 수 있습니다.
             </p>
-            <p className="text-base-custom text-white/70 z-20">
+            <p className="text-sm-custom text-white/70 z-20">
               더 넓은 화면에서 쾌적하게 서비스를 이용해 주세요.
             </p>
           </motion.div>
