@@ -102,6 +102,7 @@ const External = ({
       const json = await res.json();
       return json.data as NewsExternal;
     },
+    placeholderData: keepPreviousData,
     staleTime: 0, // 캐싱 비활성화
     gcTime: 0, // 메모리에서 즉시 삭제
   });
