@@ -1,5 +1,6 @@
 "use client";
 
+import { StarsBackground } from "@/components/animate-ui/backgrounds/stars";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import React, { useEffect } from "react";
@@ -20,6 +21,7 @@ const OnlyDesktopPage = () => {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="bg-white px-10 py-14 rounded-2xl shadow-lg flex flex-col items-center gap-6 w-[90%] max-w-md"
       >
+        <StarsBackground className="size-full absolute top-0 left-0" />
         {/* 흔들리는 로고 */}
         <motion.div
           animate={{
@@ -45,7 +47,7 @@ const OnlyDesktopPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.5 }}
-          className="text-2xl-custom font-bold text-main-dark-gray text-center"
+          className="text-2xl-custom font-bold text-center z-20 text-white"
         >
           데스크탑에서 접속해 주세요
         </motion.h1>
@@ -55,13 +57,14 @@ const OnlyDesktopPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.5 }}
-          className="text-center text-main-dark-gray"
+          className="text-center text-white z-20"
         >
           <p className="text-base-custom mb-1">
+            NewsToss는 <br />
             PC(데스크탑) 환경에서만 <br />
             이용하실 수 있습니다.
           </p>
-          <p className="text-sm-custom text-main-dark-gray/70">
+          <p className="text-sm-custom text-white/70 z-20">
             더 넓은 화면에서 쾌적하게 서비스를 이용해 주세요.
           </p>
         </motion.div>
