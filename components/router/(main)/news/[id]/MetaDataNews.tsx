@@ -57,8 +57,6 @@ const MetaDataNews = ({
     );
   }
 
-  console.log("relatedNews", relatedNews);
-
   return (
     <div className="size-full flex flex-col gap-main-4">
       <div className="flex flex-col gap-main">

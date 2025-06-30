@@ -102,14 +102,9 @@ const External = ({
       const json = await res.json();
       return json.data as NewsExternal;
     },
-    placeholderData: keepPreviousData,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    staleTime: 0, // 캐싱 비활성화
+    gcTime: 0, // 메모리에서 즉시 삭제
   });
-
-  console.log("external", external);
-  console.log("pastNewsExternal", pastNewsExternal);
-  console.log("selectedNews", selectedNews);
 
   const dataMap = {
     close: {
