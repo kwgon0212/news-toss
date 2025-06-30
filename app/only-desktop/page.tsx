@@ -4,6 +4,7 @@ import { StarsBackground } from "@/components/animate-ui/backgrounds/stars";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import React, { useEffect } from "react";
+import newsTossLogo from "@/public/news-toss-logo.png";
 
 const OnlyDesktopPage = () => {
   useEffect(() => {
@@ -34,7 +35,7 @@ const OnlyDesktopPage = () => {
             }}
           >
             <Image
-              src="/news-toss-logo.png"
+              src={newsTossLogo}
               alt="news-toss-logo"
               width={100}
               height={100}
