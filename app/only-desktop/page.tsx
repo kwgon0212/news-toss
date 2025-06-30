@@ -1,30 +1,71 @@
-import React from "react";
+"use client";
+
+import { motion } from "framer-motion";
 import Image from "next/image";
-import newsTossLogo from "@/public/news-toss-logo.png";
+import React, { useEffect } from "react";
 
 const OnlyDesktopPage = () => {
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
   return (
-    <div className="w-full h-screen overflow-y-hidden flex flex-col items-center justify-center gap-main-2">
-      <Image
-        src={newsTossLogo}
-        alt="news-toss-logo"
-        width="100"
-        height="100"
-        className="rounded-full"
-      />
+    <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-white to-main-light-gray overflow-y-hidden">
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="bg-white px-10 py-14 rounded-2xl shadow-lg flex flex-col items-center gap-6 w-[90%] max-w-md"
+      >
+        {/* 흔들리는 로고 */}
+        <motion.div
+          animate={{
+            y: [0, -5, 0, 5, 0],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        >
+          <Image
+            src="/news-toss-logo.png"
+            alt="news-toss-logo"
+            width={100}
+            height={100}
+            className="rounded-full shadow-sm"
+          />
+        </motion.div>
 
-      <h1 className="text-2xl-custom font-bold text-main-dark-gray">
-        데스크탑에서 접속해 주세요
-      </h1>
+        {/* 타이틀 */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="text-2xl-custom font-bold text-main-dark-gray text-center"
+        >
+          데스크탑에서 접속해 주세요
+        </motion.h1>
 
-      <div>
-        <p className="text-main-dark-gray text-base-custom text-center mb-2">
-          PC(데스크탑) 환경에서만 이용하실 수 있습니다.
-        </p>
-        <p className="text-main-dark-gray text-sm-custom text-center">
-          더 넓은 화면에서 쾌적하게 서비스를 이용해 주세요.
-        </p>
-      </div>
+        {/* 설명 텍스트 */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+          className="text-center text-main-dark-gray"
+        >
+          <p className="text-base-custom mb-1">
+            PC(데스크탑) 환경에서만 <br />
+            이용하실 수 있습니다.
+          </p>
+          <p className="text-sm-custom text-main-dark-gray/70">
+            더 넓은 화면에서 쾌적하게 서비스를 이용해 주세요.
+          </p>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
