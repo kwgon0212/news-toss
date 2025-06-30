@@ -184,7 +184,7 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
     queryFn: async () => {
       if (!selectedCategory) return { totalPages: 0, stocks: [] };
       const response = await fetch(
-        `/proxy/v1/stocks/categories/${encodeURIComponent(
+        `/proxy2/v2/stocks/category/${encodeURIComponent(
           selectedCategory
         )}?page=${page}`
       );
