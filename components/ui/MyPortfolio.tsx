@@ -66,36 +66,17 @@ const MyPortfolio = ({ token }: { token: JwtToken | null }) => {
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-1">
-                <div className="grid grid-cols-[auto_1fr] gap-1">
-                  <span className="text-gray-500 text-xs-custom">수익</span>
-                  <span
-                    className={clsx(
-                      "text-xs-custom font-semibold",
-                      stock.profitLoss > 0 ? "text-main-red" : "text-main-blue"
-                    )}
-                  >
-                    {stock.profitLoss > 0 ? "+" : "-"}
-                    {stock.profitLoss.toLocaleString()}원
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-[auto_1fr] gap-1">
-                  <span className="text-gray-500 text-xs-custom">수익률</span>
-                  <span
-                    className={clsx(
-                      "text-xs-custom font-semibold",
-                      stock.profitLossRate > 0
-                        ? "text-main-red"
-                        : "text-main-blue"
-                    )}
-                  >
-                    {stock.profitLossRate > 0 ? "+" : "-"}
-                    {stock.profitLossRate.toFixed(2)}%
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-[auto_1fr] gap-1"></div>
+              <div className="grid grid-cols-[auto_1fr] gap-1">
+                <span className="text-gray-500 text-xs-custom">수익</span>
+                <span
+                  className={clsx(
+                    "text-xs-custom font-semibold",
+                    stock.profitLoss > 0 ? "text-main-red" : "text-main-blue"
+                  )}
+                >
+                  {stock.profitLoss.toLocaleString()}원 (
+                  {stock.profitLossRate.toFixed(2)}%)
+                </span>
               </div>
             </div>
           </Link>

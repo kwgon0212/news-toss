@@ -83,7 +83,7 @@ const SearchStock = ({ onSelect }: SearchStockProps) => {
             <>
               {searchResult.map((result, idx) => (
                 <div
-                  className="w-full flex flex-col justify-around hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out p-main gap-[5px] group relative"
+                  className="w-full flex cursor-pointer flex-col justify-around hover:bg-main-blue/10 rounded-main transition-colors duration-200 ease-in-out p-main gap-[5px] group relative"
                   key={`search-stock-${result.stockCode}-${idx}`}
                   onClick={() => {
                     setIsOpen(false);

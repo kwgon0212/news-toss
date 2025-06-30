@@ -8,5 +8,6 @@ export interface PortfolioData {
     currentPrice: number;
     profitLoss: number;
     profitLossRate: number;
-  }[];
+  };
+  totalAsset: number;
 }

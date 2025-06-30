@@ -8,7 +8,7 @@ const MyProfit = ({
   title: string;
   profit: number | null;
 }) => {
-  if (!profit)
+  if (profit === null)
     return (
       <div className="size-full flex flex-col gap-main justify-around rounded-main p-main bg-white">
         <h2 className="text-md font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit text-center">

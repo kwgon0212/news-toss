@@ -4,12 +4,14 @@ import ProfitLossCalendar from "./ProfitLossCalendar";
 import MyAccountChart from "./MyAccountChart";
 import { getJwtToken } from "@/utils/auth";
 import GaugeChart from "./GaugeChart";
+import CheckPortfolio from "./CheckPortfolio";
 
 const MyPortfolioPage = async () => {
   const token = await getJwtToken();
 
   return (
-    <div className="grid grid-cols-10 gap-main-2 max-w-[1200px] mx-auto min-w-[800px] pb-[100px]">
+    <div className="grid grid-cols-10 gap-main-2 max-w-[1200px] mx-auto min-w-[1000px] pb-[100px]">
+      <CheckPortfolio token={token} />
       <div className="col-span-7 flex flex-col gap-main box-content p-main-2 bg-white rounded-main shadow-sm">
         <h2 className="text-2xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent w-fit">
           내 계좌

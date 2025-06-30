@@ -19,6 +19,7 @@ import { faker } from "@faker-js/faker";
 import clsx from "clsx";
 import { JwtToken } from "@/type/jwt";
 import MyProfit from "./MyProfit";
+import Button from "@/components/ui/shared/Button";
 
 ChartJS.register(
   LineElement,
@@ -31,6 +32,7 @@ ChartJS.register(
 
 const chartTypes = [
   { label: "1일", state: "D" },
+  { label: "1주", state: "W" },
   { label: "1개월", state: "M" },
   { label: "3개월", state: "3M" },
   { label: "1년", state: "Y" },
@@ -39,19 +41,12 @@ const chartTypes = [
 type ChartType = (typeof chartTypes)[number]["state"];
 
 interface Asset {
-  todayAsset: number;
-  todayPnl: number;
+  periodAsset: number;
   pnlHistory: {
-    createdDate: string | null;
-    lastModifiedDate: string;
-    id: number;
-    memberId: string;
-    date: string;
+    date: number[]; // [2025, 6, 30] 형태
     asset: number;
     pnl: number;
   }[];
-  pnlPercent: number;
-  periodPnl: number;
 }
 
 const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
@@ -229,7 +224,6 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
       const json = await res.json();
 
       setAsset(json.data);
-      console.log(json.data);
     };
 
     fetchAsset();
@@ -239,39 +233,62 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
     const fetchPnl = async () => {
       if (!token) return null;
 
-      const todayRes = await fetch(
-        `/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=Today`,
-        {
+      // 병렬로 모든 API 호출
+      const pnlPromises = [
+        fetch(`/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=Today`, {
           credentials: "include",
-        }
-      );
-
-      const monthRes = await fetch(
-        `/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=M`,
-        {
+        }),
+        fetch(`/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=M`, {
           credentials: "include",
-        }
-      );
-
-      const totalRes = await fetch(
-        `/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=Total`,
-        {
+        }),
+        fetch(`/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=Total`, {
           credentials: "include",
-        }
-      );
+        }),
+      ];
 
-      if (!todayRes.ok || !monthRes.ok || !totalRes.ok) {
-        console.error("Failed to get pnl", todayRes, monthRes, totalRes);
-        return null;
+      const results = await Promise.allSettled(pnlPromises);
+
+      // Today PnL 처리
+      try {
+        if (results[0].status === "fulfilled" && results[0].value.ok) {
+          const todayJson = await results[0].value.json();
+          setTodayPnl(todayJson.data.pnl);
+        } else {
+          console.error("Failed to get today pnl", results[0]);
+          setTodayPnl(0);
+        }
+      } catch (error) {
+        console.error("Error processing today pnl", error);
+        setTodayPnl(0);
       }
 
-      const todayJson = await todayRes.json();
-      const monthJson = await monthRes.json();
-      const totalJson = await totalRes.json();
+      // Month PnL 처리
+      try {
+        if (results[1].status === "fulfilled" && results[1].value.ok) {
+          const monthJson = await results[1].value.json();
+          setPeriodPnl(monthJson.data.pnl);
+        } else {
+          console.error("Failed to get month pnl", results[1]);
+          setPeriodPnl(0);
+        }
+      } catch (error) {
+        console.error("Error processing month pnl", error);
+        setPeriodPnl(0);
+      }
 
-      setTodayPnl(todayJson.data.pnl);
-      setPeriodPnl(monthJson.data.pnl);
-      setTotalPnl(totalJson.data.pnl);
+      // Total PnL 처리
+      try {
+        if (results[2].status === "fulfilled" && results[2].value.ok) {
+          const totalJson = await results[2].value.json();
+          setTotalPnl(totalJson.data.pnl);
+        } else {
+          console.error("Failed to get total pnl", results[2]);
+          setTotalPnl(0);
+        }
+      } catch (error) {
+        console.error("Error processing total pnl", error);
+        setTotalPnl(0);
+      }
     };
 
     fetchPnl();
@@ -338,7 +355,12 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
       </div>
     );
 
-  const labels = asset.pnlHistory.map((p) => p.date);
+  const labels = asset.pnlHistory.map((p) => {
+    const [year, month, day] = p.date;
+    return `${year}-${month.toString().padStart(2, "0")}-${day
+      .toString()
+      .padStart(2, "0")}`;
+  });
 
   const data = {
     labels,
@@ -378,41 +400,56 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
 
   return (
     <div className="size-full flex flex-col gap-main">
-      <div className="grid grid-cols-[auto_1px_auto] gap-main">
+      <div className="grid grid-cols-[auto_1px_1fr] gap-main">
         <div className="flex flex-col gap-main items-start">
           <div className="flex gap-2 items-baseline">
             <span className="text-lg-custom font-semibold">
-              {asset.todayAsset.toLocaleString()}원
+              {(asset.pnlHistory.length > 0
+                ? asset.pnlHistory[asset.pnlHistory.length - 1].asset
+                : 0
+              ).toLocaleString()}
+              원
             </span>
             <span
               className={clsx(
                 "text-xs-custom font-semibold",
-                asset.pnlPercent > 0 ? "text-main-red" : "text-main-blue"
+                asset.pnlHistory.length > 0 &&
+                  asset.pnlHistory[asset.pnlHistory.length - 1].pnl > 0
+                  ? "text-main-red"
+                  : "text-main-blue"
               )}
             >
               {chartType === "D" && "어제보다"}
+              {chartType === "W" && "지난주보다"}
               {chartType === "M" && "지난달보다"}
               {chartType === "3M" && "지난 3개월보다"}
               {chartType === "Y" && "작년보다"}{" "}
-              {asset.pnlPercent > 0 ? "+" : ""}
-              {asset.pnlPercent.toFixed(2)}%
+              {asset.pnlHistory.length > 0 &&
+              asset.pnlHistory[asset.pnlHistory.length - 1].pnl > 0
+                ? "+"
+                : ""}
+              {asset.pnlHistory.length > 0 &&
+              asset.pnlHistory[asset.pnlHistory.length - 1].asset > 0
+                ? (
+                    (asset.pnlHistory[asset.pnlHistory.length - 1].pnl /
+                      asset.pnlHistory[asset.pnlHistory.length - 1].asset) *
+                    100
+                  ).toFixed(2)
+                : "0.00"}
+              %
             </span>
           </div>
 
-          <nav className="flex gap-main h-fit">
+          <nav className="flex gap-main-1/2 h-fit">
             {chartTypes.map((type) => (
-              <button
+              <Button
                 key={type.state}
-                className={clsx(
-                  "px-main-2 py-2 rounded-main transition-colors",
-                  chartType === type.state
-                    ? "bg-main-blue/20 text-main-blue"
-                    : "hover:bg-main-dark-gray/20 text-main-dark-gray"
-                )}
+                variant={chartType === type.state ? "primary" : "ghost"}
+                className="!rounded-full"
                 onClick={() => setChartType(type.state)}
               >
                 {type.label}
-              </button>
+              </Button>
             ))}
           </nav>
         </div>

@@ -13,14 +13,18 @@ export interface Portfolio {
 
 interface PortfolioStore {
   portfolio: Portfolio[];
+  isLoading: boolean;
   setPortfolio: (portfolio: Portfolio[]) => void;
+  setIsLoading: (isLoading: boolean) => void;
   // addPortfolio: (portfolio: Portfolio) => void;
   // removePortfolio: (portfolio: Portfolio) => void;
 }
 
 export const usePortfolioStore = create<PortfolioStore>((set) => ({
   portfolio: [],
+  isLoading: true, // 초기값은 로딩 중
   setPortfolio: (portfolio) => set({ portfolio }),
+  setIsLoading: (isLoading) => set({ isLoading }),
   // addPortfolio: (portfolio) =>
   //   set((state) => ({ portfolio: [...state.portfolio, portfolio] })),
   // removePortfolio: (portfolio) =>

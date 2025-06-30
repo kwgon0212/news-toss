@@ -45,6 +45,7 @@ const ProfitLossCalendar = ({ token }: { token: JwtToken | null }) => {
 
   if (pnl) {
     console.log("날짜", new Date(pnl[0].date));
+    console.log("pnl", pnl);
   }
 
   if (!pnl || pnl.length === 0)

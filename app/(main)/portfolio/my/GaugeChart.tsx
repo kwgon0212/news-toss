@@ -12,7 +12,6 @@ import {
 import { Doughnut } from "react-chartjs-2";
 import { useEffect, useRef, useState } from "react";
 import { ChevronRight } from "lucide-react";
-import { driver } from "driver.js";
 import InvestmentStyleModal from "./InvestmentStyleModal";
 import { JwtToken } from "@/type/jwt";
 import { usePortfolioStore } from "@/store/usePortfolio";
@@ -152,47 +151,6 @@ const GaugeChart = ({ token }: { token: JwtToken | null }) => {
 
     chart.update();
   }, [investScore]);
-
-  useEffect(() => {
-    if (!token) return;
-    if (!portfolio) return;
-
-    const steps = [];
-
-    if (investScore === 0) {
-      steps.push({
-        element: "#investment-style",
-        popover: {
-          title: "투자성향 설정",
-          description: "설문을 통해 본인의 투자성향을 설정해주세요",
-        },
-      });
-    }
-
-    if (portfolio.length === 0) {
-      steps.push({
-        element: "#add-holding",
-        popover: {
-          title: "보유 종목 추가",
-          description: "갖고 계신 보유 종목을 추가해주세요",
-        },
-      });
-    }
-
-    const driverObj = driver({
-      showProgress: true,
-      steps,
-      stagePadding: 5,
-      allowClose: false,
-      nextBtnText: "다음",
-      prevBtnText: "이전",
-      doneBtnText: "완료",
-    });
-
-    driverObj.drive();
-
-    return () => driverObj.destroy();
-  }, [portfolio, investScore]);
 
   if (token && investScore === 0)
     return (

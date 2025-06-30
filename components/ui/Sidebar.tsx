@@ -20,7 +20,7 @@ type Category = "내 투자" | "관심" | "최근 본" | null;
 const Sidebar = ({ token }: { token: JwtToken | null }) => {
   const { isOpen, toggle, open, close } = useSidebarStore();
   const { setScraps } = useScrapStore();
-  const { setPortfolio } = usePortfolioStore();
+  const { setPortfolio, setIsLoading } = usePortfolioStore();
   const [category, setCategory] = useState<Category>(null);
 
   useEffect(() => {
@@ -50,19 +50,34 @@ const Sidebar = ({ token }: { token: JwtToken | null }) => {
   useEffect(() => {
     if (token) {
       const fetchPortfolio = async () => {
-        const res = await fetch(`/proxy/v1/portfolios/${token.memberId}`);
+        setIsLoading(true);
 
-        if (!res.ok) {
-          setPortfolio([]);
-          return;
+        try {
+          const res = await fetch(`/proxy/v1/portfolios/${token.memberId}`);
+
+          if (!res.ok) {
+            setPortfolio([]);
+            return;
+          }
+
+          const json: { data: { portfolioStocks: Portfolio[] } | null } =
+            await res.json();
+
+          // data가 null이거나 portfolioStocks가 없는 경우 빈 배열 설정
+          if (!json.data || !json.data.portfolioStocks) {
+            setPortfolio([]);
+            return;
+          }
+
+          setPortfolio(json.data.portfolioStocks);
+        } finally {
+          setIsLoading(false);
         }
-
-        const json: { data: { portfolioStocks: Portfolio[] } } =
-          await res.json();
-
-        setPortfolio(json.data.portfolioStocks);
       };
       fetchPortfolio();
+    } else {
+      // 토큰이 없으면 로딩 상태를 false로 설정
+      setIsLoading(false);
     }
   }, [token]);
 
