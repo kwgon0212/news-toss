@@ -160,7 +160,7 @@ const MetaDataNews = ({
                 {selectedNews.stock_list.map((stock) => (
                   <HighlightText
                     key={`related-stock-${stock.stock_id}`}
-                    className="text-xl-custom font-semibold text-white"
+                    className="text-xl-custom font-semibold text-white w-fit"
                     text={stock.stock_name}
                     transition={{
                       duration: 0.4,
@@ -213,32 +213,6 @@ const MetaDataNews = ({
         newsId={selectedNews.newsId}
         newsSummary={selectedNews.summary || null}
       />
-
-      {/* <div className="flex-1 size-full">
-        <div className="flex items-center gap-main text-xl">
-          <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
-            관련 종목
-          </h2>
-          <Tooltip
-            message="현재 뉴스와 관련된 종목 리스트에요."
-            icon={<HelpCircle size={16} />}
-            position="right"
-          />
-        </div>
-
-        <div className="grid grid-cols-5 gap-main-2 h-full">
-          {relatedStockList.length === 0 && (
-            <div className="col-span-5 flex items-center justify-center text-center text-main-dark-gray text-sm-custom py-main-2">
-              관련 종목이 없어요.
-            </div>
-          )}
-          {relatedStockList.map((stock) => (
-            <div key={`related-stock-${stock.stockCode}`}>
-              {stock.stockName}
-            </div>
-          ))}
-        </div>
-      </div> */}
     </div>
   );
 };
