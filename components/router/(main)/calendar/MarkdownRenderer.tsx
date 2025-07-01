@@ -39,9 +39,6 @@ const MarkdownRenderer = ({ message }: { message: string }) => {
     renderMarkdown();
   }, [message]);
 
-  console.log(html);
-  console.log(message);
-
   return (
     <div
       className="font-[inherit] max-w-[80%] w-fit bg-gray-100 px-3 py-2 rounded-main break-keep overflow-x-hidden"

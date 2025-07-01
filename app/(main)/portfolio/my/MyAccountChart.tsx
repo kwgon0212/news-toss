@@ -21,6 +21,7 @@ import clsx from "clsx";
 import { JwtToken } from "@/type/jwt";
 import MyProfit from "./MyProfit";
 import Button from "@/components/ui/shared/Button";
+import { usePortfolioStore } from "@/store/usePortfolio";
 
 ChartJS.register(
   LineElement,
@@ -54,6 +55,14 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
   const [chartType, setChartType] = useState<ChartType>("W");
   const [dummyData, setDummyData] = useState<ChartData<"line"> | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  // 포트폴리오 스토어에서 현재 보유 종목 데이터 가져오기
+  const { portfolio } = usePortfolioStore();
+
+  // 현재 포트폴리오 총 평가금액 계산
+  const currentPortfolioValue = portfolio.reduce((total, stock) => {
+    return total + stock.currentPrice * stock.stockCount;
+  }, 0);
 
   // Asset 데이터 (차트 타입에 따라 변경)
   const { data: asset } = useQuery({
@@ -128,8 +137,6 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
     staleTime: 0, // 캐싱 없음
     gcTime: 0, // 즉시 가비지 컬렉션
   });
-
-  console.log("chartType", chartType, asset);
 
   const options: ChartOptions<"line"> = {
     responsive: true,
@@ -331,27 +338,11 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
       .padStart(2, "0")}`;
   });
 
-  // 차트 데이터 생성 (마지막이 오늘이면 실시간 손익 반영)
+  // 차트 데이터 생성 (마지막 포인트는 현재 포트폴리오 평가금액)
   const chartData = sortedPnlHistory.map((p, index) => {
-    // 마지막 데이터가 오늘 날짜인지 확인
-    const today = new Date();
-    const [year, month, day] = p.date;
-    const dataDate = new Date(year, month - 1, day);
-    const isToday =
-      dataDate.getFullYear() === today.getFullYear() &&
-      dataDate.getMonth() === today.getMonth() &&
-      dataDate.getDate() === today.getDate();
-
-    // 마지막 데이터이면서 오늘 날짜인 경우
-    if (
-      index === sortedPnlHistory.length - 1 &&
-      isToday &&
-      todayPnl !== undefined
-    ) {
-      // 이전 날의 자산 + 오늘 당일 손익
-      const previousAsset =
-        index > 0 ? sortedPnlHistory[index - 1].asset : p.asset;
-      return previousAsset + todayPnl;
+    // 마지막 데이터인 경우 현재 포트폴리오 평가금액 사용
+    if (index === sortedPnlHistory.length - 1) {
+      return currentPortfolioValue;
     }
 
     return p.asset;
@@ -399,30 +390,7 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
         <div className="flex flex-col gap-main items-start">
           <div className="flex gap-2 items-baseline">
             <span className="text-lg-custom font-semibold">
-              {(() => {
-                if (sortedPnlHistory.length === 0) return "0";
-
-                const lastData = sortedPnlHistory[sortedPnlHistory.length - 1];
-                const today = new Date();
-                const [year, month, day] = lastData.date;
-                const dataDate = new Date(year, month - 1, day);
-                const isToday =
-                  dataDate.getFullYear() === today.getFullYear() &&
-                  dataDate.getMonth() === today.getMonth() &&
-                  dataDate.getDate() === today.getDate();
-
-                // 마지막 데이터가 오늘이고 todayPnl이 있으면 실시간 자산 계산
-                if (isToday && todayPnl !== undefined) {
-                  const previousAsset =
-                    sortedPnlHistory.length > 1
-                      ? sortedPnlHistory[sortedPnlHistory.length - 2].asset
-                      : lastData.asset;
-                  return (previousAsset + todayPnl).toLocaleString();
-                }
-
-                return lastData.asset.toLocaleString();
-              })()}
-              원
+              {currentPortfolioValue.toLocaleString()}원
             </span>
             <span
               className={clsx(

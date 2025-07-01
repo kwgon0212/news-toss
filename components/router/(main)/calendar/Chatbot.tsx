@@ -37,6 +37,7 @@ const Chatbot = ({
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const [enterToSend, setEnterToSend] = useState(false);
+  const [isComposing, setIsComposing] = useState(false);
 
   // localStorage에서 enterToSend 설정 불러오기
   useEffect(() => {
@@ -244,9 +245,11 @@ const Chatbot = ({
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            onCompositionStart={() => setIsComposing(true)}
+            onCompositionEnd={() => setIsComposing(false)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                if (enterToSend) {
+                if (enterToSend && !isComposing) {
                   e.preventDefault();
 
                   if (input.trim() && !isLoading) {
