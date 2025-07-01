@@ -15,8 +15,8 @@ import Chart from "./Chart";
 import NewsModal from "../NewsModal";
 import External from "./External";
 import Button from "@/components/ui/shared/Button";
-import { HighlightText } from "@/components/animate-ui/text/highlight";
 import { SlidingNumber } from "@/components/animate-ui/text/sliding-number";
+import { WritingText } from "@/components/animate-ui/text/writing";
 
 interface TestProps {
   mainStockList: StockSearchResult[];
@@ -158,10 +158,12 @@ const MetaDataNews = ({
             {selectedNews.stock_list && (
               <div className="flex flex-wrap gap-main">
                 {selectedNews.stock_list.map((stock) => (
-                  <HighlightText
+                  <WritingText
                     key={`related-stock-${stock.stock_id}`}
-                    className="text-xl-custom font-semibold text-white w-fit"
                     text={stock.stock_name}
+                    isGradient
+                    className="text-lg-custom font-bold"
+                    spacing={5}
                     transition={{
                       duration: 0.4,
                       ease: "easeOut",
