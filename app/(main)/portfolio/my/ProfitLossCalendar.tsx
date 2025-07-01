@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Calendar from "react-calendar";
+import { useQuery } from "@tanstack/react-query";
 import "./calendar.css";
 import { JwtToken } from "@/type/jwt";
 import clsx from "clsx";
@@ -18,73 +19,43 @@ interface Pnl {
 
 const ProfitLossCalendar = ({ token }: { token: JwtToken | null }) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [pnl, setPnl] = useState<Pnl[] | null>(null);
-  const [todayPnl, setTodayPnl] = useState<number | null>(null);
 
-  useEffect(() => {
-    const fetchPnl = async () => {
-      if (!token) return null;
+  // 연간 PnL 데이터
+  const { data: pnl } = useQuery({
+    queryKey: ["yearlyPnl", token?.memberId],
+    queryFn: async () => {
+      if (!token) throw new Error("No token");
+      const res = await fetch(
+        `/proxy/v1/portfolios/asset/${token.memberId}?period=Y`,
+        { credentials: "include" }
+      );
+      if (!res.ok) throw new Error("Failed to get yearly pnl");
+      const json = await res.json();
+      return json.data.pnlHistory as Pnl[];
+    },
+    enabled: !!token,
+    staleTime: 0, // 캐싱 없음
+    gcTime: 0, // 즉시 가비지 컬렉션
+  });
 
-      try {
-        // 연간 PnL 데이터 가져오기
-        const yearRes = await fetch(
-          `/proxy/v1/portfolios/asset/${token.memberId}?period=Y`,
-          {
-            credentials: "include",
-          }
-        );
-
-        if (yearRes.ok) {
-          const yearJson = await yearRes.json();
-          setPnl(yearJson.data.pnlHistory);
-        } else {
-          console.error("Failed to get yearly pnl", yearRes);
-        }
-
-        // 오늘 PnL 데이터 가져오기
-        const todayRes = await fetch(
-          `/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=Today`,
-          {
-            credentials: "include",
-          }
-        );
-
-        if (todayRes.ok) {
-          const todayJson = await todayRes.json();
-          setTodayPnl(todayJson.data.pnl);
-        } else {
-          console.error("Failed to get today pnl", todayRes);
-        }
-      } catch (error) {
-        console.error("Error fetching PnL data:", error);
-      }
-    };
-
-    fetchPnl();
-
-    // 오늘 데이터만 1분마다 업데이트
-    const interval = setInterval(async () => {
-      if (!token) return;
-
-      try {
-        const todayRes = await fetch(
-          `/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=Today`,
-          {
-            credentials: "include",
-          }
-        );
-
-        if (todayRes.ok) {
-          const todayJson = await todayRes.json();
-          setTodayPnl(todayJson.data.pnl);
-        }
-      } catch (error) {
-        console.error("Error updating today PnL:", error);
-      }
-    }, 60000); // 1분마다
-
-    return () => clearInterval(interval);
-  }, [token]);
+  // Today PnL (20초마다 폴링) - MyAccountChart와 동일한 queryKey 사용
+  const { data: todayPnl } = useQuery({
+    queryKey: ["todayPnl", token?.memberId],
+    queryFn: async () => {
+      if (!token) throw new Error("No token");
+      const res = await fetch(
+        `/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=Today`,
+        { credentials: "include" }
+      );
+      if (!res.ok) throw new Error("Failed to get today pnl");
+      const json = await res.json();
+      return json.data.pnl as number;
+    },
+    enabled: !!token,
+    refetchInterval: 20000, // 20초마다
+    staleTime: 0, // 캐싱 없음
+    gcTime: 0, // 즉시 가비지 컬렉션
+  });
 
   if (!pnl || pnl.length === 0)
     return (
@@ -162,7 +133,7 @@ const ProfitLossCalendar = ({ token }: { token: JwtToken | null }) => {
           date.getDate() === today.getDate();
 
         // 오늘 날짜인 경우 todayPnl 사용
-        if (isToday && todayPnl !== null) {
+        if (isToday && todayPnl !== undefined) {
           return (
             <div className="w-full flex flex-col items-center">
               <span

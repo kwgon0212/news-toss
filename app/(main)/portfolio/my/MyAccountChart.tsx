@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
+import { useQuery } from "@tanstack/react-query";
 import { PortfolioData } from "@/type/portfolio";
 import {
   Chart as ChartJS,
@@ -51,13 +52,81 @@ interface Asset {
 
 const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
   const [chartType, setChartType] = useState<ChartType>("D");
-  const [asset, setAsset] = useState<Asset | null>(null);
   const [dummyData, setDummyData] = useState<ChartData<"line"> | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  const [todayPnl, setTodayPnl] = useState<number | null>(null);
-  const [periodPnl, setPeriodPnl] = useState<number | null>(null);
-  const [totalPnl, setTotalPnl] = useState<number | null>(null);
+  // Asset 데이터 (차트 타입에 따라 변경)
+  const { data: asset } = useQuery({
+    queryKey: ["portfolioAsset", token?.memberId, chartType],
+    queryFn: async () => {
+      if (!token) throw new Error("No token");
+      const res = await fetch(
+        `/proxy/v1/portfolios/asset/${token.memberId}?period=${chartType}`,
+        { credentials: "include" }
+      );
+      if (!res.ok) throw new Error("Failed to get asset data");
+      const json = await res.json();
+      return json.data as Asset;
+    },
+    enabled: !!token,
+    staleTime: 0, // 캐싱 없음
+    gcTime: 0, // 즉시 가비지 컬렉션
+  });
+
+  // Today PnL (20초마다 폴링)
+  const { data: todayPnl } = useQuery({
+    queryKey: ["todayPnl", token?.memberId],
+    queryFn: async () => {
+      if (!token) throw new Error("No token");
+      const res = await fetch(
+        `/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=Today`,
+        { credentials: "include" }
+      );
+      if (!res.ok) throw new Error("Failed to get today pnl");
+      const json = await res.json();
+      return json.data.pnl as number;
+    },
+    enabled: !!token,
+    refetchInterval: 20000, // 20초마다
+    staleTime: 0, // 캐싱 없음
+    gcTime: 0, // 즉시 가비지 컬렉션
+  });
+
+  // Month PnL (초기 로드만)
+  const { data: periodPnl } = useQuery({
+    queryKey: ["monthPnl", token?.memberId],
+    queryFn: async () => {
+      if (!token) throw new Error("No token");
+      const res = await fetch(
+        `/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=M`,
+        { credentials: "include" }
+      );
+      if (!res.ok) throw new Error("Failed to get month pnl");
+      const json = await res.json();
+      return json.data.pnl as number;
+    },
+    enabled: !!token,
+    staleTime: 0, // 캐싱 없음
+    gcTime: 0, // 즉시 가비지 컬렉션
+  });
+
+  // Total PnL (초기 로드만)
+  const { data: totalPnl } = useQuery({
+    queryKey: ["totalPnl", token?.memberId],
+    queryFn: async () => {
+      if (!token) throw new Error("No token");
+      const res = await fetch(
+        `/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=Total`,
+        { credentials: "include" }
+      );
+      if (!res.ok) throw new Error("Failed to get total pnl");
+      const json = await res.json();
+      return json.data.pnl as number;
+    },
+    enabled: !!token,
+    staleTime: 0, // 캐싱 없음
+    gcTime: 0, // 즉시 가비지 컬렉션
+  });
 
   const hoverPlugin = {
     id: "hoverFill",
@@ -204,97 +273,6 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
     };
     setDummyData(data);
   }, []);
-
-  useEffect(() => {
-    const fetchAsset = async () => {
-      if (!token) return null;
-
-      const res = await fetch(
-        `/proxy/v1/portfolios/asset/${token.memberId}?period=${chartType}`,
-        {
-          credentials: "include",
-        }
-      );
-
-      if (!res.ok) {
-        console.error("Failed to get test", res);
-        return null;
-      }
-
-      const json = await res.json();
-
-      setAsset(json.data);
-    };
-
-    fetchAsset();
-  }, [token, chartType]);
-
-  useEffect(() => {
-    const fetchPnl = async () => {
-      if (!token) return null;
-
-      // 병렬로 모든 API 호출
-      const pnlPromises = [
-        fetch(`/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=Today`, {
-          credentials: "include",
-        }),
-        fetch(`/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=M`, {
-          credentials: "include",
-        }),
-        fetch(`/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=Total`, {
-          credentials: "include",
-        }),
-      ];
-
-      console.log("token memberId", token.memberId);
-
-      const results = await Promise.allSettled(pnlPromises);
-
-      // Today PnL 처리
-      try {
-        if (results[0].status === "fulfilled" && results[0].value.ok) {
-          const todayJson = await results[0].value.json();
-          setTodayPnl(todayJson.data.pnl);
-        } else {
-          console.error("Failed to get today pnl", results[0]);
-          setTodayPnl(0);
-        }
-      } catch (error) {
-        console.error("Error processing today pnl", error);
-        setTodayPnl(0);
-      }
-
-      // Month PnL 처리
-      try {
-        if (results[1].status === "fulfilled" && results[1].value.ok) {
-          const monthJson = await results[1].value.json();
-          setPeriodPnl(monthJson.data.pnl);
-        } else {
-          console.error("Failed to get month pnl", results[1]);
-          setPeriodPnl(0);
-        }
-      } catch (error) {
-        console.error("Error processing month pnl", error);
-        setPeriodPnl(0);
-      }
-
-      // Total PnL 처리
-      try {
-        if (results[2].status === "fulfilled" && results[2].value.ok) {
-          const totalJson = await results[2].value.json();
-          setTotalPnl(totalJson.data.pnl);
-        } else {
-          console.error("Failed to get total pnl", results[2]);
-          setTotalPnl(0);
-        }
-      } catch (error) {
-        console.error("Error processing total pnl", error);
-        setTotalPnl(0);
-      }
-    };
-
-    fetchPnl();
-  }, [token]);
 
   if (!asset)
     return (
@@ -467,7 +445,7 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
             title="총 누적 손익"
             profit={asset.pnlHistory.reduce((acc, curr) => acc + curr.pnl, 0)}
           /> */}
-          <MyProfit title="당일 손익" profit={todayPnl} />
+          <MyProfit title="당일 손익" profit={todayPnl ?? null} />
           <MyProfit
             title="월 누적 손익"
             profit={(periodPnl ?? 0) + (todayPnl ?? 0)}
