@@ -25,6 +25,7 @@ const nextConfig: NextConfig = {
       "ssl.pstatic.net",
       "s3-symbol-logo.tradingview.com",
       "encrypted-tbn0.gstatic.com",
+      "thumb.tossinvest.com",
     ],
   },
 };
