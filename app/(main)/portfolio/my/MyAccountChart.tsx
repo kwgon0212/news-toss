@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { PortfolioData } from "@/type/portfolio";
 import {
   Chart as ChartJS,
@@ -32,7 +32,7 @@ ChartJS.register(
 );
 
 const chartTypes = [
-  { label: "1일", state: "D" },
+  // { label: "1일", state: "D" },
   { label: "1주", state: "W" },
   { label: "1개월", state: "M" },
   { label: "3개월", state: "3M" },
@@ -69,6 +69,7 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
       return json.data as Asset;
     },
     enabled: !!token,
+    placeholderData: keepPreviousData,
     staleTime: 0, // 캐싱 없음
     gcTime: 0, // 즉시 가비지 컬렉션
   });
@@ -128,26 +129,7 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
     gcTime: 0, // 즉시 가비지 컬렉션
   });
 
-  const hoverPlugin = {
-    id: "hoverFill",
-    beforeDatasetsDraw(chart: ChartJS<"line">) {
-      if (hoveredIndex === null) return;
-
-      const {
-        ctx,
-        chartArea: { top, bottom },
-        scales: { x },
-      } = chart;
-
-      const xPosition = x.getPixelForValue(hoveredIndex);
-      const width = 1;
-
-      ctx.save();
-      ctx.fillStyle = "rgba(155, 64, 4, 0.1)";
-      ctx.fillRect(xPosition - width * 10, top, width * 20, bottom - top);
-      ctx.restore();
-    },
-  };
+  console.log("chartType", chartType, asset);
 
   const options: ChartOptions<"line"> = {
     responsive: true,
@@ -328,7 +310,7 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
                 }
               }
               options={options}
-              plugins={[hoverPlugin]}
+              plugins={[]}
             />
           </div>
         </div>
@@ -347,7 +329,10 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
     datasets: [
       {
         fill: true,
-        data: asset.pnlHistory.map((p) => p.asset), // 더 명확한 방식
+        data: asset.pnlHistory
+          .slice()
+          .reverse()
+          .map((p) => p.asset), // 더 명확한 방식
         borderColor: "#3485fa",
         backgroundColor: (context: ScriptableContext<"line">) => {
           const chart = context.chart;
@@ -458,11 +443,7 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
       </div>
 
       <div className="flex-1 size-full">
-        <Line
-          data={data}
-          options={options}
-          plugins={[hoverPlugin, verticalLinePlugin]}
-        />
+        <Line data={data} options={options} plugins={[verticalLinePlugin]} />
       </div>
     </div>
   );
