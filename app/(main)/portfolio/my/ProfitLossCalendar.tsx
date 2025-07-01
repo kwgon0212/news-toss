@@ -19,34 +19,72 @@ interface Pnl {
 const ProfitLossCalendar = ({ token }: { token: JwtToken | null }) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [pnl, setPnl] = useState<Pnl[] | null>(null);
+  const [todayPnl, setTodayPnl] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchPnl = async () => {
       if (!token) return null;
 
-      const res = await fetch(
-        `/proxy/v1/portfolios/asset/${token.memberId}?period=Y`,
-        {
-          credentials: "include",
+      try {
+        // 연간 PnL 데이터 가져오기
+        const yearRes = await fetch(
+          `/proxy/v1/portfolios/asset/${token.memberId}?period=Y`,
+          {
+            credentials: "include",
+          }
+        );
+
+        if (yearRes.ok) {
+          const yearJson = await yearRes.json();
+          setPnl(yearJson.data.pnlHistory);
+        } else {
+          console.error("Failed to get yearly pnl", yearRes);
         }
-      );
 
-      if (!res.ok) {
-        console.error("Failed to get pnl", res);
-        return null;
+        // 오늘 PnL 데이터 가져오기
+        const todayRes = await fetch(
+          `/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=Today`,
+          {
+            credentials: "include",
+          }
+        );
+
+        if (todayRes.ok) {
+          const todayJson = await todayRes.json();
+          setTodayPnl(todayJson.data.pnl);
+        } else {
+          console.error("Failed to get today pnl", todayRes);
+        }
+      } catch (error) {
+        console.error("Error fetching PnL data:", error);
       }
-
-      const json = await res.json();
-      setPnl(json.data.pnlHistory);
     };
 
     fetchPnl();
-  }, [token]);
 
-  if (pnl) {
-    console.log("날짜", new Date(pnl[0].date));
-    console.log("pnl", pnl);
-  }
+    // 오늘 데이터만 1분마다 업데이트
+    const interval = setInterval(async () => {
+      if (!token) return;
+
+      try {
+        const todayRes = await fetch(
+          `/proxy/v1/portfolios/asset/pnl/${token.memberId}?period=Today`,
+          {
+            credentials: "include",
+          }
+        );
+
+        if (todayRes.ok) {
+          const todayJson = await todayRes.json();
+          setTodayPnl(todayJson.data.pnl);
+        }
+      } catch (error) {
+        console.error("Error updating today PnL:", error);
+      }
+    }, 60000); // 1분마다
+
+    return () => clearInterval(interval);
+  }, [token]);
 
   if (!pnl || pnl.length === 0)
     return (
@@ -117,6 +155,32 @@ const ProfitLossCalendar = ({ token }: { token: JwtToken | null }) => {
       }}
       formatDay={(locale, date) => String(date.getDate())}
       tileContent={({ date }) => {
+        const today = new Date();
+        const isToday =
+          date.getFullYear() === today.getFullYear() &&
+          date.getMonth() === today.getMonth() &&
+          date.getDate() === today.getDate();
+
+        // 오늘 날짜인 경우 todayPnl 사용
+        if (isToday && todayPnl !== null) {
+          return (
+            <div className="w-full flex flex-col items-center">
+              <span
+                className={clsx(
+                  "flex justify-center text-xs-custom font-semibold",
+                  todayPnl > 0 && "text-main-red",
+                  todayPnl < 0 && "text-main-blue",
+                  todayPnl === 0 && "text-main-dark-gray"
+                )}
+              >
+                {todayPnl > 0 && "+"}
+                {Number(todayPnl).toLocaleString()}
+              </span>
+            </div>
+          );
+        }
+
+        // 과거 날짜는 기존 pnl 데이터에서 찾기
         const pnlData = pnl.find(
           (p) =>
             new Date(p.date).getFullYear() === date.getFullYear() &&

@@ -246,6 +246,8 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
         }),
       ];
 
+      console.log("token memberId", token.memberId);
+
       const results = await Promise.allSettled(pnlPromises);
 
       // Today PnL 처리
@@ -367,7 +369,7 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
     datasets: [
       {
         fill: true,
-        data: labels.map((_, i) => asset.pnlHistory[i].asset),
+        data: asset.pnlHistory.map((p) => p.asset), // 더 명확한 방식
         borderColor: "#3485fa",
         backgroundColor: (context: ScriptableContext<"line">) => {
           const chart = context.chart;
@@ -428,13 +430,15 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
               asset.pnlHistory[asset.pnlHistory.length - 1].pnl > 0
                 ? "+"
                 : ""}
-              {asset.pnlHistory.length > 0 &&
-              asset.pnlHistory[asset.pnlHistory.length - 1].asset > 0
-                ? (
-                    (asset.pnlHistory[asset.pnlHistory.length - 1].pnl /
-                      asset.pnlHistory[asset.pnlHistory.length - 1].asset) *
-                    100
-                  ).toFixed(2)
+              {asset.pnlHistory.length > 0
+                ? (() => {
+                    const currentData =
+                      asset.pnlHistory[asset.pnlHistory.length - 1];
+                    const previousAsset = currentData.asset - currentData.pnl;
+                    return previousAsset > 0
+                      ? ((currentData.pnl / previousAsset) * 100).toFixed(2)
+                      : "0.00";
+                  })()
                 : "0.00"}
               %
             </span>
@@ -464,8 +468,14 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
             profit={asset.pnlHistory.reduce((acc, curr) => acc + curr.pnl, 0)}
           /> */}
           <MyProfit title="당일 손익" profit={todayPnl} />
-          <MyProfit title="월 누적 손익" profit={periodPnl} />
-          <MyProfit title="총 누적 손익" profit={totalPnl} />
+          <MyProfit
+            title="월 누적 손익"
+            profit={(periodPnl ?? 0) + (todayPnl ?? 0)}
+          />
+          <MyProfit
+            title="총 누적 손익"
+            profit={(totalPnl ?? 0) + (todayPnl ?? 0)}
+          />
         </div>
       </div>
 

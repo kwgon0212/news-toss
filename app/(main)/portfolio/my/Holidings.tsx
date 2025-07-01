@@ -302,7 +302,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
             )}
 
             {searchStockResult && (
-              <div className="bg-white rounded-main border border-gray-200 shadow-sm rounded-main overflow-hidden">
+              <div className="bg-white rounded-main border border-gray-200 shadow-sm overflow-hidden">
                 {/* 헤더 */}
                 <div className="bg-gradient-to-r from-main-blue/5 to-purple-50/30 px-main-2 py-main border-b border-gray-100">
                   <div className="grid grid-cols-[2fr_1.5fr_1fr] gap-main-2">
@@ -891,7 +891,7 @@ const Holidings = ({ token }: { token: JwtToken | null }) => {
           )}
 
           {searchStockResult && (
-            <div className="bg-white rounded-main border border-gray-200 shadow-sm rounded-main overflow-hidden">
+            <div className="bg-white rounded-main border border-gray-200 shadow-sm overflow-hidden">
               {/* 헤더 */}
               <div className="bg-gradient-to-r from-main-blue/5 to-purple-50/30 px-main-2 py-main border-b border-gray-100">
                 <div className="grid grid-cols-[2fr_1.5fr_1fr] gap-main-2">
