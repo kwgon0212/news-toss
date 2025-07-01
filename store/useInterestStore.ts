@@ -161,11 +161,14 @@ export const useInterestStore = create<InterestState>((set, get) => ({
         groupSequence: json.data.groupSequence,
       };
 
-      const { interestGroups } = get();
+      const { interestGroups, selectedGroupId } = get();
       set({
         interestGroups: [...interestGroups, newGroup],
-        selectedGroupId: json.data.groupId, // 새로 추가된 그룹을 선택
-        interestStocks: [], // 새 그룹이므로 빈 종목 배열
+        // 기존 그룹이 없었던 경우에만 새 그룹을 선택
+        selectedGroupId:
+          interestGroups.length === 0 ? json.data.groupId : selectedGroupId,
+        // 새 그룹이 선택된 경우에만 빈 종목 배열로 설정
+        interestStocks: interestGroups.length === 0 ? [] : get().interestStocks,
       });
 
       // 첫 번째 그룹이면 메인으로 설정 (토스트 없이)

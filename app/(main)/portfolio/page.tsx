@@ -9,8 +9,6 @@ import CheckPortfolio from "@/components/router/portfolio/CheckPortfolio";
 const MyPortfolioPage = async () => {
   const token = await getJwtToken();
 
-  console.log(token?.memberId);
-
   return (
     <div className="grid grid-cols-10 gap-main-2 max-w-[1200px] mx-auto min-w-[1000px] pb-[100px]">
       <CheckPortfolio token={token} />

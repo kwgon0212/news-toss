@@ -255,7 +255,7 @@ const InterestStocks = ({ token }: { token: JwtToken | null }) => {
 
               <Settings2
                 onClick={() => setIsOpenSettingModal(true)}
-                className="text-main-dark-gray p-2 box-content hover:bg-main-blue/20 rounded-full transition-colors duration-200 ease-in-out"
+                className="text-main-dark-gray cursor-pointer p-2 box-content hover:bg-main-blue/20 rounded-full transition-colors duration-200 ease-in-out"
                 size={20}
               />
             </div>
