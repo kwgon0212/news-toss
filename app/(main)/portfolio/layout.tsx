@@ -1,18 +1,14 @@
+import { Metadata } from "next";
 import React from "react";
-import SideMenus from "@/components/router/(main)/portfolio/SideMenus";
-import { getJwtToken } from "@/utils/auth";
 
-const PortfolioLayout = async ({ children }: { children: React.ReactNode }) => {
-  const token = await getJwtToken();
-
-  return (
-    <div className="px-[30px] flex gap-[40px]">
-      {/* <aside className="flex flex-col gap-main">
-        <SideMenus token={token} />
-      </aside> */}
-      <div className="flex-1">{children}</div>
-    </div>
-  );
+export const metadata: Metadata = {
+  title: "내 포트폴리오",
+  description:
+    "주식 투자에 설명력을 더해주는 AI 애널리스트 내 포트폴리오 페이지",
 };
 
-export default PortfolioLayout;
+const PortfolioMyLayout = ({ children }: { children: React.ReactNode }) => {
+  return <div className="min-w-[900px] mx-auto">{children}</div>;
+};
+
+export default PortfolioMyLayout;

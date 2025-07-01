@@ -1,10 +1,10 @@
 import React from "react";
-import Holidings from "./Holidings";
-import ProfitLossCalendar from "./ProfitLossCalendar";
-import MyAccountChart from "./MyAccountChart";
+import Holidings from "@/components/router/portfolio/Holidings";
+import ProfitLossCalendar from "@/components/router/portfolio/ProfitLossCalendar";
+import MyAccountChart from "@/components/router/portfolio/MyAccountChart";
 import { getJwtToken } from "@/utils/auth";
-import GaugeChart from "./GaugeChart";
-import CheckPortfolio from "./CheckPortfolio";
+import GaugeChart from "@/components/router/portfolio/GaugeChart";
+import CheckPortfolio from "@/components/router/portfolio/CheckPortfolio";
 
 const MyPortfolioPage = async () => {
   const token = await getJwtToken();

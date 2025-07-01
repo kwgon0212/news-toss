@@ -42,7 +42,7 @@ const Footer = ({ className }: { className?: string }) => {
           캘린더
         </Link>
         <Link
-          href="/portfolio/my"
+          href="/portfolio"
           className="hover:text-main-blue transition-colors font-semibold"
         >
           포트폴리오

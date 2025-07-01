@@ -194,7 +194,7 @@ const Navigation = () => {
           증권
         </Link>
         <Link
-          href="/portfolio/my"
+          href="/portfolio"
           className={clsx(
             "text-base-custom",
             pathname.startsWith("/portfolio")
