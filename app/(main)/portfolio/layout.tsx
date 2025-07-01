@@ -1,3 +1,4 @@
+import Footer from "@/components/ui/shared/Footer";
 import { Metadata } from "next";
 import React from "react";
 
@@ -8,7 +9,12 @@ export const metadata: Metadata = {
 };
 
 const PortfolioMyLayout = ({ children }: { children: React.ReactNode }) => {
-  return <div className="min-w-[900px] mx-auto">{children}</div>;
+  return (
+    <>
+      <div className="min-w-[900px] mx-auto">{children}</div>
+      <Footer />
+    </>
+  );
 };
 
 export default PortfolioMyLayout;

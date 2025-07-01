@@ -1,3 +1,4 @@
+import Footer from "@/components/ui/shared/Footer";
 import { Metadata } from "next";
 import React from "react";
 
@@ -11,9 +12,12 @@ export const metadata: Metadata = {
 
 const StockLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="flex flex-col gap-[40px] max-w-[1200px] mx-auto">
-      {children}
-    </div>
+    <>
+      <div className="flex flex-col gap-[40px] max-w-[1200px] mx-auto">
+        {children}
+      </div>
+      <Footer />
+    </>
   );
 };
 
