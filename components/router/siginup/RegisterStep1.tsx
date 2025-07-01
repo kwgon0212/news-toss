@@ -146,9 +146,9 @@ const RegisterStep1 = ({
           onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
         />
       </div>
-      {/* <Button onClick={handleNext} className="w-fit self-end mt-main-2">
+      <Button onClick={handleNext} className="w-fit self-end mt-main-2">
         다음
-      </Button> */}
+      </Button>
 
       <AddressModal
         isOpen={isOpenAddressModal}

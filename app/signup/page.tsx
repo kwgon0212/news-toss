@@ -17,6 +17,7 @@ import {
   TabPanels,
 } from "@/components/animate-ui/headless/tabs";
 import { toast } from "react-toastify";
+import { StarsBackground } from "@/components/animate-ui/backgrounds/stars";
 
 const SignUpPage = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -73,6 +74,7 @@ const SignUpPage = () => {
 
   return (
     <>
+      <StarsBackground className="relative w-screen h-screen" />
       <Modal
         isOpen={isOpen}
         onClose={() => {
@@ -93,11 +95,12 @@ const SignUpPage = () => {
             </div>
             <div className="text-center flex flex-col gap-main">
               <p className="text-lg font-bold text-main-dark-gray">
-                실시간 주식 투자 AI 애널리스트
+                뉴스 너머의 인사이트를 건네다
               </p>
               <p className="text-sm text-main-dark-gray break-keep flex flex-col">
-                <span>과거 유사 사건 뉴스 및 증권사 리포트 기반</span>
-                <span>주식 투자 판단 보조시스템</span>
+                주식 투자 판단을 위한
+                <br />
+                과거 유사뉴스 제공 서비스
               </p>
             </div>
           </div>
