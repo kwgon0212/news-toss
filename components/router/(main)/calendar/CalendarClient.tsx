@@ -8,12 +8,12 @@ import clsx from "clsx";
 import Dropdown from "@/components/ui/shared/Dropdown";
 import Chatbot from "@/components/router/(main)/calendar/Chatbot";
 import { CalendarIcon, Loader2, ChevronUp, ChevronDown } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 interface CalendarData {
   irId: number;
   companyEventName: string;
-  date: string;
+  date: string | number[]; // 문자열 또는 [year, month, day] 배열
   category: "이벤트" | "배당" | "IPO" | "분할" | "실적";
 }
 
@@ -49,6 +49,7 @@ const CalendarClient = ({ initialData }: CalendarClientProps) => {
       return json.data;
     },
     initialData: initialData[monthKey],
+    placeholderData: keepPreviousData,
     staleTime: REFETCH_INTERVAL_MS,
     gcTime: REFETCH_INTERVAL_MS * 2,
   });
@@ -84,11 +85,20 @@ const CalendarClient = ({ initialData }: CalendarClientProps) => {
   };
 
   const filteredCalendarData = calendarData.filter((data) => {
-    const dataDate = new Date(data.date);
-    const matchesDate =
-      dataDate.getFullYear() === year &&
-      dataDate.getMonth() + 1 === month &&
-      dataDate.getDate() === day;
+    let matchesDate = false;
+
+    // date가 배열 형태 [year, month, day]인 경우 처리
+    if (Array.isArray(data.date)) {
+      const [dataYear, dataMonth, dataDay] = data.date;
+      matchesDate = dataYear === year && dataMonth === month && dataDay === day;
+    } else {
+      // date가 문자열인 경우 기존 로직 유지
+      const dataDate = new Date(data.date);
+      matchesDate =
+        dataDate.getFullYear() === year &&
+        dataDate.getMonth() + 1 === month &&
+        dataDate.getDate() === day;
+    }
 
     const matchesCategory =
       selectedCategory === "전체" || data.category === selectedCategory;
@@ -220,21 +230,36 @@ const CalendarClient = ({ initialData }: CalendarClientProps) => {
             }}
             formatDay={(locale, date) => String(date.getDate())}
             tileContent={({ date }) => {
-              const dateString = `${date.getFullYear()}-${String(
-                date.getMonth() + 1
-              ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+              const tileYear = date.getFullYear();
+              const tileMonth = date.getMonth() + 1;
+              const tileDay = date.getDate();
 
               const categoriesForDate = [
                 ...new Set(
                   calendarData
-                    .filter((data) => data.date === dateString)
+                    .filter((data) => {
+                      // date가 배열 형태 [year, month, day]인 경우 처리
+                      if (Array.isArray(data.date)) {
+                        const [dataYear, dataMonth, dataDay] = data.date;
+                        return (
+                          dataYear === tileYear &&
+                          dataMonth === tileMonth &&
+                          dataDay === tileDay
+                        );
+                      }
+                      // date가 문자열인 경우 기존 로직 유지
+                      const dateString = `${tileYear}-${String(
+                        tileMonth
+                      ).padStart(2, "0")}-${String(tileDay).padStart(2, "0")}`;
+                      return data.date === dateString;
+                    })
                     .map((data) => data.category)
                 ),
               ];
 
               if (categoriesForDate.length > 0) {
                 return (
-                  <div className="w-full flex justify-center gap-1">
+                  <div className="w-full flex justify-center gap-0.5 mt-0.5">
                     {categoriesForDate.map((category, index) => (
                       <div
                         key={`${category}-${index}`}
@@ -244,7 +269,11 @@ const CalendarClient = ({ initialData }: CalendarClientProps) => {
                   </div>
                 );
               } else {
-                return <div className="size-[6px] bg-transparent" />;
+                return (
+                  <div className="w-full flex justify-center gap-0.5 mt-0.5">
+                    <div className={`size-[6px] rounded-full bg-transparent`} />
+                  </div>
+                );
               }
             }}
             showNeighboringMonth={false}
@@ -351,7 +380,15 @@ const CalendarClient = ({ initialData }: CalendarClientProps) => {
                         className="text-main-dark-gray/70"
                         size={14}
                       />
-                      <span>{calendarData.date}</span>
+                      <span>
+                        {Array.isArray(calendarData.date)
+                          ? `${calendarData.date[0]}-${String(
+                              calendarData.date[1]
+                            ).padStart(2, "0")}-${String(
+                              calendarData.date[2]
+                            ).padStart(2, "0")}`
+                          : calendarData.date}
+                      </span>
                     </div>
                   </div>
                 </div>
