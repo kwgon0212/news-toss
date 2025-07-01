@@ -18,8 +18,6 @@ interface Pnl {
 }
 
 const ProfitLossCalendar = ({ token }: { token: JwtToken | null }) => {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-
   // 연간 PnL 데이터
   const { data: pnl } = useQuery({
     queryKey: ["yearlyPnl", token?.memberId],
@@ -67,12 +65,6 @@ const ProfitLossCalendar = ({ token }: { token: JwtToken | null }) => {
           <Calendar
             prev2Label={null}
             next2Label={null}
-            value={selectedDate}
-            onChange={(date) => {
-              if (date instanceof Date) {
-                setSelectedDate(date);
-              }
-            }}
             maxDate={new Date()}
             calendarType="gregory"
             view="month"
@@ -94,11 +86,6 @@ const ProfitLossCalendar = ({ token }: { token: JwtToken | null }) => {
               );
             }}
             showNeighboringMonth={false}
-            onActiveStartDateChange={({ activeStartDate }) => {
-              if (activeStartDate) {
-                setSelectedDate(new Date(activeStartDate));
-              }
-            }}
             className="w-full h-full"
           />
         </div>
@@ -109,12 +96,6 @@ const ProfitLossCalendar = ({ token }: { token: JwtToken | null }) => {
     <Calendar
       prev2Label={null}
       next2Label={null}
-      value={selectedDate}
-      onChange={(date) => {
-        if (date instanceof Date) {
-          setSelectedDate(date);
-        }
-      }}
       maxDate={new Date()}
       minDate={new Date(new Date().getFullYear(), 0, 1)}
       calendarType="gregory"
@@ -181,11 +162,6 @@ const ProfitLossCalendar = ({ token }: { token: JwtToken | null }) => {
         );
       }}
       showNeighboringMonth={false}
-      onActiveStartDateChange={({ activeStartDate }) => {
-        if (activeStartDate) {
-          setSelectedDate(new Date(activeStartDate));
-        }
-      }}
       className="w-full h-full"
     />
   );
