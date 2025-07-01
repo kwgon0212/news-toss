@@ -14,6 +14,18 @@ import {
 import { IntervalKey } from "./IntervalSelector";
 import { RealTimeStockData } from "@/hooks/useRealTimeStock";
 
+// 시장 오픈 여부 체크 함수
+const isMarketOpen = (now: Date = new Date()) => {
+  const dayOfWeek = now.getDay(); // 0=일요일, 6=토요일
+  if (dayOfWeek === 0 || dayOfWeek === 6) return false; // 주말
+
+  const hour = now.getHours();
+  const minute = now.getMinutes();
+  const currentTime = hour * 100 + minute;
+
+  return currentTime >= 900 && currentTime <= 1530; // 09:00 ~ 15:30
+};
+
 // 상수 정의
 const CHART_CONSTANTS = {
   HEIGHT: 320,
@@ -499,6 +511,71 @@ const StockChart = ({
     }));
   }, [stockDataD, stockDataW, stockDataM, stockDataY, selectedInterval]);
 
+  // 실시간 데이터 업데이트
+  useEffect(() => {
+    if (!realTimeData || !candlestickRef.current || !volumeRef.current) return;
+
+    // 함수형 업데이트를 사용하여 최신 상태 참조
+    setAllLoadedData((prevAllData) => {
+      const currentData = prevAllData[selectedInterval];
+      if (!currentData?.length) return prevAllData;
+
+      // 오늘 날짜 생성
+      const today = new Date().toISOString().split("T")[0];
+      const lastDataIndex = currentData.length - 1;
+      const lastCandle = currentData[lastDataIndex];
+
+      let updatedData: CandleData[];
+
+      // 마지막 캔들이 오늘 날짜인지 확인
+      if (lastCandle.time === today) {
+        // 기존 오늘 캔들을 실시간 데이터로 업데이트
+        const updatedCandle: CandleData = {
+          time: today,
+          open: lastCandle.open, // 시가는 유지
+          high: Math.max(lastCandle.high, parseFloat(realTimeData.price)),
+          low: Math.min(lastCandle.low, parseFloat(realTimeData.price)),
+          close: parseFloat(realTimeData.price), // 현재가를 종가로
+          volume: parseFloat(realTimeData.volume),
+        };
+
+        updatedData = [...currentData];
+        updatedData[lastDataIndex] = updatedCandle;
+      } else {
+        // 오늘 날짜의 새로운 캔들 생성
+        const newCandle: CandleData = {
+          time: today,
+          open: parseFloat(realTimeData.openPrice),
+          high: parseFloat(realTimeData.highPrice),
+          low: parseFloat(realTimeData.lowPrice),
+          close: parseFloat(realTimeData.price),
+          volume: parseFloat(realTimeData.volume),
+        };
+
+        updatedData = [...currentData, newCandle];
+      }
+
+      // 차트 데이터 업데이트
+      candlestickRef.current?.setData(updatedData);
+
+      // 볼륨 데이터도 업데이트
+      const volumeData = updatedData.map((candle) => ({
+        time: candle.time,
+        value: candle.volume,
+        color:
+          candle.close >= candle.open
+            ? CHART_CONSTANTS.COLORS.VOLUME_UP
+            : CHART_CONSTANTS.COLORS.VOLUME_DOWN,
+      }));
+      volumeRef.current?.setData(volumeData);
+
+      return {
+        ...prevAllData,
+        [selectedInterval]: updatedData,
+      };
+    });
+  }, [realTimeData, selectedInterval]);
+
   // interval 변경 시 실시간 스크롤
   useEffect(() => {
     if (chartRef.current) {
@@ -530,12 +607,31 @@ const StockChart = ({
     };
   }, []);
 
+  const marketOpen = isMarketOpen();
+
   return (
     <div className="h-[320px] relative">
       <div
         ref={chartContainerRef}
         style={{ width: "100%", height: "100%", position: "relative" }}
       />
+
+      {/* 실시간 상태 인디케이터 */}
+      <div className="absolute top-0 left-main flex items-center gap-2">
+        {marketOpen && realTimeData && (
+          <div className="flex items-center gap-1 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            20초 주기
+          </div>
+        )}
+        {!marketOpen && (
+          <div className="flex items-center gap-1 bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-medium">
+            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+            장마감
+          </div>
+        )}
+      </div>
+
       {/* 툴팁 */}
       <div
         ref={tooltipRef}
@@ -554,6 +650,7 @@ const StockChart = ({
           boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
         }}
       />
+
       {isLoadingMore && (
         <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-sm">
           이전 데이터 로딩 중...

@@ -42,9 +42,9 @@ export const useRealTimeStock = (stockCode: string) => {
       return json.data;
     },
     enabled: !!stockCode,
-    refetchInterval: marketOpen ? 30000 : false, // 시장 오픈 시에만 30초마다 폴링
+    refetchInterval: marketOpen ? 20000 : false, // 시장 오픈 시에만 20초마다 폴링
     refetchIntervalInBackground: false,
-    staleTime: 25000, // 25초 동안 fresh 상태 유지
+    staleTime: 15000, // 15초 동안 fresh 상태 유지
     gcTime: 5 * 60 * 1000, // 5분
   });
 };
