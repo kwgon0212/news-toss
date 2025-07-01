@@ -155,21 +155,25 @@ const MetaDataNews = ({
               </span>
             </div>
 
-            {selectedNews.stock_list && (
+            {selectedNews.stock_list && selectedNews.stock_list.length > 0 && (
               <div className="flex flex-wrap gap-main">
-                {selectedNews.stock_list.map((stock) => (
-                  <WritingText
-                    key={`related-stock-${stock.stock_id}`}
-                    text={stock.stock_name}
-                    isGradient
-                    className="text-lg-custom font-bold"
-                    spacing={5}
-                    transition={{
-                      duration: 0.4,
-                      ease: "easeOut",
-                    }}
-                  />
-                ))}
+                <WritingText
+                  key={`related-stock-${
+                    selectedNews.stock_list[selectedNews.stock_list.length - 1]
+                      .stock_id
+                  }`}
+                  text={
+                    selectedNews.stock_list[selectedNews.stock_list.length - 1]
+                      .stock_name
+                  }
+                  isGradient
+                  className="text-lg-custom font-bold"
+                  spacing={5}
+                  transition={{
+                    duration: 0.4,
+                    ease: "easeOut",
+                  }}
+                />
               </div>
             )}
 

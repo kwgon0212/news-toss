@@ -353,7 +353,7 @@ const External = ({
     return (
       <div className="size-full flex flex-col gap-main-2">
         <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
-          현재 vs 과거 변동률
+          현재 vs 과거 거래 추이
         </h2>
         <p className="text-red-500 font-semibold">
           과거 뉴스 데이터를 불러오는데 실패했습니다
@@ -375,12 +375,12 @@ const External = ({
     <div className="size-full flex flex-col gap-main-2">
       <div className="flex items-center gap-main">
         <h2 className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
-          현재 vs 과거 변동률
+          현재 vs 과거 거래 추이
         </h2>
         <Tooltip
-          message="각 일자의 지표는 뉴스 발행일 전일(D-1) 대비 변동률입니다."
+          message="뉴스 발행일 기준, 현재 뉴스 종목과 과거 유사 뉴스 종목의 거래 흐름을 비교해 볼 수 있어요."
           icon={<HelpCircle size={16} />}
-          position="right"
+          position="bottom"
         />
       </div>
       <div className="flex flex-col gap-main">
