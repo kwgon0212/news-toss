@@ -106,6 +106,12 @@ const Navigation = () => {
   }, [newsSearch]);
 
   useEffect(() => {
+    if (stockSearch === "") {
+      setStockSearchResult([]);
+    }
+  }, [stockSearch]);
+
+  useEffect(() => {
     if (isOpenSearchModal) {
       setNewsSearch("");
       setNewsSearchResult([]);
