@@ -407,9 +407,9 @@ export default function LandingPage() {
       </div>
 
       <motion.div
-        className="fixed left-1/2 -translate-x-1/2 bottom-main-5"
+        className="fixed left-1/2 -translate-x-1/2 bottom-main-5 flex flex-col items-center gap-main"
         animate={{
-          y: [0, 10, 0],
+          y: [0, 30, 0],
           opacity: isAtBottom ? 0 : 1,
         }}
         transition={{
@@ -422,7 +422,7 @@ export default function LandingPage() {
           },
         }}
       >
-        <ChevronDown size={40} strokeWidth={1} />
+        <ChevronDown size={40} strokeWidth={2} className="text-main-blue" />
       </motion.div>
     </div>
   );
