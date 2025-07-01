@@ -341,10 +341,9 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                 <div className="flex items-center gap-main">
                   {[
                     ...new Map(
-                      news.mainNews.stock_list?.map((item) => [
-                        item.stock_name,
-                        item,
-                      ])
+                      news.mainNews.stock_list
+                        ?.slice(0, 2)
+                        .map((item) => [item.stock_name, item])
                     ).values(),
                   ].map((stock) => (
                     <span
@@ -354,6 +353,12 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
                       {stock.stock_name}
                     </span>
                   ))}
+                  {news.mainNews.stock_list &&
+                    news.mainNews.stock_list.length > 2 && (
+                      <span className="text-main-dark-gray text-xs-custom">
+                        +{news.mainNews.stock_list.length - 2}
+                      </span>
+                    )}
                 </div>
 
                 <p className={clsx("text-start font-semibold", "line-clamp-1")}>
