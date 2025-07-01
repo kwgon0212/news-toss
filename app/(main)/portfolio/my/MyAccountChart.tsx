@@ -51,7 +51,7 @@ interface Asset {
 }
 
 const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
-  const [chartType, setChartType] = useState<ChartType>("D");
+  const [chartType, setChartType] = useState<ChartType>("W");
   const [dummyData, setDummyData] = useState<ChartData<"line"> | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
@@ -317,11 +317,44 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
       </div>
     );
 
-  const labels = asset.pnlHistory.map((p) => {
+  // 날짜 순서대로 정렬
+  const sortedPnlHistory = asset.pnlHistory.slice().sort((a, b) => {
+    const dateA = new Date(a.date[0], a.date[1] - 1, a.date[2]);
+    const dateB = new Date(b.date[0], b.date[1] - 1, b.date[2]);
+    return dateA.getTime() - dateB.getTime();
+  });
+
+  const labels = sortedPnlHistory.map((p) => {
     const [year, month, day] = p.date;
     return `${year}-${month.toString().padStart(2, "0")}-${day
       .toString()
       .padStart(2, "0")}`;
+  });
+
+  // 차트 데이터 생성 (마지막이 오늘이면 실시간 손익 반영)
+  const chartData = sortedPnlHistory.map((p, index) => {
+    // 마지막 데이터가 오늘 날짜인지 확인
+    const today = new Date();
+    const [year, month, day] = p.date;
+    const dataDate = new Date(year, month - 1, day);
+    const isToday =
+      dataDate.getFullYear() === today.getFullYear() &&
+      dataDate.getMonth() === today.getMonth() &&
+      dataDate.getDate() === today.getDate();
+
+    // 마지막 데이터이면서 오늘 날짜인 경우
+    if (
+      index === sortedPnlHistory.length - 1 &&
+      isToday &&
+      todayPnl !== undefined
+    ) {
+      // 이전 날의 자산 + 오늘 당일 손익
+      const previousAsset =
+        index > 0 ? sortedPnlHistory[index - 1].asset : p.asset;
+      return previousAsset + todayPnl;
+    }
+
+    return p.asset;
   });
 
   const data = {
@@ -329,10 +362,7 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
     datasets: [
       {
         fill: true,
-        data: asset.pnlHistory
-          .slice()
-          .reverse()
-          .map((p) => p.asset), // 더 명확한 방식
+        data: chartData, // 실시간 손익이 반영된 데이터
         borderColor: "#3485fa",
         backgroundColor: (context: ScriptableContext<"line">) => {
           const chart = context.chart;
@@ -369,34 +399,52 @@ const MyAccountChart = ({ token }: { token: JwtToken | null }) => {
         <div className="flex flex-col gap-main items-start">
           <div className="flex gap-2 items-baseline">
             <span className="text-lg-custom font-semibold">
-              {(asset.pnlHistory.length > 0
-                ? asset.pnlHistory[asset.pnlHistory.length - 1].asset
-                : 0
-              ).toLocaleString()}
+              {(() => {
+                if (sortedPnlHistory.length === 0) return "0";
+
+                const lastData = sortedPnlHistory[sortedPnlHistory.length - 1];
+                const today = new Date();
+                const [year, month, day] = lastData.date;
+                const dataDate = new Date(year, month - 1, day);
+                const isToday =
+                  dataDate.getFullYear() === today.getFullYear() &&
+                  dataDate.getMonth() === today.getMonth() &&
+                  dataDate.getDate() === today.getDate();
+
+                // 마지막 데이터가 오늘이고 todayPnl이 있으면 실시간 자산 계산
+                if (isToday && todayPnl !== undefined) {
+                  const previousAsset =
+                    sortedPnlHistory.length > 1
+                      ? sortedPnlHistory[sortedPnlHistory.length - 2].asset
+                      : lastData.asset;
+                  return (previousAsset + todayPnl).toLocaleString();
+                }
+
+                return lastData.asset.toLocaleString();
+              })()}
               원
             </span>
             <span
               className={clsx(
                 "text-xs-custom font-semibold",
-                asset.pnlHistory.length > 0 &&
-                  asset.pnlHistory[asset.pnlHistory.length - 1].pnl > 0
+                sortedPnlHistory.length > 0 &&
+                  sortedPnlHistory[sortedPnlHistory.length - 1].pnl > 0
                   ? "text-main-red"
                   : "text-main-blue"
               )}
             >
-              {chartType === "D" && "어제보다"}
               {chartType === "W" && "지난주보다"}
               {chartType === "M" && "지난달보다"}
               {chartType === "3M" && "지난 3개월보다"}
               {chartType === "Y" && "작년보다"}{" "}
-              {asset.pnlHistory.length > 0 &&
-              asset.pnlHistory[asset.pnlHistory.length - 1].pnl > 0
+              {sortedPnlHistory.length > 0 &&
+              sortedPnlHistory[sortedPnlHistory.length - 1].pnl > 0
                 ? "+"
                 : ""}
-              {asset.pnlHistory.length > 0
+              {sortedPnlHistory.length > 0
                 ? (() => {
                     const currentData =
-                      asset.pnlHistory[asset.pnlHistory.length - 1];
+                      sortedPnlHistory[sortedPnlHistory.length - 1];
                     const previousAsset = currentData.asset - currentData.pnl;
                     return previousAsset > 0
                       ? ((currentData.pnl / previousAsset) * 100).toFixed(2)
