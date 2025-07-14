@@ -36,10 +36,14 @@ const NewsDetailPage = async ({
       ? newsDetailResult.value
       : { data: {} as News };
 
+  console.log(newsDetailJson.data, "newsDetailJson");
+
   const relatedNewsJson: { data: News[] } =
     relatedNewsResult.status === "fulfilled"
       ? relatedNewsResult.value
       : { data: [] };
+
+  console.log(relatedNewsJson.data, "relatedNewsJson");
 
   const metaDataJson: { data: MetaData } =
     metaDataResult.status === "fulfilled"

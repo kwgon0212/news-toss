@@ -1,4 +1,3 @@
-import Footer from "@/components/ui/shared/Footer";
 import { Metadata } from "next";
 import React from "react";
 
@@ -9,12 +8,7 @@ export const metadata: Metadata = {
 };
 
 const CalendarLayout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <>
-      <div className="max-w-[1000px] h-full mx-auto">{children}</div>
-      <Footer />
-    </>
-  );
+  return <div className="max-w-[1000px] h-full mx-auto">{children}</div>;
 };
 
 export default CalendarLayout;

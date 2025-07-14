@@ -193,7 +193,10 @@ const External = ({
   const pastDataMap = pastNewsExternal
     ? {
         close: {
-          label: `과거 뉴스 [ ${selectedNews.stock_list?.[0]?.stock_name} ]`,
+          label: `과거 뉴스 [ ${
+            selectedNews.stock_list?.[selectedNews.stock_list.length - 1]
+              ?.stock_name
+          } ]`,
           data: [
             pastNewsExternal.dMinus5Close,
             pastNewsExternal.dMinus4Close,
@@ -209,7 +212,10 @@ const External = ({
           color: "#a5b4fc",
         },
         volume: {
-          label: `과거 뉴스 [ ${selectedNews.stock_list?.[0]?.stock_name} ]`,
+          label: `과거 뉴스 [ ${
+            selectedNews.stock_list?.[selectedNews.stock_list.length - 1]
+              ?.stock_name
+          } ]`,
           data: [
             pastNewsExternal.dMinus5Volume,
             pastNewsExternal.dMinus4Volume,
@@ -225,7 +231,10 @@ const External = ({
           color: "#f1a8d1",
         },
         foreign: {
-          label: `과거 뉴스 [ ${selectedNews.stock_list?.[0]?.stock_name} ]`,
+          label: `과거 뉴스 [ ${
+            selectedNews.stock_list?.[selectedNews.stock_list.length - 1]
+              ?.stock_name
+          } ]`,
           data: [
             pastNewsExternal.dMinus5Foreign,
             pastNewsExternal.dMinus4Foreign,
@@ -241,7 +250,10 @@ const External = ({
           color: "#86efac",
         },
         institution: {
-          label: `과거 뉴스 [ ${selectedNews.stock_list?.[0]?.stock_name} ]`,
+          label: `과거 뉴스 [ ${
+            selectedNews.stock_list?.[selectedNews.stock_list.length - 1]
+              ?.stock_name
+          } ]`,
           data: [
             pastNewsExternal.dMinus5Institution,
             pastNewsExternal.dMinus4Institution,
@@ -257,7 +269,10 @@ const External = ({
           color: "#fcd34d",
         },
         individual: {
-          label: `과거 뉴스 [ ${selectedNews.stock_list?.[0]?.stock_name} ]`,
+          label: `과거 뉴스 [ ${
+            selectedNews.stock_list?.[selectedNews.stock_list.length - 1]
+              ?.stock_name
+          } ]`,
           data: [
             pastNewsExternal.dMinus5Individual,
             pastNewsExternal.dMinus4Individual,

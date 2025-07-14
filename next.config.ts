@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    unoptimized: true,
     dangerouslyAllowSVG: true,
     domains: [
       "placehold.co",
