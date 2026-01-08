@@ -11,6 +11,7 @@ import Dropdown from "@/components/ui/shared/Dropdown";
 import clsx from "clsx";
 import { SlidingNumber } from "@/components/animate-ui/text/sliding-number";
 import { WritingText } from "@/components/animate-ui/text/writing";
+import ErrorComponent from "@/components/ui/shared/ErrorComponent";
 
 const AllNews = ({
   initialNews,
@@ -69,13 +70,11 @@ const AllNews = ({
   if (error) {
     return (
       <div className="grid grid-cols-3 w-full gap-main-2">
-        <div className="col-span-3 grid grid-cols-3 gap-main w-full relative">
-          <div className="col-span-3 flex items-center gap-main">
+        <div className="col-span-3 flex flex-col gap-main w-full relative">
+          <div className="flex items-center gap-main">
             <div className="text-3xl-custom font-bold">모든 뉴스</div>
           </div>
-          <p className="text-red-500">
-            모든 뉴스 데이터를 불러오는데 실패했습니다.
-          </p>
+          <ErrorComponent message="모든 뉴스 데이터를 불러오는데 실패했습니다." />
         </div>
       </div>
     );
@@ -150,7 +149,7 @@ const AllNews = ({
                     .map((stock) => (
                       <WritingText
                         key={`all-news-${news.newsId}-${stock.stock_name}`}
-                        text={stock.stock_name}
+                        text={stock.stock_name.slice(0, 5) + "..."}
                         isGradient
                         className={clsx(
                           "text-lg-custom font-bold",

@@ -13,6 +13,8 @@ import { useQuery } from "@tanstack/react-query";
 import Button from "@/components/ui/shared/Button";
 import { useRouter } from "next/navigation";
 
+import ErrorComponent from "@/components/ui/shared/ErrorComponent";
+
 const SkeletonNewsCard = () => (
   <div className="flex flex-col gap-main animate-pulse">
     <div className="w-full aspect-[1.5/1] bg-gray-200 rounded-main" />
@@ -286,8 +288,8 @@ const CustomNews = ({ token }: { token: JwtToken | null }) => {
             <SkeletonNewsCard key={`skeleton-${index}`} />
           ))
         ) : isError ? (
-          <div className="col-span-3 flex justify-center items-center py-8">
-            <p className="text-gray-500">뉴스를 불러오는데 실패했습니다.</p>
+          <div className="col-span-3">
+            <ErrorComponent message="뉴스를 불러오는데 실패했습니다." />
           </div>
         ) : customNews.length === 0 ? (
           <div className="col-span-3 flex justify-center items-center py-8">

@@ -12,9 +12,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { CountingNumber } from "@/components/animate-ui/text/counting-number";
 import { SlidingNumber } from "@/components/animate-ui/text/sliding-number";
+import ErrorComponent from "@/components/ui/shared/ErrorComponent";
 
 const RealTime = ({ initialNews }: { initialNews: News[] }) => {
   const [news, setNews] = useState<News[]>(initialNews.slice(0, 10));
+  const [error, setError] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [newsCount, setNewsCount] = useState<{
@@ -24,11 +26,16 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
 
   useEffect(() => {
     const fetchNewsCount = async () => {
-      const res = await fetch("/proxy/news/v2/count");
-      const json: {
-        data: { news_count_total: number; news_count_today: number };
-      } = await res.json();
-      setNewsCount(json.data);
+      try {
+        const res = await fetch("/proxy/news/v2/count");
+        if (!res.ok) throw new Error("Failed to fetch");
+        const json: {
+          data: { news_count_total: number; news_count_today: number };
+        } = await res.json();
+        setNewsCount(json.data);
+      } catch (err) {
+        setError(true);
+      }
     };
     fetchNewsCount();
   }, []);
@@ -77,12 +84,12 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
             hideProgressBar: true,
           });
         } catch (err) {
-          console.error("❌ SSE 데이터 파싱 에러:", err);
+          // console.error("❌ SSE 데이터 파싱 에러:", err);
         }
       });
 
       sse.onerror = (err) => {
-        console.error("❌ SSE 연결 에러 발생:", err);
+        // console.error("❌ SSE 연결 에러 발생:", err);
         sse?.close();
         retryTimeout = setTimeout(connectSSE, 5000);
       };
@@ -114,92 +121,100 @@ const RealTime = ({ initialNews }: { initialNews: News[] }) => {
         />
       </div>
 
-      <div className="grid grid-cols-[1fr_60px] h-fit gap-x-main justify-end text-end font-semibold text-sm-custom">
-        <p>오늘 수집된 뉴스:</p>
-        <span>
-          <b className="text-main-blue">
-            {newsCount.news_count_today ? (
-              <CountingNumber number={newsCount.news_count_today} />
-            ) : (
-              "..."
-            )}
-          </b>{" "}
-          개
-        </span>
-        <p>전체 수집된 뉴스:</p>
-        <span>
-          <b className="text-main-blue">
-            {newsCount.news_count_total ? (
-              <CountingNumber number={newsCount.news_count_total} />
-            ) : (
-              "..."
-            )}
-          </b>{" "}
-          개
-        </span>
-      </div>
-
-      <div className="col-span-2">
-        <div
-          ref={containerRef}
-          className="relative h-[160px] overflow-y-auto"
-          onMouseEnter={stopRotation}
-          onMouseLeave={startRotation}
-        >
-          <AnimatePresence initial={false}>
-            <motion.div
-              key={news[0]?.newsId}
-              initial={{ y: "100%", opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: "-100%", opacity: 0 }}
-              transition={{ duration: 0.4 }}
-              className="flex flex-col absolute top-0 left-0 w-full"
-            >
-              {news.map((item, idx) => (
-                <div
-                  key={`realtime-news-${item.newsId}-${idx}`}
-                  className={clsx(
-                    "grid grid-cols-[150px_1fr_140px_80px] gap-main",
-                    idx % 2 === 1 ? "bg-main-light-gray/50 rounded-sm" : ""
-                  )}
-                >
-                  <div className="text-center p-2 truncate text-base-custom font-semibold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
-                    {item.stock_list
-                      ? item.stock_list[0].stock_name
-                      : "처리중..."}
-                  </div>
-
-                  <div className="p-2">
-                    <Link
-                      href={item.url}
-                      className="hover:text-main-blue transition-colors duration-300 text-sm-custom"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {item.title}
-                    </Link>
-                  </div>
-
-                  <div className="text-left text-main-blue p-2 text-sm-custom font-semibold flex items-center gap-1">
-                    중요도 점수 |{" "}
-                    {item.impact_score ? (
-                      <SlidingNumber number={item.impact_score} padStart />
-                    ) : (
-                      "--- "
-                    )}
-                    점
-                  </div>
-
-                  <div className="flex items-center gap-1 text-xs-custom">
-                    <Clock className="text-main-dark-gray" size={12} />
-                    {item.wdate && formatDate(item.wdate)}
-                  </div>
-                </div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
+      {error ? (
+        <div className="col-span-2 h-[200px]">
+          <ErrorComponent message="실시간 뉴스 데이터를 불러오는데 실패했습니다." />
         </div>
-      </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-[1fr_60px] h-fit gap-x-main justify-end text-end font-semibold text-sm-custom">
+            <p>오늘 수집된 뉴스:</p>
+            <span>
+              <b className="text-main-blue">
+                {newsCount.news_count_today ? (
+                  <CountingNumber number={newsCount.news_count_today} />
+                ) : (
+                  "..."
+                )}
+              </b>{" "}
+              개
+            </span>
+            <p>전체 수집된 뉴스:</p>
+            <span>
+              <b className="text-main-blue">
+                {newsCount.news_count_total ? (
+                  <CountingNumber number={newsCount.news_count_total} />
+                ) : (
+                  "..."
+                )}
+              </b>{" "}
+              개
+            </span>
+          </div>
+
+          <div className="col-span-2">
+            <div
+              ref={containerRef}
+              className="relative h-[160px] overflow-y-auto"
+              onMouseEnter={stopRotation}
+              onMouseLeave={startRotation}
+            >
+              <AnimatePresence initial={false}>
+                <motion.div
+                  key={news[0]?.newsId}
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: "-100%", opacity: 0 }}
+                  transition={{ duration: 0.4 }}
+                  className="flex flex-col absolute top-0 left-0 w-full"
+                >
+                  {news.map((item, idx) => (
+                    <div
+                      key={`realtime-news-${item.newsId}-${idx}`}
+                      className={clsx(
+                        "grid grid-cols-[150px_1fr_140px_80px] gap-main",
+                        idx % 2 === 1 ? "bg-main-light-gray/50 rounded-sm" : ""
+                      )}
+                    >
+                      <div className="text-center p-2 truncate text-base-custom font-semibold bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
+                        {item.stock_list
+                          ? item.stock_list[0].stock_name
+                          : "처리중..."}
+                      </div>
+
+                      <div className="p-2">
+                        <Link
+                          href={item.url}
+                          className="hover:text-main-blue transition-colors duration-300 text-sm-custom"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {item.title}
+                        </Link>
+                      </div>
+
+                      <div className="text-left text-main-blue p-2 text-sm-custom font-semibold flex items-center gap-1">
+                        중요도 점수 |{" "}
+                        {item.impact_score ? (
+                          <SlidingNumber number={item.impact_score} padStart />
+                        ) : (
+                          "--- "
+                        )}
+                        점
+                      </div>
+
+                      <div className="flex items-center gap-1 text-xs-custom">
+                        <Clock className="text-main-dark-gray" size={12} />
+                        {item.wdate && formatDate(item.wdate)}
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

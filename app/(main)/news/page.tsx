@@ -16,11 +16,15 @@ const HomePage = async () => {
   ]);
 
   const highlightNews: HighlightNews[] =
-    highlightResult.status === "fulfilled" ? highlightResult.value.data : [];
+    highlightResult.status === "fulfilled" && highlightResult.value?.data
+      ? highlightResult.value.data
+      : [];
   const highlightNewsError = highlightResult.status === "rejected";
 
   const allInitialNews: News[] =
-    allNewsResult.status === "fulfilled" ? allNewsResult.value.data : [];
+    allNewsResult.status === "fulfilled" && allNewsResult.value?.data
+      ? allNewsResult.value.data
+      : [];
   const allInitialNewsError = allNewsResult.status === "rejected";
 
   return (

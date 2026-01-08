@@ -44,7 +44,13 @@
     "@types/node": "^20",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19",
+    "msw": "^2.12.7",
     "tailwindcss": "^4.1.7",
     "typescript": "^5"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

@@ -18,6 +18,7 @@ import {
 import { Line } from "react-chartjs-2";
 import DownPrice from "@/components/ui/shared/DownPrice";
 import UpPrice from "@/components/ui/shared/UpPrice";
+import ErrorComponent from "@/components/ui/shared/ErrorComponent";
 
 ChartJS.register(
   CategoryScale,
@@ -135,7 +136,7 @@ export default function OverViewChart() {
     staleTime: 5 * 60 * 1000, // 5분
     gcTime: 10 * 60 * 1000, // 10분
     placeholderData: keepPreviousData,
-    retry: 2,
+    retry: 1,
   });
 
   // 타입 변경 시 첫 번째 심볼로 설정
@@ -171,7 +172,10 @@ export default function OverViewChart() {
   if (error) {
     return (
       <div className="p-main-2 bg-white shadow-md rounded-main space-y-4">
-        <div className="text-red-500">❌ {error.message}</div>
+        <ErrorComponent
+          message={error.message || "데이터를 불러오는데 실패했습니다."}
+          className="min-h-[200px]"
+        />
       </div>
     );
   }

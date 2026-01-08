@@ -13,6 +13,7 @@ import NewsModal from "./NewsModal";
 import { HighlightText } from "@/components/animate-ui/text/highlight";
 import { SlidingNumber } from "@/components/animate-ui/text/sliding-number";
 import { WritingText } from "@/components/animate-ui/text/writing";
+import ErrorComponent from "@/components/ui/shared/ErrorComponent";
 
 const MainNews = ({
   news,
@@ -85,14 +86,11 @@ const MainNews = ({
     }, 5000);
   };
 
-  const mainNews = news[currentPage].news;
-  const gridNews = news[currentPage].related;
-
   if (error) {
     return (
       <div className="grid grid-cols-3 w-full gap-main-2">
-        <div className="col-span-3 grid grid-cols-3 gap-main w-full relative">
-          <div className="col-span-3 flex items-center gap-main">
+        <div className="col-span-3 flex flex-col gap-main w-full relative">
+          <div className="flex items-center gap-main">
             <div className="text-3xl-custom font-bold">
               <span className="bg-gradient-to-r from-main-blue to-purple-600 bg-clip-text text-transparent">
                 주요 뉴스
@@ -104,9 +102,7 @@ const MainNews = ({
               icon={<CircleHelp size={16} />}
             />
           </div>
-          <p className="text-main-red">
-            주요뉴스 데이터를 불러오는데 실패했습니다.
-          </p>
+          <ErrorComponent message="주요뉴스 데이터를 불러오는데 실패했습니다." />
         </div>
       </div>
     );
@@ -135,6 +131,9 @@ const MainNews = ({
       </div>
     );
   }
+
+  const mainNews = news[currentPage]?.news;
+  const gridNews = news[currentPage]?.related;
 
   return (
     <div className="grid grid-cols-2 gap-main-2 w-full relative">
@@ -215,7 +214,7 @@ const MainNews = ({
                               ease: "easeInOut",
                             }}
                             className="text-lg font-semibold bg-gradient-to-r from-main-blue to-purple-600 text-white"
-                            text={stock.stock_name}
+                            text={stock.stock_name.slice(0, 5) + "..."}
                           />
                         ))}
                       {/* {(mainNews.stock_list?.length ?? 0) > 2 && (
@@ -326,7 +325,7 @@ const MainNews = ({
                       .map((stock) => (
                         <WritingText
                           key={`highlight-news-related-${stock.stock_name}`}
-                          text={stock.stock_name}
+                          text={stock.stock_name.slice(0, 5) + "..."}
                           isGradient
                           className="text-lg-custom font-bold"
                           spacing={5}

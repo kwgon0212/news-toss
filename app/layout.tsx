@@ -7,6 +7,7 @@ import "driver.js/dist/driver.css";
 import QueryClientProvider from "../components/router/QueryClientProvider";
 import InvestSurveyProvider from "@/components/router/InvestSurveyProvider";
 import { getJwtToken } from "@/utils/auth";
+import { MSWProvider } from "./MSWProvider";
 
 const pretendard = localFont({
   src: "../public/fonts/PretendardVariable.woff2",
@@ -45,18 +46,20 @@ export default async function RootLayout({
     <html lang="kr">
       <body className={`${pretendard.variable} antialiased`}>
         <QueryClientProvider>
-          <ToastContainer
-            position="top-center"
-            autoClose={1000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-          />
-          <SentryProvider>
-            <InvestSurveyProvider token={token}>
-              {children}
-            </InvestSurveyProvider>
-          </SentryProvider>
+          <MSWProvider>
+            <ToastContainer
+              position="top-center"
+              autoClose={1000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+            />
+            <SentryProvider>
+              <InvestSurveyProvider token={token}>
+                {children}
+              </InvestSurveyProvider>
+            </SentryProvider>
+          </MSWProvider>
         </QueryClientProvider>
       </body>
     </html>

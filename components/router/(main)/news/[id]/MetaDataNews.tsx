@@ -48,6 +48,9 @@ const MetaDataNews = ({
     setSelectedNews(news);
   };
 
+  console.log(selectedNews);
+  console.log(selectedStockName);
+
   // 필수 데이터가 없는 경우 early return
   if (!selectedNews || !selectedStockName) {
     return (
@@ -180,7 +183,7 @@ const MetaDataNews = ({
             <div className="grid grid-cols-5 gap-main">
               <div className="size-full rounded-main shrink-0 relative col-span-2">
                 <Image
-                  src={selectedNews.press ?? "https://placehold.co/200x150"}
+                  src={selectedNews.image ?? "https://placehold.co/200x150"}
                   alt={`${selectedNews.title}-image`}
                   fill
                   sizes="100%"
@@ -200,7 +203,7 @@ const MetaDataNews = ({
                 <span className="text-xl-custom font-bold bg-gradient-to-r from-main-blue to-purple-500 bg-clip-text text-transparent w-fit">
                   뉴스 요약
                 </span>
-                <p>{selectedNews.image}</p>
+                <p>{selectedNews.press}</p>
               </div>
             </div>
           </div>

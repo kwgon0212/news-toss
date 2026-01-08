@@ -17,6 +17,7 @@ import {
   AccordionButton,
   AccordionPanel,
 } from "@/components/animate-ui/headless/accordion";
+import ErrorComponent from "@/components/ui/shared/ErrorComponent";
 
 interface StockData {
   stockName: string;
@@ -172,7 +173,7 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
     },
     staleTime: 10 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
-    retry: 5,
+    retry: 1,
   });
 
   const {
@@ -197,7 +198,7 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
     placeholderData: keepPreviousData,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
-    retry: 5,
+    retry: 1,
   });
 
   const totalPage = categoryStocks?.totalPages || 1;
@@ -287,9 +288,7 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
     return (
       <div className="p-main flex flex-col gap-main">
         <h2 className="text-xl font-bold">카테고리</h2>
-        <div className="flex items-center justify-center h-32 text-gray-500">
-          카테고리 데이터를 불러올 수 없습니다.
-        </div>
+        <ErrorComponent message="카테고리 데이터를 불러올 수 없습니다." />
       </div>
     );
   }
@@ -342,9 +341,7 @@ const CategoryStock = ({ token }: { token: JwtToken | null }) => {
           {isStocksLoading ? (
             <StocksSkeleton />
           ) : stocksError ? (
-            <div className="flex items-center justify-center h-32 text-gray-500">
-              종목 데이터를 불러올 수 없습니다.
-            </div>
+            <ErrorComponent message="종목 데이터를 불러올 수 없습니다." />
           ) : (
             <>
               <div className="grid grid-cols-2 grid-rows-3 gap-y-main">

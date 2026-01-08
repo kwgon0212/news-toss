@@ -20,6 +20,7 @@ import { KOSPI } from "@/type/stocks/KOSPI";
 import { RefreshCcw } from "lucide-react";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
+import ErrorComponent from "@/components/ui/shared/ErrorComponent";
 
 ChartJS.register(
   LineElement,
@@ -67,17 +68,20 @@ const KOSPIChart = () => {
     error,
   } = useQuery<KOSPI>({
     queryKey: ["kospi"],
-    queryFn: () =>
-      fetch("/proxy2/v2/stocks/indices/KOSPI").then((res) =>
-        res.json().then((data) => data.data)
-      ),
+    queryFn: async () => {
+      const res = await fetch("/proxy2/v2/stocks/indices/KOSPI");
+      if (!res.ok) throw new Error("데이터 로딩 실패");
+      return res.json().then((data) => data.data);
+    },
+    retry: 1,
   });
 
   if (error)
     return (
-      <div className="p-4 bg-gray-300 animate-pulse rounded-md text-center">
-        에러임
-      </div>
+      <ErrorComponent
+        message="차트 데이터를 불러오는데 실패했습니다."
+        className="min-h-[232px]"
+      />
     );
 
   if (isLoading) {
